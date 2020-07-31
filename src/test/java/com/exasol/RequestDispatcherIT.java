@@ -31,6 +31,16 @@ class RequestDispatcherIT {
             "exasol/docker-db:7.0.rc1-d1") //
                     .withRequiredServices() //
                     .withExposedPorts(8563);
+    private static final String EXASOL_LUA_MODULE_LOADER_WORKAROUND = "table.insert(package.loaders,\n" //
+            + "    function (module_name)\n" //
+            + "        local loader = package.preload[module_name]\n" //
+            + "        if(loader == nil) then\n" //
+            + "            error(\"Module \" .. module_name .. \" not found in package.preload.\")\n" //
+            + "        else\n" //
+            + "            return loader\n" //
+            + "        end\n" //
+            + "    end\n" //
+            + ")\n\n";
 
     @Test
     void test() throws NoDriverFoundException, SQLException, IOException {
@@ -40,13 +50,12 @@ class RequestDispatcherIT {
         sourceSchema.createTable("T", "C1", "BOOLEAN") //
                 .insert("true").insert("false");
         final Schema scriptSchema = factory.createSchema("L");
-        String content = "table.insert(package.loaders,\n" + "    function (module_name)\n"
-                + "        local loader = package.preload[module_name]\n" + "        if(loader == nil) then\n"
-                + "            error(\"Module \" .. module_name .. \" not found in package.preload.\")\n"
-                + "        else\n" + "            return loader\n" + "        end\n" + "    end\n" + ")\n\n"
-                + Files.readString(RLS_PACKAGE_PATH);
+        String content = EXASOL_LUA_MODULE_LOADER_WORKAROUND + Files.readString(RLS_PACKAGE_PATH);
         final AdapterScript adapterScript = scriptSchema.createAdapterScript("RLS", Language.LUA, content);
-        factory.createVirtualSchemaBuilder("R").adapterScript(adapterScript).build();
+        factory.createVirtualSchemaBuilder("R") //
+                .adapterScript(adapterScript) //
+                .sourceSchema(sourceSchema) //
+                .build();
         final Statement statement = connection.createStatement();
         final ResultSet result = statement.executeQuery("SELECT * FROM R.T");
         assertThat(result, ResultSetStructureMatcher.table("BOOLEAN").row("true").row("false").matches());

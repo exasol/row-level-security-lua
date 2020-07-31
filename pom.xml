@@ -92,18 +92,7 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.and.failsafe.plugin.version}</version>
-                <configuration>
-                    <!-- Set the highest log level for coverage testing, so that we have a chance to 
-                        reach branches in the logging lambdas too. -->
-                    <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties
-                        ${argLine}
-                    </argLine>
-                </configuration>
-            </plugin>
+            <!-- Note that we do not need the Surefire-plug-in in this project since unit tests are run by luaunit. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -153,10 +142,14 @@
                                 <argument>${basedir}/tools/amalg.lua</argument>
                                 <argument>-o</argument>
                                 <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
+                                <!-- Include main script containing the adapter entry point-->
                                 <argument>-s</argument>
                                 <argument>exasolvs/request_dispatcher.lua</argument>
+                                <!-- Include modules by name (no slashes, no ".lua"!) -->
+                                <argument>exasolvs.query_renderer</argument>
                                 <argument>exasolrls.adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
+                                <argument>exasolrls.query_rewriter</argument>
                             </arguments>
                         </configuration>
                     </execution>

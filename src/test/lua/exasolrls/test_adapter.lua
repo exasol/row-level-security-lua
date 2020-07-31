@@ -18,7 +18,7 @@ function test_rls_adapter.test_create_virtual_schema()
     mockagne.when(metadata_reader_mock.read("S")).thenAnswer(schema_metadata)
     local expected = {type = "createVirtualSchema",
             schemaMetadata = schema_metadata}
-    local request = {schemaMetadataInfo = {name = "V", properties = {SCHEMA = "S"}}}
+    local request = {schemaMetadataInfo = {name = "V", properties = {SCHEMA_NAME = "S"}}}
     local actual = adapter.create_virtual_schema(nil, request)
     luaunit.assertEquals(actual, expected)
 end

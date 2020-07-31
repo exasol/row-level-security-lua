@@ -63,7 +63,7 @@ function test_query_renderer.test_render_unary_not_filter()
         from = {type = "table", name = "MONTHS"},
         filter = {
             type = "predicate_not",
-            left = {
+            right = {
                 type = "predicate_equal",
                 left = {type = "literal_string", value = "Q3"},
                 right = {type = "column", name="QUARTER", tableName = "MONTHS"}
@@ -71,7 +71,7 @@ function test_query_renderer.test_render_unary_not_filter()
         }
     }
     assertRendersTo(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
-            .. ' WHERE ((\'Q3\' = "MONTHS"."QUARTER") AND ("MONTHS"."DAYS_IN_MONTH" > 30))');
+            .. ' WHERE (NOT (\'Q3\' = "MONTHS"."QUARTER"))');
 end
 
 os.exit(luaunit.LuaUnit.run())

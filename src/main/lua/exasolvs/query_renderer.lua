@@ -1,13 +1,23 @@
 local M = {}
 
+-- TODO: Move to a separate module!
+--
 function string.startsWith(text, start)
-    return start == string.sub(text,1,string.len(start))
+    return start == string.sub(text, 1, string.len(start))
 end
 
+---
+-- Create a new query renderer.
+-- 
+-- @param query query to be rendered
+-- 
+-- @return new query renderer instance
+-- 
 function M.new (query)
     local self = {original_query = query, query_elements = {}}
     local OPERATORS = {
-        predicate_equal = "=", predicate_less = "<", predicate_greater = ">", predicate_and = "AND", predicate_or = "or"
+        predicate_equal = "=", predicate_less = "<", predicate_greater = ">",
+        predicate_and = "AND", predicate_or = "OR", predicate_not = "NOT"
     }
     
     local function append(value)
@@ -63,8 +73,10 @@ function M.new (query)
     append_predicate = function (predicate)
         local type = predicate.type
         append("(")
-        appendOperand(predicate.left)
-        append(" ")
+        if(type ~= "predicate_not") then
+            appendOperand(predicate.left)
+            append(" ")
+        end
         append(OPERATORS[type])
         append(" ")
         appendOperand(predicate.right)
@@ -78,6 +90,10 @@ function M.new (query)
         end
     end
     
+    --- Render the query to a string.
+    -- 
+    -- @return query as string
+    -- 
     local function render()
         append("SELECT ")
         append_select_list()
