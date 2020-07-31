@@ -1,0 +1,32 @@
+{
+	"folders": {},
+	"connections": {
+		"exasol-173710a62e3-1611415fadf6e7d6": {
+			"provider": "exasol",
+			"driver": "exasol",
+			"name": "127.0.0.1",
+			"save-password": true,
+			"show-system-objects": true,
+			"read-only": false,
+			"configuration": {
+				"host": "127.0.0.1",
+				"port": "8563",
+				"url": "jdbc:exa:127.0.0.1:8563;clientname=Eclipse IDE;clientversion=4.16.0.20200615-1200",
+				"type": "dev",
+				"provider-properties": {},
+				"auth-model": "native",
+				"handlers": {}
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Development",
+			"color": "255,255,255",
+			"description": "Regular development database",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false
+		}
+	}
+}
