@@ -14,11 +14,11 @@ local function read_columns(table_id)
     local ok, result = exa.pquery("DESCRIBE " .. table_id)
     local columns = {}
     if(ok) then
-        for i, column in ipairs(result) do
-            local column_id = column.COLUMN_NAME
+        for i = 1, #result do
+            local column_id = result[i].COLUMN_NAME
             if((column_id ~= "EXA_ROW_ROLES") and (column_id ~= "EXA_ROW_TENANT") and (column_id ~= "EXA_ROW_GROUP"))
             then
-                local column_type = column.SQL_TYPE
+                local column_type = result[i].SQL_TYPE
                 columns[i] = {name = column_id, dataType = {type = column_type}}
             end
         end
@@ -33,8 +33,8 @@ local function read_tables(schema_id)
     local ok, result = exa.pquery("SELECT TABLE_NAME FROM CAT")
     local tables = {}
     if(ok) then 
-        for i, table in ipairs(result) do
-            local table_id = table.TABLE_NAME
+        for i = 1, #result do
+            local table_id = result[i].TABLE_NAME
             if((table_id ~= "EXA_RLS_USERS") and (table_id ~= "EXA_ROLE_MAPPING") and (table_id ~= "EXA_GROUP_MEMBERS"))
             then
                 local columns = read_columns(table_id)
