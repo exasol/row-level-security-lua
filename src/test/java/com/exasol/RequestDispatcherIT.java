@@ -46,7 +46,7 @@ class RequestDispatcherIT {
     void test() throws NoDriverFoundException, SQLException, IOException {
         final Connection connection = container.createConnection("");
         final ExasolObjectFactory factory = new ExasolObjectFactory(connection);
-        final Schema sourceSchema = factory.createSchema("S");
+        final Schema sourceSchema = factory.createSchema("SOURCE");
         sourceSchema.createTable("T", "C1", "BOOLEAN") //
                 .insert("true").insert("false");
         final Schema scriptSchema = factory.createSchema("L");
@@ -57,7 +57,7 @@ class RequestDispatcherIT {
                 .sourceSchema(sourceSchema) //
                 .build();
         final Statement statement = connection.createStatement();
-        final ResultSet result = statement.executeQuery("SELECT * FROM R.T");
-        assertThat(result, ResultSetStructureMatcher.table("BOOLEAN").row("true").row("false").matches());
+        final ResultSet result = statement.executeQuery("SELECT C1 FROM SOURCE.T");
+        assertThat(result, ResultSetStructureMatcher.table("BOOLEAN").row(true).row(false).matches());
     }
 }

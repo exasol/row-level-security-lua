@@ -3,7 +3,7 @@ M = {}
 local CONTROL_TABLES = {"EXA_RLS_USERS", "EXA_ROLE_MAPPING", "EXA_GROUP_MAPPING"}
 
 local function open_schema(schema_id)
-    local ok, result = exa.pquery("OPEN SCHEMA " .. schema_id)
+    local ok, result = exa.pquery('OPEN SCHEMA "' .. schema_id .. '"')
     if(not ok) then
         error("E-MDR-1: Unable to open source schema " .. schema_id .. " for reading metadata. Caused by: "
                 .. result.error_message)
@@ -11,7 +11,7 @@ local function open_schema(schema_id)
 end
 
 local function read_columns(table_id)
-    local ok, result = exa.pquery("DESCRIBE " .. table_id)
+    local ok, result = exa.pquery('DESCRIBE "' .. table_id .. '"')
     local columns = {}
     if(ok) then
         for i = 1, #result do
@@ -30,7 +30,7 @@ local function read_columns(table_id)
 end
 
 local function read_tables(schema_id)
-    local ok, result = exa.pquery("SELECT TABLE_NAME FROM CAT")
+    local ok, result = exa.pquery('SELECT "TABLE_NAME" FROM "CAT"')
     local tables = {}
     if(ok) then 
         for i = 1, #result do

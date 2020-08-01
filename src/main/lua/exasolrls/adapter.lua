@@ -44,7 +44,7 @@ function M.get_capabilities(exa_metadata, request)
 end
 
 function M.push_down(exa_metadata, request)
-    return query_rewriter.rewrite(request.pushdownRequest)
+    return {type = "pushdown", sql = query_rewriter.rewrite(request.pushdownRequest)}
 end
 
 return M

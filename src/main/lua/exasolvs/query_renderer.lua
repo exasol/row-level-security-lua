@@ -39,11 +39,16 @@ function M.new (query)
     end
     
     local function append_select_list()
-        for i, select_list_element in ipairs(self.original_query.selectList) do
-            local type = select_list_element.type
-            comma(i)
-            if(type == "column") then
-                append_column_reference(select_list_element)
+        local select_list = self.original_query.selectList
+        if(select_list == nil) then
+            append("*")
+        else
+            for i = 1, #select_list do
+                local type = select_list[i].type
+                comma(i)
+                if(type == "column") then
+                    append_column_reference(select_list[i])
+                end
             end
         end
     end
@@ -101,7 +106,7 @@ function M.new (query)
         append_filter()
         return table.concat(self.query_elements, "")
     end
-
+    
     return {render = render}
 end
 
