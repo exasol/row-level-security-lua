@@ -155,6 +155,7 @@
                                 <argument>-n</argument>
                                 <argument>${project.build.directory}/luaunit-report.xml</argument>
                             </arguments>
+                            <!-- Modules must be added to the LUA_PATH for the tests to work. -->
                             <environmentVariables>
                                 <LUA_PATH>${lua.src}/?.lua;${LUA_PATH}</LUA_PATH>
                             </environmentVariables>
