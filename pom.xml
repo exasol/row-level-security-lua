@@ -17,6 +17,7 @@
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <lua.src>${basedir}/src/main/lua</lua.src>
+        <lua.test>${basedir}/src/test/lua</lua.test>
         <source.admin.scripts>${lua.src}/administration</source.admin.scripts>
     </properties>
     <repositories>
@@ -138,10 +139,27 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
+                        <id>Lua Unit Tests</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>lua</executable>
+                            <useMavenLogger>true</useMavenLogger>
+                            <workingDirectory>${lua.test}</workingDirectory>
+                            <arguments>
+                                <argument>exasolrls/test_adapter.lua</argument>
+                                <argument>-o</argument>
+                                <argument>junit</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <!-- Bundle the main script (dispatcher) and the modules into a single lua package 
                             that can be deployed as Lua adapter script. -->
                         <id>Lua Virtual Schema Bundle</id>
-                        <phase>compile</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
