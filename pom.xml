@@ -18,6 +18,7 @@
         </sonar.coverage.jacoco.xmlReportPaths>
         <lua.src>${basedir}/src/main/lua</lua.src>
         <lua.test>${basedir}/src/test/lua</lua.test>
+        <lua.path>/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;./?.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua</lua.path>
         <source.admin.scripts>${lua.src}/administration</source.admin.scripts>
     </properties>
     <repositories>
@@ -145,20 +146,11 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>lua</executable>
+                            <executable>${project.basedir}/tools/unittest.sh</executable>
                             <useMavenLogger>true</useMavenLogger>
-                            <workingDirectory>${lua.test}</workingDirectory>
                             <arguments>
-                                <argument>exasolrls/test_adapter.lua</argument>
-                                <argument>-o</argument>
-                                <argument>junit</argument>
-                                <argument>-n</argument>
-                                <argument>${project.build.directory}/luaunit-report.xml</argument>
+                              <argument>${project.basedir}</argument>
                             </arguments>
-                            <!-- Modules must be added to the LUA_PATH for the tests to work. -->
-                            <environmentVariables>
-                                <LUA_PATH>${lua.src}/?.lua;${LUA_PATH}</LUA_PATH>
-                            </environmentVariables>
                         </configuration>
                     </execution>
                     <execution>
