@@ -152,7 +152,12 @@
                                 <argument>exasolrls/test_adapter.lua</argument>
                                 <argument>-o</argument>
                                 <argument>junit</argument>
+                                <argument>-n</argument>
+                                <argument>${project.build.directory}/luaunit-report.xml</argument>
                             </arguments>
+                            <environmentVariables>
+                                <LUA_PATH>${lua.src}/?.lua;${LUA_PATH}</LUA_PATH>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                     <execution>
