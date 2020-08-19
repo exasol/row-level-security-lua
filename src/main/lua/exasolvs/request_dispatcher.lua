@@ -1,7 +1,10 @@
 cjson = require("cjson")
 adapter = require("exasolrls.adapter", "adapter")
+log = require("exasollog.log")
 
 function adapter_call(request_as_json)
+    log.open("172.17.0.1", 3000)
+    log.info("Received request:\n" .. request_as_json)
     local request = cjson.decode(request_as_json)
     local handlers = {
         pushdown =  adapter.push_down,
@@ -13,8 +16,11 @@ function adapter_call(request_as_json)
     }
     local handler = handlers[request.type]
     if(handler ~= nil) then
-        return cjson.encode(handler(nil, request))
+        local response = cjson.encode(handler(nil, request))
+        log.debug("Response:\n" .. response)
+        return response
     else
         error("F-RQD-1: Unknown Virtual Schema request type received: " .. request.type)
     end
+    log.close()
 end

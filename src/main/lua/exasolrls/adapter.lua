@@ -1,5 +1,5 @@
-metadata_reader = require("exasolrls.metadata_reader")
-query_rewriter = require("exasolrls.query_rewriter")
+local metadata_reader = require("exasolrls.metadata_reader")
+local query_rewriter = require("exasolrls.query_rewriter")
 
 local M = {}
 
@@ -14,7 +14,8 @@ local M = {}
 -- 
 function M.create_virtual_schema(exa_metadata, request)
     local properties = request.schemaMetadataInfo.properties
-    return {type = "createVirtualSchema", schemaMetadata = metadata_reader.read(properties.SCHEMA_NAME)}
+    local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
+    return {type = "createVirtualSchema", schemaMetadata = schema_metadata}
 end
 
 ---
@@ -44,7 +45,10 @@ function M.get_capabilities(exa_metadata, request)
 end
 
 function M.push_down(exa_metadata, request)
-    return {type = "pushdown", sql = query_rewriter.rewrite(request.pushdownRequest)}
+    local properties = request.schemaMetadataInfo.properties
+    local adapter_cache = request.schemaMetadataInfo.adapterNotes
+    local rewritten_query = query_rewriter.rewrite(request.pushdownRequest, properties.SCHEMA_NAME, adapter_cache)
+    return {type = "pushdown", sql = rewritten_query}
 end
 
 return M

@@ -174,9 +174,11 @@
                                 <argument>exasolvs/request_dispatcher.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
                                 <argument>exasolvs.query_renderer</argument>
+                                <argument>exasolrls.table_protection_status</argument>
                                 <argument>exasolrls.adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
                                 <argument>exasolrls.query_rewriter</argument>
+                                <argument>exasollog.log</argument>
                             </arguments>
                         </configuration>
                     </execution>

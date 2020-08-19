@@ -3,7 +3,7 @@ renderer = require("exasolvs.query_renderer")
 
 test_query_renderer = {}
 
-local function assertRendersTo(original_query, expected)
+local function assert_renders_to(original_query, expected)
     luaunit.assertEquals(renderer.new(original_query).render(), expected);
 end
 
@@ -16,7 +16,7 @@ function test_query_renderer.test_render_simple_select()
         },
         from = {type  = "table", name = "T1"}
     }
-    assertRendersTo(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1"');
+    assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1"');
 end
 
 function test_query_renderer.test_render_with_single_predicate_filter()
@@ -30,7 +30,7 @@ function test_query_renderer.test_render_with_single_predicate_filter()
             right = {type = "literal_exactnumeric", value = "30"}
         }
     }
-    assertRendersTo(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS" WHERE ("MONTHS"."DAYS_IN_MONTH" > 30)');
+    assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS" WHERE ("MONTHS"."DAYS_IN_MONTH" > 30)');
 end
 
 function test_query_renderer.test_render_nested_predicate_filter()
@@ -40,20 +40,20 @@ function test_query_renderer.test_render_nested_predicate_filter()
         from = {type = "table", name = "MONTHS"},
         filter = {
             type = "predicate_and",
-            left = {
+            expressions = {{
                 type = "predicate_equal",
                 left = {type = "literal_string", value = "Q3"},
                 right = {type = "column", name="QUARTER", tableName = "MONTHS"}
-            },
-            right ={
+            }, {
                 type = "predicate_greater",
                 left = {type = "column", name="DAYS_IN_MONTH", tableName = "MONTHS"},
                 right = {type = "literal_exactnumeric", value = "30"}
             }
+            }
         }
     }
-    assertRendersTo(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
-            .. ' WHERE ((\'Q3\' = "MONTHS"."QUARTER") AND ("MONTHS"."DAYS_IN_MONTH" > 30))');
+    assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
+        .. ' WHERE ((\'Q3\' = "MONTHS"."QUARTER") AND ("MONTHS"."DAYS_IN_MONTH" > 30))');
 end
 
 function test_query_renderer.test_render_unary_not_filter()
@@ -63,15 +63,56 @@ function test_query_renderer.test_render_unary_not_filter()
         from = {type = "table", name = "MONTHS"},
         filter = {
             type = "predicate_not",
-            right = {
+            expression = {
                 type = "predicate_equal",
                 left = {type = "literal_string", value = "Q3"},
                 right = {type = "column", name="QUARTER", tableName = "MONTHS"}
             },
         }
     }
-    assertRendersTo(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
-            .. ' WHERE (NOT (\'Q3\' = "MONTHS"."QUARTER"))');
+    assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
+        .. ' WHERE (NOT (\'Q3\' = "MONTHS"."QUARTER"))');
+end
+
+function test_query_renderer.test_scalar_function_in_select_list()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "function_scalar", name ="UPPER", arguments = {{type = "literal_string", value = "bob"}}}
+        }
+    }
+    assert_renders_to(original_query, "SELECT UPPER('bob')")
+end
+
+function test_query_renderer.test_scalar_function_in_select_list()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "column", name = "LASTNAME", tableName = "PEOPLE"}
+        },
+        from = {type = "table", name = "PEOPLE"},
+        filter = {
+            type = "predicate_equal",
+            left = {
+                type = "function_scalar",
+                name = "LOWER",
+                arguments = {
+                    {type = "column", name = "FIRSTNAME", tableName = "PEOPLE"},
+                }
+            },
+            right = {type = "literal_string", value = "eve"}
+        }
+    }
+    assert_renders_to(original_query, 'SELECT "PEOPLE"."LASTNAME" FROM "PEOPLE" WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
+end
+
+function test_query_renderer.test_current_user()
+    local original_query = {
+        type = "select",
+        selectList = {{type = "function_scalar", name = "CURRENT_USER"}}
+    }
+    assert_renders_to(original_query, 'SELECT CURRENT_USER')
+
 end
 
 os.exit(luaunit.LuaUnit.run())
