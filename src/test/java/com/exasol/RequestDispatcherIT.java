@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ class RequestDispatcherIT {
         return factory.createVirtualSchemaBuilder(name + "_RLS") //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .build();
+                .properties(Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS", "172.17.0.1:3000")).build();
     }
 
     private ResultSet executeRlsQueryWithUser(final String query, final User user) throws SQLException {

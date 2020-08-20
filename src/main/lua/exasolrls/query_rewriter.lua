@@ -32,7 +32,7 @@ function M.rewrite(original_query, source_schema, adapter_cache)
     local table = query.from.name
     query.from.schema = source_schema
     if(protection.is_table_protected(source_schema, table, adapter_cache)) then
-        log.debug('Table "' .. table .. "' is RLS-protected. Adding row filters.")
+        log.debug('Table "%s" is RLS-protected. Adding row filters.', table)
         local protection_filter = {
             type = "predicate_equal",
             left = {type = "column", tableName = table, name = "EXA_ROW_TENANT"},
@@ -45,7 +45,7 @@ function M.rewrite(original_query, source_schema, adapter_cache)
             query.filter = protection_filter
         end
     else
-        log.debug('Table "' .. table .. "' is not protected. No filters added.")
+        log.debug('Table "%s" is not protected. No filters added.', table)
     end
     return renderer.new(query).render()
 end

@@ -13,12 +13,11 @@ end
 
 local function determine_table_protection_from_metadata(schema_id, table_id)
     local fully_qualified_table_id = '"' .. schema_id .. '"."'.. table_id .. '"'
-    log.debug("Reading protection status of table " .. fully_qualified_table_id)
+    log.debug("Reading protection status of table %s.", fully_qualified_table_id)
     local ok, result = exa.pquery('DESCRIBE ' .. fully_qualified_table_id)
     if(ok) then
         for i = 1, #result do
             local column_name = result[i].COLUMN_NAME
-            log.debug('Checking column "' .. column_name .. "'")
             if(column_name == "EXA_ROW_TENANT") then
                 return true
             end
