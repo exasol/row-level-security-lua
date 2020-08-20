@@ -1,5 +1,17 @@
 local levels = {NONE = 1, FATAL = 2, ERROR = 3, WARN = 4, INFO = 5, CONFIG = 6, DEBUG = 7, TRACE = 8}
 
+---
+-- This module implements a remote log client with the ability to fall back to console logging in case no connection
+-- to a remote log receiver is established.
+-- <p>
+-- You can optionally use a high resolution timer for performance monitoring. Since Lua's <code>os.date()</code>
+-- function only has a resolution of seconds, that timer uses <code>socket.gettime()</code>. Note that the values
+-- you are getting are not the milliseconds of a second, but the milliseconds counted from when the module was first
+-- loaded &mdash; which is typically at the very beginning of the software using this module.
+-- </p><p>
+-- Use the <code>init()</code> method to set some global parameters for this module.
+-- </p>
+--
 local M = {
     level = levels.INFO,
     socket_client = nil,
@@ -116,28 +128,50 @@ function M.set_level(level_name)
     end
 end
 
+---
+-- Write to a socket, print or discard message.
+-- <p>
+-- If a socket connection is established, this method writes to that socket. Otherwise if the global print function
+-- exists (e.g. in a unit test) falls back to logging via <code>print()</code>.
+-- </p><p>
+-- Exasol removed print() in it's Lua implementation, so there is no fallback on a real Exasol instance. You either use
+-- remote logging or messages are discarded immediately.
+-- </p>
+--
+-- @param level log level
+--
+-- @param message log message; otherwise used as format string if any variadic parameters follow
+--
+-- @param ... parameters to be inserted into formatted message (optional)
+--
 local function write(level, message, ...)
-    local entry
-    local formatted_message = (select('#', ...) > 0) and string.format(message, ...) or message
-    if M.use_high_resolution_time then
-        local current_millis = string.format("%3.3f", (socket.gettime() - M.start_nanos) * 1000)
-        entry = {
-            os.date(M.timestamp_pattern),
-            " (", current_millis, "ms) [", level , "]",
-            string.rep(" ", 7 - string.len(level)), formatted_message
-        }
+    if not M.socket_client and print then
+        return
     else
-        entry = {
-            os.date(M.timestamp_pattern),
-            " [", level , "]",
-            string.rep(" ", 7 - string.len(level)), formatted_message
-        }
-    end
-    if M.socket_client then
-        entry[#entry + 1] = "\n"
-        M.socket_client:send(table.concat(entry))
-    else
-        print(table.concat(entry))
+        local entry
+        local formatted_message = (select('#', ...) > 0) and string.format(message, ...) or message
+        if M.use_high_resolution_time then
+            local current_millis = string.format("%07.3f", (socket.gettime() - M.start_nanos) * 1000)
+            entry = {
+                os.date(M.timestamp_pattern),
+                " (", current_millis, "ms) [", level , "]",
+                string.rep(" ", 7 - string.len(level)), formatted_message
+            }
+        else
+            entry = {
+                os.date(M.timestamp_pattern),
+                " [", level , "]",
+                string.rep(" ", 7 - string.len(level)), formatted_message
+            }
+        end
+        if M.socket_client then
+            entry[#entry + 1] = "\n"
+            M.socket_client:send(table.concat(entry))
+        else
+            if(print) then
+                print(table.concat(entry))
+            end
+        end
     end
 end
 

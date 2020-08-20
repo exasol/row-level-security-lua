@@ -5,7 +5,7 @@ local log = require("exasollog.log")
 local M  = {}
 
 local function validate(query)
-    if(query == nil) then
+    if not query then
         error("E-RLS-QRW-1: Unable to rewrite query because it was <nil>.")
     end
     local push_down_type = query.type
@@ -31,7 +31,7 @@ function M.rewrite(original_query, source_schema, adapter_cache)
     local query = original_query
     local table = query.from.name
     query.from.schema = source_schema
-    if(protection.is_table_protected(source_schema, table, adapter_cache)) then
+    if protection.is_table_protected(source_schema, table, adapter_cache) then
         log.debug('Table "%s" is RLS-protected. Adding row filters.', table)
         local protection_filter = {
             type = "predicate_equal",
@@ -39,7 +39,7 @@ function M.rewrite(original_query, source_schema, adapter_cache)
             right = {type = "function_scalar", name = "CURRENT_USER"}
         }
         local original_filter = query.filter
-        if(original_filter) then
+        if original_filter then
             query.filter =  {type = "predicate_and", expressions = {protection_filter, original_filter}}
         else
             query.filter = protection_filter

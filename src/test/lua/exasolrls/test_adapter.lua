@@ -14,10 +14,10 @@ end
 
 function test_rls_adapter.test_create_virtual_schema()
     local schema_metadata = {tables = {{type = "table", name = "T1", columns =
-                    {{name = "C1", dataType = { type = "BOOLEAN"}}}}}}
+        {{name = "C1", dataType = { type = "BOOLEAN"}}}}}}
     mockagne.when(metadata_reader_mock.read("S")).thenAnswer(schema_metadata)
     local expected = {type = "createVirtualSchema",
-            schemaMetadata = schema_metadata}
+        schemaMetadata = schema_metadata}
     local request = {schemaMetadataInfo = {name = "V", properties = {SCHEMA_NAME = "S"}}}
     local actual = adapter.create_virtual_schema(nil, request)
     luaunit.assertEquals(actual, expected)
@@ -25,9 +25,9 @@ end
 
 function test_rls_adapter:test_get_capabilites()
     local expected = {type = "getCapabilities",
-            capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
-                        "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",
-                        "LIMIT_WITH_OFFSET"}}
+        capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
+            "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",
+            "LIMIT_WITH_OFFSET"}}
     local actual = adapter.get_capabilities()
     luaunit.assertEquals(actual , expected)
 end

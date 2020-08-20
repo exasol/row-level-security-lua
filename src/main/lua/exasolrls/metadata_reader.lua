@@ -7,7 +7,7 @@ local CONTROL_TABLES = {"EXA_RLS_USERS", "EXA_ROLE_MAPPING", "EXA_GROUP_MAPPING"
 
 local function open_schema(schema_id)
     local ok, result = exa.pquery('OPEN SCHEMA "' .. schema_id .. '"')
-    if(not ok) then
+    if not ok  then
         error("E-MDR-1: Unable to open source schema " .. schema_id .. " for reading metadata. Caused by: "
             .. result.error_message)
     end
@@ -17,7 +17,7 @@ local function read_columns(table_id)
     local ok, result = exa.pquery('DESCRIBE "' .. table_id .. '"')
     local columns = {}
     local tenant_protected, role_protected, group_protected
-    if(ok) then
+    if ok  then
         for i = 1, #result do
             local column_id = result[i].COLUMN_NAME
             if(column_id == "EXA_ROW_TENANT") then
@@ -42,10 +42,10 @@ local function read_tables(schema_id)
     local ok, result = exa.pquery('SELECT "TABLE_NAME" FROM "CAT"')
     local tables = {}
     local table_protection = {}
-    if(ok) then
+    if ok then
         for i = 1, #result do
             local table_id = result[i].TABLE_NAME
-            if((table_id ~= "EXA_RLS_USERS") and (table_id ~= "EXA_ROLE_MAPPING") and (table_id ~= "EXA_GROUP_MEMBERS"))
+            if (table_id ~= "EXA_RLS_USERS") and (table_id ~= "EXA_ROLE_MAPPING") and (table_id ~= "EXA_GROUP_MEMBERS")
             then
                 local columns, tenant_protected, role_protected, group_protected = read_columns(table_id)
                 tables[i] = {name = table_id, columns = columns}

@@ -4,21 +4,21 @@ local M = {}
 
 local function determine_table_protection_from_cache(table_id, protection_cache)
     local protection = string.match(protection_cache, table_id .. ":([-rtg]+)")
-    if(protection == nil) then
+    if not protection then
         error("F-RLS-TPS-2: Unable to find table \"" .. table_id
             .. "\" in protection status cache. Please check the table name and refresh the Virtual Schema.")
     end
-    return (protection ~= "---")
+    return protection ~= "---"
 end
 
 local function determine_table_protection_from_metadata(schema_id, table_id)
     local fully_qualified_table_id = '"' .. schema_id .. '"."'.. table_id .. '"'
     log.debug("Reading protection status of table %s.", fully_qualified_table_id)
     local ok, result = exa.pquery('DESCRIBE ' .. fully_qualified_table_id)
-    if(ok) then
+    if ok then
         for i = 1, #result do
             local column_name = result[i].COLUMN_NAME
-            if(column_name == "EXA_ROW_TENANT") then
+            if column_name == "EXA_ROW_TENANT" then
                 return true
             end
         end
@@ -41,7 +41,7 @@ end
 -- @return <code>true</code> if the table is protected.
 --
 function M.is_table_protected(schema_id, table_id, adapter_cache)
-    if(adapter_cache == nil) then
+    if not adapter_cache then
         return determine_table_protection_from_metadata(schema_id, table_id)
     else
         return determine_table_protection_from_cache(table_id, adapter_cache)

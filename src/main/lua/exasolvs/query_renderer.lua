@@ -28,7 +28,7 @@ function M.new (query)
     end
 
     local function comma(index)
-        if(index > 1) then
+        if index > 1 then
             self.query_elements[#self.query_elements + 1] = ", "
         end
     end
@@ -44,7 +44,7 @@ function M.new (query)
     local function append_scalar_function(scalar_function)
         local function_name = scalar_function.name
         append(function_name)
-        if(function_name ~= "CURRENT_USER") then
+        if function_name ~= "CURRENT_USER" then
             append("(")
             local arguments = scalar_function.arguments
             if(arguments) then
@@ -68,7 +68,7 @@ function M.new (query)
 
     local function append_select_list()
         local select_list = self.original_query.selectList
-        if(select_list == nil) then
+        if not select_list then
             append("*")
         else
             append_select_list_elements(select_list)
@@ -76,9 +76,9 @@ function M.new (query)
     end
 
     local function append_from()
-        if(self.original_query.from) then
+        if self.original_query.from then
             append(' FROM "')
-            if(self.original_query.from.schema) then
+            if self.original_query.from.schema then
                 append(self.original_query.from.schema)
                 append('"."')
             end
@@ -89,11 +89,11 @@ function M.new (query)
 
     local function append_predicate(operand)
         local type = string.sub(operand.type, 11)
-        if(type == "equal" or type == "greater" or type == "less") then
+        if type == "equal" or type == "greater" or type == "less" then
             append_binary_predicate(operand)
-        elseif(type == "not") then
+        elseif type == "not" then
             append_unary_predicate(operand)
-        elseif(type == "and" or type == "or") then
+        elseif type == "and" or type == "or" then
             append_iterated_predicate(operand)
         else
             error('E-VS-QR-2: Unable to render unknown SQL predicate type "' .. type .. '".')
@@ -102,7 +102,7 @@ function M.new (query)
 
     append_expression = function (expression)
         local type = expression.type
-        if(type == "column") then
+        if type == "column" then
             append_column_reference(expression)
         elseif(type == "literal_exactnumeric" or type == "literal_boolean") then
             append(expression.value)
@@ -142,7 +142,7 @@ function M.new (query)
         append("(")
         local expressions = predicate.expressions
         for i = 1, #expressions do
-            if(i > 1) then
+            if i > 1 then
                 append(" ")
                 append(OPERATORS[predicate.type])
                 append(" ")
@@ -153,7 +153,7 @@ function M.new (query)
     end
 
     local function append_filter()
-        if(self.original_query.filter) then
+        if self.original_query.filter then
             append(" WHERE ")
             append_predicate(self.original_query.filter)
         end

@@ -13,8 +13,6 @@ local function json_assert(actual, expected)
     luaunit.assertEquals(cjson.decode(actual), expected)
 end
 
-
-
 function test_request_dispatcher:test_get_capabilities()
     local response = adapter_call('{"type" : "getCapabilities"}')
     local expected = {type = "getCapabilities", capabilities = {

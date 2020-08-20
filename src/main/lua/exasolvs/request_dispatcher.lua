@@ -1,6 +1,6 @@
+local log = require("exasollog.log")
 local cjson = require("cjson")
 local adapter = require("exasolrls.adapter", "adapter")
-local log = require("exasollog.log")
 
 local function handle_request(request)
     local handlers = {
