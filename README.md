@@ -48,13 +48,17 @@ Requirement, design documents and coverage tags are written in [OpenFastTrace](h
 
 ### Run Time Dependencies
 
-Running the Virtual Schema requires a Java Runtime version 11 or later.
+Running the RLS Lua Virtual Schema requires a Exasol with built-in Lua 5.1 or later.
 
 | Dependency                               | Purpose                                                | License                       |
 |------------------------------------------|--------------------------------------------------------|-------------------------------|
 | [Lua CJSON][luacjson]                    | JSON parsing and writing                               | MIT License                   |
+| [LuaSocket][luasocket]                   | Socket communication                                   | MIT License                   |
+
+Note that Lua CSON and LuaSucket both are pre-installed on an Exasol database. For local unit testing you need to install them on the test machine though.
 
 [luacjson]: https://www.kyne.com.au/~mark/software/lua-cjson.php
+[luasocket]: http://w3.impa.br/~diego/software/luasocket/
 
 ### Test Dependencies
 
