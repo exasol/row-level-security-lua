@@ -32,7 +32,7 @@ local socket = require("socket")
 -- first time.
 -- </p>
 -- <p>
--- You can use a high resolution timer. Note that this are <p>not</p> the sub-second units of the timestamp! Lua
+-- You can use a high resolution timer. Note that these are <p>not</p> the sub-second units of the timestamp! Lua
 -- timestamps only offer second resolution. Rather you get a time difference in milliseconds counted from the first time
 -- the log is opened.
 --
@@ -129,7 +129,7 @@ function M.set_level(level_name)
 end
 
 ---
--- Write to a socket, print or discard message.
+-- Write to a socket, print or discard the message.
 -- <p>
 -- If a socket connection is established, this method writes to that socket. Otherwise if the global print function
 -- exists (e.g. in a unit test) falls back to logging via <code>print()</code>.
