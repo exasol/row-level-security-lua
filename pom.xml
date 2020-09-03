@@ -178,7 +178,7 @@
                                 <argument>exasolrls.adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
                                 <argument>exasolrls.query_rewriter</argument>
-                                <argument>exasollog.log</argument>
+                                <argument>remotelog</argument>
                             </arguments>
                         </configuration>
                     </execution>

@@ -1,4 +1,4 @@
-local log = require("exasollog.log")
+local log = require("remotelog")
 
 local M = {}
 
