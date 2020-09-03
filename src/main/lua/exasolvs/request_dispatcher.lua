@@ -1,4 +1,4 @@
-local log = require("exasollog.log")
+local log = require("remotelog")
 local cjson = require("cjson")
 local adapter = require("exasolrls.adapter", "adapter")
 

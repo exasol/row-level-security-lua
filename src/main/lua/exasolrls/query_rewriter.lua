@@ -1,6 +1,6 @@
 local renderer = require("exasolvs.query_renderer")
 local protection = require("exasolrls.table_protection_status")
-local log = require("exasollog.log")
+local log = require("remotelog")
 
 local M  = {}
 

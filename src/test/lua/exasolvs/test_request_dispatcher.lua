@@ -1,7 +1,7 @@
 local luaunit = require("luaunit")
 local mockagne = require("mockagne")
 local log_mock = mockagne.getMock()
-package.preload["exasollog.log"] = function () return log_mock end
+package.preload["remotelog"] = function () return log_mock end
 local cjson = require("cjson")
 local dispatcher = require("exasolvs.request_dispatcher")
 
