@@ -156,6 +156,7 @@ function M.new (query)
     end
     
     append_predicate_in = function (predicate)
+        append("(")
         append_expression(predicate.expression)
         append(" IN (")
         local arguments = predicate.arguments
@@ -163,7 +164,7 @@ function M.new (query)
             comma(i)
             append_expression(arguments[i])
         end
-        append(")")
+        append("))")
     end
 
     local function append_filter()

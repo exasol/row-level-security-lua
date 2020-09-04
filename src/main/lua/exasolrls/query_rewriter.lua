@@ -37,10 +37,24 @@ local function construct_group_protection_filter(table_id)
     }
 end
 
+local function construct_or(...)
+    return {
+        type = "predicate_or",
+        expressions = {...}
+    }
+end
+
 local function construct_protection_filter(table_id, protection)
     if protection.tenant_protected  then
-        log.debug('Table "%s" is tenant-protected. Adding tenant as row filter.', table_id)
-        return construct_tenant_protection_filter(table_id)
+        if protection.group_protected then
+            log.debug('Table "%s" is tenant-protected and group-protected. Adding filter for user or a group.',
+                table_id)
+            return construct_or(construct_tenant_protection_filter(table_id),
+                construct_group_protection_filter(table_id))
+        else
+            log.debug('Table "%s" is tenant-protected. Adding tenant as row filter.', table_id)
+            return construct_tenant_protection_filter(table_id)
+        end
     elseif protection.group_protected then
         log.debug('Table "%s" is group-protected. Adding group as row filter.', table_id)
         return construct_group_protection_filter(table_id)
