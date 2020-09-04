@@ -42,18 +42,35 @@ function M.new (query)
     end
 
     local function append_scalar_function(scalar_function)
-        local function_name = scalar_function.name
-        append(function_name)
-        if function_name ~= "CURRENT_USER" then
-            append("(")
-            local arguments = scalar_function.arguments
-            if(arguments) then
-                for i = 1, #arguments do
-                    comma(i)
-                    append_expression(arguments[i])
+        local supported_scalar_functions = {
+            -- Numeric functions
+            ABS = true, ACOS = true, ASIN = true, ATAN = true, ATAN2 = true, CEIL = true, COS = true, COSH = true,
+            COT = true, DEGREES = true, DIV = true, EXP = true, FLOOR = true, LN = true, LOG = true, LOG10 = true,
+            LOG2 = true, MOD = true, PI = true, POWER = true, RADIANS = true, RAND = true, ROUND = true, SIGN = true,
+            SIN = true, SINH = true, SQRT = true, TAN = true, TO_CHAR = true, TO_NUMBER = true, TRUNC = true,
+            -- String Functions
+            ASCII = true, BIT_LENGTH = true, CHARACTER_LENGTH = true, CHR = true, COLOGNE_PHONETIC = true,
+            CONCAT = true, DUMP = true, EDIT_DISTANCE = true, INITCAP = true, INSERT = true, INSTR = true, LCASE = true,
+            LEFT = true, LENGTH = true, LOCATE = true, LOWER = true, LPAD = true, LTRIM = true, MID = true,
+            OCTET_LENGTH = true,
+            CURRENT_USER = true, LOWER = true, UPPER = true,
+        }
+        local function_name = string.upper(scalar_function.name)
+        if supported_scalar_functions[function_name] then
+            append(function_name)
+            if function_name ~= "CURRENT_USER" then
+                append("(")
+                local arguments = scalar_function.arguments
+                if (arguments) then
+                    for i = 1, #arguments do
+                        comma(i)
+                        append_expression(arguments[i])
+                    end
                 end
+                append(")")
             end
-            append(")")
+        else
+            error('E-VS-QR-3: Unable to render unsupported scalar function type "' .. function_name .. '".')
         end
     end
 
@@ -104,7 +121,7 @@ function M.new (query)
         local type = expression.type
         if type == "column" then
             append_column_reference(expression)
-        elseif(type == "literal_exactnumeric" or type == "literal_boolean") then
+        elseif(type == "literal_exactnumeric" or type == "literal_boolean" or type == "literal_double") then
             append(expression.value)
         elseif(type == "literal_string") then
             append("'")
