@@ -21,7 +21,8 @@ function M.new (query)
     }
 
     -- forward declarations
-    local append_unary_predicate, append_binary_predicate, append_iterated_predicate, append_expression
+    local append_unary_predicate, append_binary_predicate, append_iterated_predicate, append_expression,
+        append_predicate_in
 
     local function append(value)
         self.query_elements[#self.query_elements + 1] = value
@@ -95,6 +96,8 @@ function M.new (query)
             append_unary_predicate(operand)
         elseif type == "and" or type == "or" then
             append_iterated_predicate(operand)
+        elseif type == "in_constlist" then
+            append_predicate_in(operand)
         else
             error('E-VS-QR-2: Unable to render unknown SQL predicate type "' .. type .. '".')
         end
@@ -148,6 +151,17 @@ function M.new (query)
                 append(" ")
             end
             append_expression(expressions[i])
+        end
+        append(")")
+    end
+    
+    append_predicate_in = function (predicate)
+        append_expression(predicate.expression)
+        append(" IN (")
+        local arguments = predicate.arguments
+        for i = 1, #arguments do
+            comma(i)
+            append_expression(arguments[i])
         end
         append(")")
     end

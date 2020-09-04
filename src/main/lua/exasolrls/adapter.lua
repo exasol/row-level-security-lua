@@ -1,7 +1,7 @@
 local metadata_reader = require("exasolrls.metadata_reader")
 local query_rewriter = require("exasolrls.query_rewriter")
 
-local M = {VERSION = "0.1.0", NAME = "Row-level Security adapter (LUA)"}
+local M = {VERSION = "0.2.0", NAME = "Row-level Security adapter (LUA)"}
 
 ---
 -- Create a virtual schema.
