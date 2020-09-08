@@ -129,7 +129,7 @@ function test_query_renderer.test_predicate_in_constlist()
             }
         }
     }
-    assert_renders_to(original_query, 'SELECT \'hello\' FROM "T1" WHERE "T1"."C1" IN (\'A1\', \'A2\')')
+    assert_renders_to(original_query, 'SELECT \'hello\' FROM "T1" WHERE ("T1"."C1" IN (\'A1\', \'A2\'))')
 end
 
 os.exit(luaunit.LuaUnit.run())

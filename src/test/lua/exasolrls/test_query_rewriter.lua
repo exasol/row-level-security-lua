@@ -72,7 +72,8 @@ function test_query_rewriter:test_tenant_plus_group_protected_table()
         from = {type  = "table", name = "PROT"}
     }
     self:assert_rewrite(original_query, "S", "PROT:tg-",
-        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (("PROT"."EXA_ROW_TENANT" = CURRENT_USER) OR ("PROT"."EXA_ROW_GROUP" IN (\'G1\', \'G2\')))')
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (("PROT"."EXA_ROW_TENANT" = CURRENT_USER) '
+        .. 'OR ("PROT"."EXA_ROW_GROUP" IN (\'G1\', \'G2\')))')
 end
 
 os.exit(luaunit.LuaUnit.run())
