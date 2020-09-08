@@ -41,24 +41,55 @@ function M.new (query)
         append('"')
     end
 
+    -- Currently unsupported scalar function: EXTRACT, CASE, CAST, JSON_VALUE, SESSION_PARAMETER
+    -- TODO: implement special cases: https://github.com/exasol/row-level-security-lua/issues/10
     local function append_scalar_function(scalar_function)
         local supported_scalar_functions = {
             -- Numeric functions
             ABS = true, ACOS = true, ASIN = true, ATAN = true, ATAN2 = true, CEIL = true, COS = true, COSH = true,
-            COT = true, DEGREES = true, DIV = true, EXP = true, FLOOR = true, LN = true, LOG = true, LOG10 = true,
-            LOG2 = true, MOD = true, PI = true, POWER = true, RADIANS = true, RAND = true, ROUND = true, SIGN = true,
-            SIN = true, SINH = true, SQRT = true, TAN = true, TO_CHAR = true, TO_NUMBER = true, TRUNC = true,
-            -- String Functions
-            ASCII = true, BIT_LENGTH = true, CHARACTER_LENGTH = true, CHR = true, COLOGNE_PHONETIC = true,
-            CONCAT = true, DUMP = true, EDIT_DISTANCE = true, INITCAP = true, INSERT = true, INSTR = true, LCASE = true,
-            LEFT = true, LENGTH = true, LOCATE = true, LOWER = true, LPAD = true, LTRIM = true, MID = true,
-            OCTET_LENGTH = true,
-            CURRENT_USER = true, LOWER = true, UPPER = true,
+            COT = true, DEGREES = true, DIV = true, EXP = true, FLOOR = true, LN = true, LOG = true, MOD = true,
+            POWER = true, RADIANS = true, RAND = true, ROUND = true, SIGN = true, SIN = true, SINH = true, SQRT = true,
+            TAN = true, TANH = true, TO_CHAR = true, TO_NUMBER = true, TRUNC = true,
+            -- String functions
+            ASCII = true, BIT_LENGTH = true, CHR = true, COLOGNE_PHONETIC = true, CONCAT = true, DUMP = true,
+            EDIT_DISTANCE = true, INSERT = true, INSTR = true, LENGTH = true, LOCATE = true, LOWER = true, LPAD = true,
+            LTRIM = true, OCTET_LENGTH = true, REGEXP_INSTR = true, REGEXP_REPLACE = true, REGEXP_SUBSTR = true,
+            REPEAT = true, REPLACE = true, REVERSE = true, RIGHT = true, RPAD = true, RTRIM = true, SOUNDEX = true,
+            SPACE = true, SUBSTR = true, TRANSLATE = true, TRIM = true, UNICODE = true, UNICODECHR = true, UPPER = true,
+            -- Date/Time functions
+            ADD_DAYS = true, ADD_HOURS = true, ADD_MINUTES = true, ADD_MONTHS = true, ADD_SECONDS = true,
+            ADD_WEEKS = true, ADD_YEARS = true, CONVERT_TZ = true, CURRENT_DATE = true, CURRENT_TIMESTAMP = true,
+            DATE_TRUNC = true, DAY = true, DAYS_BETWEEN = true, DBTIMEZONE = true, HOURS_BETWEEN = true,
+            LOCALTIMESTAMP = true, MINUTE = true, MINUTES_BETWEEN = true, MONTH = true, MONTH_BETWEEN = true,
+            NUMTODSINTERVAL = true, NUMTOYMINTERVAL = true, POSIX_TIME = true, SECOND = true, SECONDS_BETWEEN = true,
+            SESSIONTIMEZONE = true, SYSDATE = true, SYSTIMESTAMP = true, TO_DATE = true, TO_DSINTERVAL = true,
+            TO_TIMESTAMP = true, TO_YMINTERVAL = true, WEEK = true, YEAR = true, YEARS_BETWEEN = true,
+            -- Geospatial functions
+            ST_AREA = true, ST_BOUNDARY = true, ST_BUFFER = true, ST_CENTROID = true, ST_CONTAINS = true,
+            ST_CONVEXHULL = true, ST_CROSSES = true, ST_DIFFERENCE = true, ST_DIMENSION = true, ST_DISJOINT = true,
+            ST_DISTANCE = true, ST_ENDPOINT = true, ST_ENVELOPE = true, ST_EQUALS = true, ST_EXTERIORRING = true,
+            ST_FORCE2D = true, ST_GEOMETRYN = true, ST_GEOMETRYTYPE = true, ST_INTERIORRINGN = true,
+            ST_INTERSECTION = true, ST_INTERSECTS = true, ST_ISCLOSED = true, ST_ISEMPTY = true, ST_ISRING = true,
+            ST_ISSIMPLE = true, ST_LENGTH = true, ST_NUMGEOMETRIES = true, ST_NUMINTERIORRINGS = true,
+            ST_NUMPOINTS = true, ST_OVERLAPS = true, ST_POINTN = true, ST_SETSRID = true, ST_STARTPOINT = true,
+            ST_SYMDIFFERENCE = true, ST_TOUCHES = true, ST_TRANSFORM = true, ST_UNION = true, ST_WITHIN = true,
+            ST_X = true, ST_Y = true,
+            -- Bitwise functions
+            BIT_AND = true, BIT_CHECK = true, BIT_NOT = true, BIT_OR = true, BIT_SET = true, BIT_TO_NUM = true,
+            BIT_XOR = true,
+            -- Other functions
+            CURRENT_SCHEMA = true, CURRENT_SESSION = true, CURRENT_STATEMENT = true, CURRENT_USER = true,
+            GREATEST = true, HASH_MD5 = true, HASHTYPE_MD5 = true, HASH_SHA = true, HASH_SHA1 = true,
+            HASHTYPE_SHA1 = true, HASH_SHA256 = true, HASHTYPE_SHA256 = true, HASH_SHA512 = true,
+            HASHTYPE_SHA512 = true, HASH_TIGER = true, HASHTYPE_TIGER = true, IS_NUMBER = true, IS_BOOLEAN = true,
+            IS_DATE = true, IS_DSINTERVAL = true, IS_YMINTERVAL = true, IS_TIMESTAMP = true, NULLIFZERO = true,
+            SYS_GUID = true, ZEROIFNULL = true
         }
         local function_name = string.upper(scalar_function.name)
         if supported_scalar_functions[function_name] then
             append(function_name)
-            if function_name ~= "CURRENT_USER" then
+            if function_name ~= "CURRENT_USER" and function_name ~= "SYSDATE" and function_name ~= "CURRENT_SCHEMA"
+                    and function_name ~= "CURRENT_SESSION" and function_name ~= "CURRENT_STATEMENT" then
                 append("(")
                 local arguments = scalar_function.arguments
                 if (arguments) then
@@ -123,7 +154,7 @@ function M.new (query)
             append_column_reference(expression)
         elseif(type == "literal_exactnumeric" or type == "literal_boolean" or type == "literal_double") then
             append(expression.value)
-        elseif(type == "literal_string") then
+        elseif(type == "literal_string" or type == 'literal_date' or type == 'literal_timestamp') then
             append("'")
             append(expression.value)
             append("'")
