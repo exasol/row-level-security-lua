@@ -44,47 +44,43 @@ function M.new (query)
     -- Currently unsupported scalar function: EXTRACT, CASE, CAST, JSON_VALUE, SESSION_PARAMETER
     -- TODO: implement special cases: https://github.com/exasol/row-level-security-lua/issues/10
     local function append_scalar_function(scalar_function)
-        local supported_scalar_functions = {
+        local supported_scalar_functions_list = {
             -- Numeric functions
-            ABS = true, ACOS = true, ASIN = true, ATAN = true, ATAN2 = true, CEIL = true, COS = true, COSH = true,
-            COT = true, DEGREES = true, DIV = true, EXP = true, FLOOR = true, LN = true, LOG = true, MOD = true,
-            POWER = true, RADIANS = true, RAND = true, ROUND = true, SIGN = true, SIN = true, SINH = true, SQRT = true,
-            TAN = true, TANH = true, TO_CHAR = true, TO_NUMBER = true, TRUNC = true,
+            "ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "CEIL", "COS", "COSH", "COT", "DEGREES", "DIV", "EXP", "FLOOR",
+            "LN", "LOG", "MOD", "POWER", "RADIANS", "RAND", "ROUND", "SIGN", "SIN", "SINH", "SQRT", "TAN", "TANH",
+            "TO_CHAR", "TO_NUMBER", "TRUNC",
             -- String functions
-            ASCII = true, BIT_LENGTH = true, CHR = true, COLOGNE_PHONETIC = true, CONCAT = true, DUMP = true,
-            EDIT_DISTANCE = true, INSERT = true, INSTR = true, LENGTH = true, LOCATE = true, LOWER = true, LPAD = true,
-            LTRIM = true, OCTET_LENGTH = true, REGEXP_INSTR = true, REGEXP_REPLACE = true, REGEXP_SUBSTR = true,
-            REPEAT = true, REPLACE = true, REVERSE = true, RIGHT = true, RPAD = true, RTRIM = true, SOUNDEX = true,
-            SPACE = true, SUBSTR = true, TRANSLATE = true, TRIM = true, UNICODE = true, UNICODECHR = true, UPPER = true,
+            "ASCII", "BIT_LENGTH", "CHR", "COLOGNE_PHONETIC", "CONCAT", "DUMP", "EDIT_DISTANCE", "INSERT", "INSTR",
+            "LENGTH", "LOCATE", "LOWER", "LPAD", "LTRIM", "OCTET_LENGTH", "REGEXP_INSTR", "REGEXP_REPLACE",
+            "REGEXP_SUBSTR", "REPEAT", "REPLACE", "REVERSE", "RIGHT", "RPAD", "RTRIM", "SOUNDEX", "SPACE", "SUBSTR",
+            "TRANSLATE", "TRIM", "UNICODE", "UNICODECHR", "UPPER",
             -- Date/Time functions
-            ADD_DAYS = true, ADD_HOURS = true, ADD_MINUTES = true, ADD_MONTHS = true, ADD_SECONDS = true,
-            ADD_WEEKS = true, ADD_YEARS = true, CONVERT_TZ = true, CURRENT_DATE = true, CURRENT_TIMESTAMP = true,
-            DATE_TRUNC = true, DAY = true, DAYS_BETWEEN = true, DBTIMEZONE = true, HOURS_BETWEEN = true,
-            LOCALTIMESTAMP = true, MINUTE = true, MINUTES_BETWEEN = true, MONTH = true, MONTH_BETWEEN = true,
-            NUMTODSINTERVAL = true, NUMTOYMINTERVAL = true, POSIX_TIME = true, SECOND = true, SECONDS_BETWEEN = true,
-            SESSIONTIMEZONE = true, SYSDATE = true, SYSTIMESTAMP = true, TO_DATE = true, TO_DSINTERVAL = true,
-            TO_TIMESTAMP = true, TO_YMINTERVAL = true, WEEK = true, YEAR = true, YEARS_BETWEEN = true,
+            "ADD_DAYS", "ADD_HOURS", "ADD_MINUTES", "ADD_MONTHS", "ADD_SECONDS", "ADD_WEEKS", "ADD_YEARS",
+            "CONVERT_TZ", "CURRENT_DATE", "CURRENT_TIMESTAMP", "DATE_TRUNC", "DAY", "DAYS_BETWEEN", "DBTIMEZONE",
+            "HOURS_BETWEEN", "LOCALTIMESTAMP", "MINUTE", "MINUTES_BETWEEN", "MONTH", "MONTH_BETWEEN",
+            "NUMTODSINTERVAL", "NUMTOYMINTERVAL", "POSIX_TIME", "SECOND", "SECONDS_BETWEEN", "SESSIONTIMEZONE",
+            "SYSDATE", "SYSTIMESTAMP", "TO_DATE", "TO_DSINTERVAL", "TO_TIMESTAMP", "TO_YMINTERVAL", "WEEK", "YEAR",
+            "YEARS_BETWEEN",
             -- Geospatial functions
-            ST_AREA = true, ST_BOUNDARY = true, ST_BUFFER = true, ST_CENTROID = true, ST_CONTAINS = true,
-            ST_CONVEXHULL = true, ST_CROSSES = true, ST_DIFFERENCE = true, ST_DIMENSION = true, ST_DISJOINT = true,
-            ST_DISTANCE = true, ST_ENDPOINT = true, ST_ENVELOPE = true, ST_EQUALS = true, ST_EXTERIORRING = true,
-            ST_FORCE2D = true, ST_GEOMETRYN = true, ST_GEOMETRYTYPE = true, ST_INTERIORRINGN = true,
-            ST_INTERSECTION = true, ST_INTERSECTS = true, ST_ISCLOSED = true, ST_ISEMPTY = true, ST_ISRING = true,
-            ST_ISSIMPLE = true, ST_LENGTH = true, ST_NUMGEOMETRIES = true, ST_NUMINTERIORRINGS = true,
-            ST_NUMPOINTS = true, ST_OVERLAPS = true, ST_POINTN = true, ST_SETSRID = true, ST_STARTPOINT = true,
-            ST_SYMDIFFERENCE = true, ST_TOUCHES = true, ST_TRANSFORM = true, ST_UNION = true, ST_WITHIN = true,
-            ST_X = true, ST_Y = true,
+            "ST_AREA", "ST_BOUNDARY", "ST_BUFFER", "ST_CENTROID", "ST_CONTAINS", "ST_CONVEXHULL", "ST_CROSSES",
+            "ST_DIFFERENCE", "ST_DIMENSION", "ST_DISJOINT", "ST_DISTANCE", "ST_ENDPOINT", "ST_ENVELOPE", "ST_EQUALS",
+            "ST_EXTERIORRING", "ST_FORCE2D", "ST_GEOMETRYN", "ST_GEOMETRYTYPE", "ST_INTERIORRINGN", "ST_INTERSECTION",
+            "ST_INTERSECTS", "ST_ISCLOSED", "ST_ISEMPTY", "ST_ISRING", "ST_ISSIMPLE", "ST_LENGTH", "ST_NUMGEOMETRIES",
+            "ST_NUMINTERIORRINGS", "ST_NUMPOINTS", "ST_OVERLAPS", "ST_POINTN", "ST_SETSRID", "ST_STARTPOINT",
+            "ST_SYMDIFFERENCE", "ST_TOUCHES", "ST_TRANSFORM", "ST_UNION", "ST_WITHIN", "ST_X", "ST_Y",
             -- Bitwise functions
-            BIT_AND = true, BIT_CHECK = true, BIT_NOT = true, BIT_OR = true, BIT_SET = true, BIT_TO_NUM = true,
-            BIT_XOR = true,
+            "BIT_AND", "BIT_CHECK", "BIT_NOT", "BIT_OR", "BIT_SET", "BIT_TO_NUM", "BIT_XOR",
             -- Other functions
-            CURRENT_SCHEMA = true, CURRENT_SESSION = true, CURRENT_STATEMENT = true, CURRENT_USER = true,
-            GREATEST = true, HASH_MD5 = true, HASHTYPE_MD5 = true, HASH_SHA = true, HASH_SHA1 = true,
-            HASHTYPE_SHA1 = true, HASH_SHA256 = true, HASHTYPE_SHA256 = true, HASH_SHA512 = true,
-            HASHTYPE_SHA512 = true, HASH_TIGER = true, HASHTYPE_TIGER = true, IS_NUMBER = true, IS_BOOLEAN = true,
-            IS_DATE = true, IS_DSINTERVAL = true, IS_YMINTERVAL = true, IS_TIMESTAMP = true, NULLIFZERO = true,
-            SYS_GUID = true, ZEROIFNULL = true
+            "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST", "HASH_MD5",
+            "HASHTYPE_MD5", "HASH_SHA", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
+            "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
+            "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL"
         }
+        local supported_scalar_functions = {}
+        for index = 1, #supported_scalar_functions_list do
+            supported_scalar_functions[supported_scalar_functions_list[index]] = true
+        end
+
         local function_name = string.upper(scalar_function.name)
         if supported_scalar_functions[function_name] then
             append(function_name)
