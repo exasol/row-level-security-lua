@@ -483,6 +483,24 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             arg_type = "literal_exactnumeric",
             arg_value = 5,
             expected = "SELECT ZEROIFNULL(5)"
+        },
+        {
+            func_name = "FROM_POSIX_TIME",
+            arg_type = "literal_exactnumeric",
+            arg_value = 5,
+            expected = "SELECT FROM_POSIX_TIME(5)"
+        },
+        {
+            func_name = "HOUR",
+            arg_type = "literal_timestamp",
+            arg_value = "2010-10-20 11:59:40.123",
+            expected = "SELECT HOUR('2010-10-20 11:59:40.123')"
+        },
+        {
+            func_name = "INITCAP",
+            arg_type = "literal_string",
+            arg_value = "ThiS is great",
+            expected = "SELECT INITCAP('ThiS is great')"
         }
     }
     for _, parameter in ipairs(parameters) do
@@ -877,6 +895,38 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 3,
             expected = "SELECT GREATEST(9, 3)"
+        },
+        {
+            func_name = "BIT_LROTATE",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 1024,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 63,
+            expected = "SELECT BIT_LROTATE(1024, 63)"
+        },
+        {
+            func_name = "BIT_RROTATE",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 1024,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 63,
+            expected = "SELECT BIT_RROTATE(1024, 63)"
+        },
+        {
+            func_name = "BIT_LSHIFT",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 1024,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 63,
+            expected = "SELECT BIT_LSHIFT(1024, 63)"
+        },
+        {
+            func_name = "BIT_RSHIFT",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 1024,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 63,
+            expected = "SELECT BIT_RSHIFT(1024, 63)"
         }
     }
     for _, parameter in ipairs(parameters) do
