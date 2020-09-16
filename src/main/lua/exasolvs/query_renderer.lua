@@ -1,4 +1,43 @@
-local M = {}
+local M = {
+    supported_scalar_functions_list = {
+        -- Numeric functions
+        "ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "CEIL", "COS", "COSH", "COT", "DEGREES", "DIV", "EXP", "FLOOR",
+        "LN", "LOG", "MOD", "POWER", "RADIANS", "RAND", "ROUND", "SIGN", "SIN", "SINH", "SQRT", "TAN", "TANH",
+        "TO_CHAR", "TO_NUMBER", "TRUNC",
+        -- String functions
+        "ASCII", "BIT_LENGTH", "CHR", "COLOGNE_PHONETIC", "CONCAT", "DUMP", "EDIT_DISTANCE", "INITCAP", "INSERT", "INSTR",
+        "LENGTH", "LOCATE", "LOWER", "LPAD", "LTRIM", "OCTET_LENGTH", "REGEXP_INSTR", "REGEXP_REPLACE",
+        "REGEXP_SUBSTR", "REPEAT", "REPLACE", "REVERSE", "RIGHT", "RPAD", "RTRIM", "SOUNDEX", "SPACE", "SUBSTR",
+        "TRANSLATE", "TRIM", "UNICODE", "UNICODECHR", "UPPER",
+        -- Date/Time functions
+        "ADD_DAYS", "ADD_HOURS", "ADD_MINUTES", "ADD_MONTHS", "ADD_SECONDS", "ADD_WEEKS", "ADD_YEARS",
+        "CONVERT_TZ", "CURRENT_DATE", "CURRENT_TIMESTAMP", "DATE_TRUNC", "DAY", "DAYS_BETWEEN", "DBTIMEZONE",
+        "FROM_POSIX_TIME", "HOUR", "HOURS_BETWEEN", "LOCALTIMESTAMP", "MINUTE", "MINUTES_BETWEEN", "MONTH", "MONTH_BETWEEN",
+        "NUMTODSINTERVAL", "NUMTOYMINTERVAL", "POSIX_TIME", "SECOND", "SECONDS_BETWEEN", "SESSIONTIMEZONE",
+        "SYSDATE", "SYSTIMESTAMP", "TO_DATE", "TO_DSINTERVAL", "TO_TIMESTAMP", "TO_YMINTERVAL", "WEEK", "YEAR",
+        "YEARS_BETWEEN",
+        -- Geospatial functions
+        "ST_AREA", "ST_BOUNDARY", "ST_BUFFER", "ST_CENTROID", "ST_CONTAINS", "ST_CONVEXHULL", "ST_CROSSES",
+        "ST_DIFFERENCE", "ST_DIMENSION", "ST_DISJOINT", "ST_DISTANCE", "ST_ENDPOINT", "ST_ENVELOPE", "ST_EQUALS",
+        "ST_EXTERIORRING", "ST_FORCE2D", "ST_GEOMETRYN", "ST_GEOMETRYTYPE", "ST_INTERIORRINGN", "ST_INTERSECTION",
+        "ST_INTERSECTS", "ST_ISCLOSED", "ST_ISEMPTY", "ST_ISRING", "ST_ISSIMPLE", "ST_LENGTH", "ST_NUMGEOMETRIES",
+        "ST_NUMINTERIORRINGS", "ST_NUMPOINTS", "ST_OVERLAPS", "ST_POINTN", "ST_SETSRID", "ST_STARTPOINT",
+        "ST_SYMDIFFERENCE", "ST_TOUCHES", "ST_TRANSFORM", "ST_UNION", "ST_WITHIN", "ST_X", "ST_Y",
+        -- Bitwise functions
+        "BIT_AND", "BIT_CHECK", "BIT_LROTATE", "BIT_LSHIFT", "BIT_NOT", "BIT_OR", "BIT_RROTATE", "BIT_RSHIFT",
+        "BIT_SET", "BIT_TO_NUM", "BIT_XOR",
+        -- Other functions
+        "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST", "HASH_MD5",
+        "HASHTYPE_MD5", "HASH_SHA", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
+        "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
+        "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL"
+    },
+    supported_scalar_functions = {}
+}
+
+for index = 1, #M.supported_scalar_functions_list do
+    M.supported_scalar_functions[M.supported_scalar_functions_list[index]] = true
+end
 
 -- TODO: Move to a separate module!
 --
@@ -42,19 +81,26 @@ function M.new (query)
         append('"')
     end
 
+    -- Currently unsupported scalar function: EXTRACT, CASE, CAST, JSON_VALUE, SESSION_PARAMETER
+    -- TODO: implement special cases: https://github.com/exasol/row-level-security-lua/issues/10
     local function append_scalar_function(scalar_function)
-        local function_name = scalar_function.name
-        append(function_name)
-        if function_name ~= "CURRENT_USER" then
-            append("(")
-            local arguments = scalar_function.arguments
-            if(arguments) then
-                for i = 1, #arguments do
-                    comma(i)
-                    append_expression(arguments[i])
+        local function_name = string.upper(scalar_function.name)
+        if M.supported_scalar_functions[function_name] then
+            append(function_name)
+            if function_name ~= "CURRENT_USER" and function_name ~= "SYSDATE" and function_name ~= "CURRENT_SCHEMA"
+                    and function_name ~= "CURRENT_SESSION" and function_name ~= "CURRENT_STATEMENT" then
+                append("(")
+                local arguments = scalar_function.arguments
+                if (arguments) then
+                    for i = 1, #arguments do
+                        comma(i)
+                        append_expression(arguments[i])
+                    end
                 end
+                append(")")
             end
-            append(")")
+        else
+            error('E-VS-QR-3: Unable to render unsupported scalar function type "' .. function_name .. '".')
         end
     end
 
@@ -107,9 +153,9 @@ function M.new (query)
         local type = expression.type
         if type == "column" then
             append_column_reference(expression)
-        elseif(type == "literal_exactnumeric" or type == "literal_boolean") then
+        elseif(type == "literal_exactnumeric" or type == "literal_boolean" or type == "literal_double") then
             append(expression.value)
-        elseif(type == "literal_string") then
+        elseif(type == "literal_string" or type == 'literal_date' or type == 'literal_timestamp') then
             append("'")
             append(expression.value)
             append("'")

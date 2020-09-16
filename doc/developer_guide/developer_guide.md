@@ -34,6 +34,7 @@ Execute as `root` or modify to install in your home directory:
 sudo luarocks install LuaUnit
 sudo luarocks install Mockagne
 sudo luarocks install lua-cjson
+sudo luarocks install remotelog
 ```
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.
@@ -45,3 +46,51 @@ As most non-trivial pieces of software, `row-level-security-lua` is modularized.
 To make this process easier, the [Maven POM file](../../pom.xml) contains an execution that automates this step. Still it is necessary to add new modules by hand in the list of modules to be bundled in the POM.
 
 Note that the entry point `request_dispatcher.lua` is a regular Lua script that must be added to the bundle using the `-s` switch and its relative path. The remaining bundle elements are Lua modules and must be listed in dot-notation.
+
+## How to Run Lua Unit Tests
+
+### Run Unit Tests From Terminal
+
+To run unit tests from terminal, you first need to install Lua:
+
+```bash
+sudo apt install lua5.1
+```
+
+Another important thing to do, you need to add the project's directories with lua files to LUA_PATH environment variable.
+We add two absolute paths, one to the `main` and another to the `test` folder: 
+
+```bash
+export LUA_PATH='/home/<absolute>/<path>/row-level-security-lua/src/main/lua/?.lua;/home/<absolute>/<path>/row-level-security-lua/src/test/lua/?.lua;'"$LUA_PATH"
+```
+
+After that you can try to run any test file:
+
+```bash
+lua src/test/lua/exasolvs/test_query_renderer.lua 
+```
+
+### Running the Unit Tests From Intellij IDEA
+
+First, you need to install a plug-in that handles Lua code. We recommend to use `lua` plugin by `sylvanaar`.
+
+In the next step we add a Lua interpreter. Fow that go to `File` &rarr; `Project structure` &rarr; `Modules`.
+Here press `Add` button in the upper left corner and add a new Lua framework.
+You can use one of the default Lua interpreters suggested by Intellij or add your own in `SDKs` tab of the `Project structure`.
+We recommend installing and using `lua5.1`.
+
+Now add the `LUA_PATH` environment variable here too. Go to `Run` &rarr; `Edit configurations` &rarr; `Templates` &rarr; `Lua Script`.
+We assume that you have already run the tests via a terminal and you added an enviroment variable there. Now check it via a terminal command:
+
+```bash
+echo $LUA_PATH
+```
+
+Copy the output, in the `Enviroment variables` field press `Browse` &rarr; `Add`.
+Paste the lines you copied to the `Value` field and add `LUA_PATH` as a `Name`.
+  
+Now you can right-click any unit-test class and `Run...` or use hot keys `[CTRL] + [SHIFT] + [F10]`.
+
+### Running the Unit Tests From Eclipse IDE
+
+We recommend you install the [Lua Development Tools](LDT)](https://www.eclipse.org/ldt/) when working on this project using the Eclipse IDE. If you add the Lua nature to the project, you can set the paths `src/main/lua` and `src/test/lua` as source paths. This way you can directly run the unit test as Lua application (`[CTRL] + [F11]`) without further configuration.
