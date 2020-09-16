@@ -24,7 +24,7 @@ function test_query_rewriter:assert_rewrite(original_query, source_schema, adapt
 end
 
 function test_query_rewriter:test_unprotected_table()
-    when(self.user.get_groups()).thenAnswer({})
+    when(self.user.get_groups(any())).thenAnswer({})
     local original_query = {
         type = "select",
         selectList = {
@@ -37,7 +37,7 @@ function test_query_rewriter:test_unprotected_table()
 end
 
 function test_query_rewriter:test_tenant_protected_table()
-    when(self.user.get_groups()).thenAnswer({})
+    when(self.user.get_groups(any())).thenAnswer({})
     local original_query = {
         type = "select",
         selectList = {
@@ -50,7 +50,7 @@ function test_query_rewriter:test_tenant_protected_table()
 end
 
 function test_query_rewriter:test_group_protected_table()
-    when(self.user.get_groups()).thenAnswer({"G1", "G2"})
+    when(self.user.get_groups(any())).thenAnswer({"G1", "G2"})
     local original_query = {
         type = "select",
         selectList = {
@@ -63,7 +63,7 @@ function test_query_rewriter:test_group_protected_table()
 end
 
 function test_query_rewriter:test_tenant_plus_group_protected_table()
-    when(self.user.get_groups()).thenAnswer({"G1", "G2"})
+    when(self.user.get_groups(any())).thenAnswer({"G1", "G2"})
     local original_query = {
         type = "select",
         selectList = {

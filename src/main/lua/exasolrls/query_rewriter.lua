@@ -24,8 +24,8 @@ local function construct_tenant_protection_filter(table_id)
     }
 end
 
-local function construct_group_protection_filter(table_id)
-    local groups = user.get_groups()
+local function construct_group_protection_filter(source_schema_id, table_id)
+    local groups = user.get_groups(source_schema_id)
     local group_literals = {}
     for i = 1, #groups do
         group_literals[i] = {type = "literal_string", value = groups[i]}
@@ -44,27 +44,27 @@ local function construct_or(...)
     }
 end
 
-local function construct_protection_filter(table_id, protection)
+local function construct_protection_filter(source_schema_id, table_id, protection)
     if protection.tenant_protected  then
         if protection.group_protected then
-            log.debug('Table "%s" is tenant-protected and group-protected. Adding filter for user or a group.',
-                table_id)
+            log.debug('Table "%s"."%s" is tenant-protected and group-protected. Adding filter for user or a group.',
+                source_schema_id, table_id)
             return construct_or(construct_tenant_protection_filter(table_id),
-                construct_group_protection_filter(table_id))
+                construct_group_protection_filter(source_schema_id, table_id))
         else
-            log.debug('Table "%s" is tenant-protected. Adding tenant as row filter.', table_id)
+            log.debug('Table "%s"."%s" is tenant-protected. Adding tenant as row filter.', source_schema_id, table_id)
             return construct_tenant_protection_filter(table_id)
         end
     elseif protection.group_protected then
-        log.debug('Table "%s" is group-protected. Adding group as row filter.', table_id)
-        return construct_group_protection_filter(table_id)
+        log.debug('Table "%s"."%s" is group-protected. Adding group as row filter.', source_schema_id, table_id)
+        return construct_group_protection_filter(source_schema_id, table_id)
     else
         error("E-RLS-QRW-3: Illegal protection scheme used. Allowed schemes are: tenant, group, tenant + group")
     end
 end
 
-local function rewrite_with_protection(query, source_schema, table_id, protection)
-    local protection_filter = construct_protection_filter(table_id, protection)
+local function rewrite_with_protection(query, source_schema_id, table_id, protection)
+    local protection_filter = construct_protection_filter(source_schema_id, table_id, protection)
     local original_filter = query.filter
     if original_filter then
         query.filter = {type = "predicate_and", expressions = {protection_filter, original_filter}}
