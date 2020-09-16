@@ -86,7 +86,7 @@ We assume that you have already run the tests via a terminal and you added an en
 echo $LUA_PATH
 ```
 
-Copy the output, in the `Enviroment variables` field press `Browse` -> `Add`.
+Copy the output, in the `Enviroment variables` field press `Browse` &rarr; `Add`.
 Paste the lines you copied to the `Value` field and add `LUA_PATH` as a `Name`.
   
 Now you can right-click any unit-test class and `Run...` or use hot keys `[CTRL] + [SHIFT] + [F10]`.
