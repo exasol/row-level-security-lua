@@ -55,7 +55,7 @@ end
 function M.new (query)
     local self = {original_query = query, query_elements = {}}
     local OPERATORS = {
-        predicate_equal = "=", predicate_less = "<", predicate_greater = ">",
+        predicate_equal = "=", predicate_notequal = "<>", predicate_less = "<", predicate_greater = ">",
         predicate_and = "AND", predicate_or = "OR", predicate_not = "NOT"
     }
 
@@ -136,7 +136,7 @@ function M.new (query)
 
     local function append_predicate(operand)
         local type = string.sub(operand.type, 11)
-        if type == "equal" or type == "greater" or type == "less" then
+        if type == "equal" or type == "notequal" or type == "greater" or type == "less" then
             append_binary_predicate(operand)
         elseif type == "not" then
             append_unary_predicate(operand)
