@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>row-level-security-lua</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <properties>
@@ -174,23 +174,15 @@
                                 <argument>exasolvs/request_dispatcher.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
                                 <argument>exasolvs.query_renderer</argument>
-                                <argument>exasolrls.table_protection_status</argument>
                                 <argument>exasolrls.adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
+                                <argument>exasolrls.table_protection_reader</argument>
                                 <argument>exasolrls.query_rewriter</argument>
+                                <argument>exasolrls.user_information</argument>
                                 <argument>remotelog</argument>
                             </arguments>
                         </configuration>
                     </execution>
-                    <!-- execution> <id>Administration SQL Scripts Assembler</id> <phase>compile</phase> 
-                        <goals> <goal>exec</goal> </goals> <configuration> <executable>${basedir}/tools/assemble_sql_scripts.sh</executable> 
-                        <useMavenLogger>true</useMavenLogger> <arguments> <argument>target/administration-sql-scripts-${project.version}.sql</argument> 
-                        <argument>${source.admin.scripts}/exa_rls_base.lua</argument> <argument>${source.admin.scripts}/exa_identifier.lua</argument> 
-                        <argument>${source.admin.scripts}/add_rls_role.lua</argument> <argument>${source.admin.scripts}/assign_roles_to_user.lua</argument> 
-                        <argument>${source.admin.scripts}/delete_rls_role.lua</argument> <argument>${source.admin.scripts}/roles_mask.lua</argument> 
-                        <argument>${source.admin.scripts}/add_user_to_group.lua</argument> <argument>${source.admin.scripts}/remove_user_from_group.lua</argument> 
-                        <argument>${source.admin.scripts}/list_all_groups.lua</argument> <argument>${source.admin.scripts}/list_user_groups.lua</argument> 
-                        </arguments> </configuration> </execution -->
                 </executions>
             </plugin>
             <plugin>
@@ -208,7 +200,7 @@
                 </executions>
             </plugin>
             <!-- plugin> <groupId>org.itsallcode</groupId> <artifactId>openfasttrace-maven-plugin</artifactId> 
-                <version>0.1.0</version> <executions> <execution> <id>trace-requirements</id> <goals> <goal>trace</goal> 
+                <version>1.0.0</version> <executions> <execution> <id>trace-requirements</id> <goals> <goal>trace</goal> 
                 </goals> </execution> </executions> </plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -18,7 +18,7 @@ local function handle_request(request)
         log.debug("Response:\n" .. response)
         return response
     else
-        error('F-RQD-1: Unknown Virtual Schema request type "%s" received.', request.type)
+        error('F-RQD-1: Unknown Virtual Schema request type "' .. request.type .. '" received.')
     end
 end
 

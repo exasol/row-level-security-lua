@@ -1055,4 +1055,21 @@ function test_query_renderer.test_current_user()
 
 end
 
+function test_query_renderer.test_predicate_in_constlist()
+    local original_query = {
+        type = "select",
+        selectList = {{type = "literal_string", value = "hello"}},
+        from = {type = "table", name = "T1"},
+        filter = {
+            type = "predicate_in_constlist",
+            expression = {type = "column", name = "C1", tableName = "T1"},
+            arguments = {
+                {type = "literal_string", value = "A1"},
+                {type = "literal_string", value = "A2"}
+            }
+        }
+    }
+    assert_renders_to(original_query, 'SELECT \'hello\' FROM "T1" WHERE ("T1"."C1" IN (\'A1\', \'A2\'))')
+end
+
 os.exit(luaunit.LuaUnit.run())

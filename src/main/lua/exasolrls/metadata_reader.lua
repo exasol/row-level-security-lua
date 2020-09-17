@@ -3,8 +3,6 @@ local cjson require("cjson")
 
 M = {}
 
-local CONTROL_TABLES = {"EXA_RLS_USERS", "EXA_ROLE_MAPPING", "EXA_GROUP_MAPPING"}
-
 local function open_schema(schema_id)
     local ok, result = exa.pquery('OPEN SCHEMA "' .. schema_id .. '"')
     if not ok  then
