@@ -10,7 +10,6 @@ local M = {}
 -- @return Lua table containing one entry per database table that lists the protection details
 --
 function M.read(adapter_cache, table_id)
-    local status = {}
     for table_protection_cache in string.gmatch(adapter_cache, "[^,]+") do
         local colon_index = string.find(table_protection_cache, ":", 1, true)
         local extracted_table_id = string.sub(table_protection_cache, 1, colon_index - 1)
