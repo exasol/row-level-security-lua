@@ -76,4 +76,31 @@ function test_query_rewriter:test_tenant_plus_group_protected_table()
         .. 'OR ("PROT"."EXA_ROW_GROUP" IN (\'G1\', \'G2\')))')
 end
 
+function test_query_rewriter:test_role_protected_table()
+    when(self.user.get_role_mask(any())).thenAnswer(5)
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "column", name = "C1", tableName = "PROT"},
+        },
+        from = {type  = "table", name = "PROT"}
+    }
+    self:assert_rewrite(original_query, "S", "PROT:--r",
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (BIT_AND("PROT"."EXA_ROW_ROLES", 5) <> 0)') 
+end
+
+function test_query_rewriter:test_tenant_plus_role_protected_table()
+    when(self.user.get_role_mask(any())).thenAnswer(13)
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "column", name = "C1", tableName = "PROT"},
+        },
+        from = {type  = "table", name = "PROT"}
+    }
+    self:assert_rewrite(original_query, "S", "PROT:t-r",
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (("PROT"."EXA_ROW_TENANT" = CURRENT_USER)'
+            ..' OR (BIT_AND("PROT"."EXA_ROW_ROLES", 13) <> 0))') 
+end
+
 os.exit(luaunit.LuaUnit.run())

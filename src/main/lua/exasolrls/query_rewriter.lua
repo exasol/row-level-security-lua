@@ -37,6 +37,22 @@ local function construct_group_protection_filter(source_schema_id, table_id)
     }
 end
 
+local function construct_role_protection_filter(source_schema_id, table_id)
+    local role_mask = user.get_role_mask(source_schema_id)
+    return {
+        type = "predicate_notequal",
+        left = {
+            type = "function_scalar",
+            name = "BIT_AND",
+            arguments = {
+                {type = "column", tableName = table_id, name = "EXA_ROW_ROLES"},
+                {type = "literal_exactnumeric", value = role_mask}
+            }
+         },
+         right = {type = "literal_exactnumeric", value = 0}
+    }
+end
+
 local function construct_or(...)
     return {
         type = "predicate_or",
@@ -51,6 +67,11 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
                 source_schema_id, table_id)
             return construct_or(construct_tenant_protection_filter(table_id),
                 construct_group_protection_filter(source_schema_id, table_id))
+        elseif protection.role_protected then
+            log.debug('Table "%s"."%s" is tenant-protected and role-protected. Adding filter for user or role.',
+                source_schema_id, table_id)
+            return construct_or(construct_tenant_protection_filter(table_id),
+                construct_role_protection_filter(source_schema_id, table_id))        
         else
             log.debug('Table "%s"."%s" is tenant-protected. Adding tenant as row filter.', source_schema_id, table_id)
             return construct_tenant_protection_filter(table_id)
@@ -58,6 +79,9 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
     elseif protection.group_protected then
         log.debug('Table "%s"."%s" is group-protected. Adding group as row filter.', source_schema_id, table_id)
         return construct_group_protection_filter(source_schema_id, table_id)
+    elseif protection.role_protected then
+        log.debug('Table "%s"."%s" is role-protected. Adding role mask as row filter.', source_schema_id, table_id)
+        return construct_role_protection_filter(source_schema_id, table_id)
     else
         error("E-RLS-QRW-3: Illegal protection scheme used. Allowed schemes are: tenant, group, tenant + group")
     end
