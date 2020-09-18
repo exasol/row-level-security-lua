@@ -17,10 +17,12 @@ function M.read(adapter_cache, table_id)
             local protection_tags = string.sub(table_protection_cache, colon_index + 1, string.len(table_protection_cache))
             local tenant_protected = string.find(protection_tags, "t", 1, true) and true or false
             local group_protected = string.find(protection_tags, "g", 1, true) and true or false
+            local role_protected = string.find(protection_tags, "r", 1, true) and true or false
             return {
-                protected = tenant_protected or group_protected,
+                protected = tenant_protected or group_protected or role_protected,
                 tenant_protected = tenant_protected,
-                group_protected = group_protected
+                group_protected = group_protected,
+                role_protected = role_protected
             }
         end
     end

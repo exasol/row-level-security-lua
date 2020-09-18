@@ -1,22 +1,6 @@
 # Row Level Security (Lua)
 
-<img alt="row-level-security logo" src="doc/images/row-level-security_128x128.png" style="float:left; padding:0px 10px 10px 10px;"/>
-
-[![Build Status](https://api.travis-ci.com/exasol/row-level-security.svg?branch=master)](https://travis-ci.org/exasol/row-level-security-lua)
-
-SonarCloud results:
-
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=security_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=sqale_index)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=code_smells)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=coverage)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+Note: badges will be added once the project is published.
 
 Protect access to database tables on a per-row level based on roles and / or tenants. 
 
