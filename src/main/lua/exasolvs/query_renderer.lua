@@ -30,7 +30,7 @@ local M = {
         "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST", "HASH_MD5",
         "HASHTYPE_MD5", "HASH_SHA", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
         "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
-        "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL"
+        "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL", "SESSION_PARAMETER"
     },
     supported_scalar_functions = {}
 }
@@ -81,8 +81,6 @@ function M.new (query)
         append('"')
     end
 
-    -- Currently unsupported scalar function: EXTRACT, CASE, CAST, JSON_VALUE, SESSION_PARAMETER
-    -- TODO: implement special cases: https://github.com/exasol/row-level-security-lua/issues/10
     local function append_scalar_function(scalar_function)
         local function_name = string.upper(scalar_function.name)
         if M.supported_scalar_functions[function_name] then
@@ -103,6 +101,109 @@ function M.new (query)
             error('E-VS-QR-3: Unable to render unsupported scalar function type "' .. function_name .. '".')
         end
     end
+
+    local function append_scalar_function_extract(scalar_function_extract)
+        local to_extract = string.upper(scalar_function_extract.toExtract)
+        local function_name = string.upper(scalar_function_extract.name)
+        local arguments = scalar_function_extract.arguments
+        append(function_name)
+        append("(")
+        append(to_extract)
+        append(" FROM ")
+        append_expression(arguments[1])
+        append(")")
+    end
+
+    -- TODO: implement missinf data types: https://github.com/exasol/row-level-security-lua/issues/15
+    local function append_data_type(data_type)
+        local type = data_type.type
+        append(type)
+        if type == "DECIMAL" then
+            local precision = data_type.precision
+            local scale = data_type.scale
+            append("(")
+            append(precision)
+            append(",")
+            append(scale)
+            append(")")
+        elseif type == "VARCHAR" then
+            local size = data_type.size
+            local character_set = data_type.characterSet
+            append("(")
+            append(size)
+            append(")")
+            if (character_set ~= nil) then
+                append(" ")
+                append(character_set)
+            end
+        else
+            error('E-VS-QR-4: Unable to render unknown data type "' .. type .. '".')
+        end
+    end
+
+    local function append_scalar_function_cast(scalar_function_cast)
+        local function_name = string.upper(scalar_function_cast.name)
+        local arguments = scalar_function_cast.arguments
+        local data_type = scalar_function_cast.dataType
+        append(function_name)
+        append("(")
+        append_expression(arguments[1])
+        append(" AS ")
+        append_data_type(data_type)
+        append(")")
+    end
+
+    local function append_scalar_function_json_value(scalar_function_cast_json_value)
+        local function_name = string.upper(scalar_function_cast_json_value.name)
+        local arguments = scalar_function_cast_json_value.arguments
+        local data_type = scalar_function_cast_json_value.dataType
+        local empty_behavior = scalar_function_cast_json_value.emptyBehavior
+        local error_behavior = scalar_function_cast_json_value.errorBehavior
+        append(function_name)
+        append("(")
+        append_expression(arguments[1])
+        append(", ")
+        append_expression(arguments[2])
+        append(" RETURNING ")
+        append_data_type(data_type)
+        append(" ")
+        append(empty_behavior.type)
+        if empty_behavior.type == "DEFAULT" then
+            append(" ")
+            append_expression(empty_behavior.expression)
+        end
+        append(" ON EMPTY ")
+        append(error_behavior.type)
+        if error_behavior.type == "DEFAULT" then
+            append(" ")
+            append_expression(error_behavior.expression)
+        end
+        append(" ON ERROR)")
+    end
+
+    local function append_scalar_function_case(scalar_function_case)
+        local function_name = string.upper(scalar_function_case.name)
+        local basis = scalar_function_case.basis
+        local arguments = scalar_function_case.arguments
+        local results = scalar_function_case.results
+        append(function_name)
+        append(" ")
+        append_expression(basis)
+        for i = 1, #arguments do
+            local argument = arguments[i]
+            local result = results[i]
+            append(" WHEN ")
+            append_expression(argument)
+            append(" THEN ")
+            append_expression(result)
+        end
+        if (#results > #arguments) then
+            append(" ELSE ")
+            append_expression(results[#results])
+        end
+        append(" END")
+    end
+
 
     local function append_select_list_elements(select_list)
         for i = 1, #select_list do
@@ -149,19 +250,37 @@ function M.new (query)
         end
     end
 
+    local function append_quoted_literal_expression(literal_expression)
+        append("'")
+        append(literal_expression.value)
+        append("'")
+    end
+
     append_expression = function (expression)
         local type = expression.type
         if type == "column" then
             append_column_reference(expression)
         elseif(type == "literal_exactnumeric" or type == "literal_boolean" or type == "literal_double") then
             append(expression.value)
-        elseif(type == "literal_string" or type == 'literal_date' or type == 'literal_timestamp') then
-            append("'")
-            append(expression.value)
-            append("'")
-        elseif(type == "function_scalar") then
+        elseif (type == "literal_string") then
+            append_quoted_literal_expression(expression)
+        elseif (type == 'literal_date') then
+            append("DATE ")
+            append_quoted_literal_expression(expression)
+        elseif (type == 'literal_timestamp') then
+            append("TIMESTAMP ")
+            append_quoted_literal_expression(expression)
+        elseif (type == "function_scalar") then
             append_scalar_function(expression)
-        elseif(string.starts_with(type, "predicate_")) then
+        elseif (type == "function_scalar_extract") then
+            append_scalar_function_extract(expression)
+        elseif (type == "function_scalar_cast") then
+            append_scalar_function_cast(expression)
+        elseif (type == "function_scalar_json_value") then
+            append_scalar_function_json_value(expression)
+        elseif (type == "function_scalar_case") then
+            append_scalar_function_case(expression)
+        elseif (string.starts_with(type, "predicate_")) then
             append_predicate(expression)
         else
             error('E-VS-QR-1: Unable to render unknown SQL expression type "' .. expression.type .. '".')
