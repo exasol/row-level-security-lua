@@ -1,4 +1,4 @@
-# row-level-security-lua, released 2020-09-23
+# row-level-security-lua, released 2020-09-18
 
 Code name: Role- and group-security
 
