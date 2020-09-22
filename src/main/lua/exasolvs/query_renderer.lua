@@ -111,25 +111,95 @@ function M.new (query)
         append(")")
     end
 
-    -- TODO: implement missing data types: https://github.com/exasol/row-level-security-lua/issues/15
+    local function append_decimal(data_type)
+        append("(")
+        append(data_type.precision)
+        append(",")
+        append(data_type.scale)
+        append(")")
+    end
+
+    local function append_char_or_varchar(data_type)
+        append("(")
+        append(data_type.size)
+        append(")")
+        local character_set = data_type.characterSet
+        if (character_set ~= nil) then
+            append(" ")
+            append(character_set)
+        end
+    end
+
+    local function append_timestamp(data_type)
+        local with_local_time_zone = data_type.withLocalTimeZone
+        if (with_local_time_zone ~= nil and with_local_time_zone == true) then
+            append(" WITH LOCAL TIME ZONE")
+        end
+    end
+
+    local function append_geometry(data_type)
+        local srid = data_type.srid
+        if srid ~= nil then
+            append("(")
+            append(srid)
+            append(")")
+        end
+    end
+
+    local function append_interval(data_type)
+        if data_type.fromTo == "DAY TO SECONDS" then
+            append(" DAY")
+            local precision = data_type.precision
+            if (precision ~= nil) then
+                append("(")
+                append(precision)
+                append(")")
+            end
+            append(" TO SECOND")
+            local fraction = data_type.fraction
+            if (fraction ~= nil) then
+                append("(")
+                append(fraction)
+                append(")")
+            end
+        else
+            append(" YEAR")
+            local precision = data_type.precision
+            if (precision ~= nil) then
+                append("(")
+                append(precision)
+                append(")")
+            end
+            append(" TO MONTH")
+        end
+    end
+
+    local function append_hashtype(data_type)
+        local bytesize = data_type.bytesize
+        if bytesize ~= nil then
+            append("(")
+            append(bytesize)
+            append(" BYTE)")
+        end
+    end
+
     local function append_data_type(data_type)
         local type = data_type.type
         append(type)
         if type == "DECIMAL" then
-            append("(")
-            append(data_type.precision)
-            append(",")
-            append(data_type.scale)
-            append(")")
-        elseif type == "VARCHAR" then
-            append("(")
-            append(data_type.size)
-            append(")")
-            local character_set = data_type.characterSet
-            if (character_set ~= nil) then
-                append(" ")
-                append(character_set)
-            end
+            append_decimal(data_type)
+        elseif type == "VARCHAR" or type == "CHAR" then
+            append_char_or_varchar(data_type)
+        elseif type == "DOUBLE" or type == "DATE" or type == "BOOLEAN" then
+            -- intentionally left empty
+        elseif type == "TIMESTAMP" then
+            append_timestamp(data_type)
+        elseif type == "GEOMETRY" then
+            append_geometry(data_type)
+        elseif type == "INTERVAL" then
+            append_interval(data_type)
+        elseif type == "HASHTYPE" then
+            append_hashtype(data_type)
         else
             error('E-VS-QR-4: Unable to render unknown data type "' .. type .. '".')
         end

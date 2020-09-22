@@ -1082,6 +1082,51 @@ function test_query_renderer.test_scalar_function_cast()
         },
         {
             argument = { type = 'literal_string', value = '100' },
+            data_type = { size = 100, type = "CHAR", characterSet = "UTF8" },
+            expected = "SELECT CAST('100' AS CHAR(100) UTF8)"
+        },
+        {
+            argument = { type = 'literal_string', value = '1999-12-31' },
+            data_type = { type = "DATE" },
+            expected = "SELECT CAST('1999-12-31' AS DATE)"
+        },
+        {
+            argument = { type = 'literal_string', value = '1999-12-31 23:59:00' },
+            data_type = { type = "TIMESTAMP", withLocalTimeZone = true },
+            expected = "SELECT CAST('1999-12-31 23:59:00' AS TIMESTAMP WITH LOCAL TIME ZONE)"
+        },
+        {
+            argument = { type = 'literal_string', value = 'true' },
+            data_type = { type = "BOOLEAN" },
+            expected = "SELECT CAST('true' AS BOOLEAN)"
+        },
+        {
+            argument = { type = 'literal_string', value = '100' },
+            data_type = { type = "DOUBLE" },
+            expected = "SELECT CAST('100' AS DOUBLE)"
+        },
+        {
+            argument = { type = 'literal_string', value = 'POINT (1 2)' },
+            data_type = { type = "GEOMETRY", srid = 1 },
+            expected = "SELECT CAST('POINT (1 2)' AS GEOMETRY(1))"
+        },
+        {
+            argument = { type = 'literal_string', value = '2 12:50:10.123' },
+            data_type = { type = "INTERVAL", fromTo = "DAY TO SECONDS", precision = 3, fraction = 4 },
+            expected = "SELECT CAST('2 12:50:10.123' AS INTERVAL DAY(3) TO SECOND(4))"
+        },
+        {
+            argument = { type = 'literal_string', value = '5-3' },
+            data_type = { type = "INTERVAL", fromTo = "YEAR TO MONTH", precision = 3 },
+            expected = "SELECT CAST('5-3' AS INTERVAL YEAR(3) TO MONTH)"
+        },
+        {
+            argument = { type = 'literal_string', value = '550e8400-e29b-11d4-a716' },
+            data_type = { type = "HASHTYPE", bytesize = 10 },
+            expected = "SELECT CAST('550e8400-e29b-11d4-a716' AS HASHTYPE(10 BYTE))"
+        },
+        {
+            argument = { type = 'literal_string', value = '100' },
             data_type = { precision = 10, scale = 0, type = "DECIMAL" },
             expected = "SELECT CAST('100' AS DECIMAL(10,0))"
         }
