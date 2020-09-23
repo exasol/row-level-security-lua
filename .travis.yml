@@ -1,6 +1,9 @@
 language: java
 
+sudo: required
+
 install:
+  - apt install luarocks
   - luarocks install luacov
   - luarocks install luacov-coveralls
   - luarocks install Mockagne
