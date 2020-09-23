@@ -1,0 +1,21 @@
+language: java
+
+install:
+  - luarocks install luacov
+  - luarocks install luacov-coveralls
+  - luarocks install Mockagne
+  - luarocks install lua-cjson
+  - luarocks install remotelog
+  - luarocks install LuaUnit
+
+script:
+  - lua -lluacov test_query_renderer.lua
+  - lua -lluacov test_request_dispatcher.lua
+  - lua -lluacov test_adapter.lua
+  - lua -lluacov test_metadata_reader.lua
+  - lua -lluacov test_query_rewriter.lua
+  - lua -lluacov test_table_protection_reader.lua
+  - lua -lluacov test_user_information.lua
+
+after_success:
+  - luacov-coveralls
