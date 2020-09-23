@@ -3,13 +3,13 @@ language: java
 sudo: required
 
 install:
-  - apt install luarocks
-  - luarocks install luacov
-  - luarocks install luacov-coveralls
-  - luarocks install Mockagne
-  - luarocks install lua-cjson
-  - luarocks install remotelog
-  - luarocks install LuaUnit
+  - sudo apt install luarocks
+  - sudo luarocks install luacov
+  - sudo luarocks install luacov-coveralls
+  - sudo luarocks install Mockagne
+  - sudo luarocks install lua-cjson
+  - sudo luarocks install remotelog
+  - sudo luarocks install LuaUnit
 
 script:
   - lua -lluacov test_query_renderer.lua
