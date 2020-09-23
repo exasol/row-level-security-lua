@@ -23,7 +23,7 @@ script:
   - lua -lluacov src/test/lua/exasolrls/test_query_rewriter.lua
   - lua -lluacov src/test/lua/exasolrls/test_table_protection_reader.lua
   - lua -lluacov src/test/lua/exasolrls/test_user_information.lua
-  - luacheck src
+  # - luacheck src
 
 after_success:
   - luacov-coveralls
