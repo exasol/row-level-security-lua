@@ -3,22 +3,27 @@ language: java
 sudo: required
 
 install:
+  - sudo apt-get update
   - sudo apt install luarocks
+  - sudo luarocks install luacheck
   - sudo luarocks install luacov
   - sudo luarocks install luacov-coveralls
+  - sudo luarocks install LuaUnit
   - sudo luarocks install Mockagne
   - sudo luarocks install lua-cjson
   - sudo luarocks install remotelog
-  - sudo luarocks install LuaUnit
 
 script:
-  - lua -lluacov test_query_renderer.lua
-  - lua -lluacov test_request_dispatcher.lua
-  - lua -lluacov test_adapter.lua
-  - lua -lluacov test_metadata_reader.lua
-  - lua -lluacov test_query_rewriter.lua
-  - lua -lluacov test_table_protection_reader.lua
-  - lua -lluacov test_user_information.lua
+  - luarocks path
+  - export LUA_PATH='/home/travis/build/exasol/row-level-security-lua/src/main/lua/?.lua;/home/travis/build/exasol/row-level-security-lua/src/test/lua/?.lua;/home/travis/.luarocks/share/lua/5.1/?.lua;/home/travis/.luarocks/share/lua/5.1/?/init.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/home/build/exsaol/row-level-security-lua/src/main/lua/?.lua;/home/build/exsaol/row-level-security-lua/src/test/lua/?.lua;'"$LUA_PATH"
+  - lua -lluacov src/test/lua/exasolvs/test_query_renderer.lua
+  - lua -lluacov src/test/lua/exasolvs/test_request_dispatcher.lua
+  - lua -lluacov src/test/lua/exasolrls/test_adapter.lua
+  - lua -lluacov src/test/lua/exasolrls/test_metadata_reader.lua
+  - lua -lluacov src/test/lua/exasolrls/test_query_rewriter.lua
+  - lua -lluacov src/test/lua/exasolrls/test_table_protection_reader.lua
+  - lua -lluacov src/test/lua/exasolrls/test_user_information.lua
+  - luacheck src
 
 after_success:
   - luacov-coveralls
