@@ -119,27 +119,26 @@ function M.new (query)
         append(")")
     end
 
-    local function append_char_or_varchar(data_type)
+    local function append_character_type(data_type)
         append("(")
         append(data_type.size)
         append(")")
         local character_set = data_type.characterSet
-        if (character_set ~= nil) then
+        if character_set then
             append(" ")
             append(character_set)
         end
     end
 
     local function append_timestamp(data_type)
-        local with_local_time_zone = data_type.withLocalTimeZone
-        if (with_local_time_zone ~= nil and with_local_time_zone == true) then
+        if data_type.withLocalTimeZone then
             append(" WITH LOCAL TIME ZONE")
         end
     end
 
     local function append_geometry(data_type)
         local srid = data_type.srid
-        if srid ~= nil then
+        if srid then
             append("(")
             append(srid)
             append(")")
@@ -150,14 +149,14 @@ function M.new (query)
         if data_type.fromTo == "DAY TO SECONDS" then
             append(" DAY")
             local precision = data_type.precision
-            if (precision ~= nil) then
+            if precision then
                 append("(")
                 append(precision)
                 append(")")
             end
             append(" TO SECOND")
             local fraction = data_type.fraction
-            if (fraction ~= nil) then
+            if fraction then
                 append("(")
                 append(fraction)
                 append(")")
@@ -165,7 +164,7 @@ function M.new (query)
         else
             append(" YEAR")
             local precision = data_type.precision
-            if (precision ~= nil) then
+            if precision then
                 append("(")
                 append(precision)
                 append(")")
@@ -175,10 +174,10 @@ function M.new (query)
     end
 
     local function append_hashtype(data_type)
-        local bytesize = data_type.bytesize
-        if bytesize ~= nil then
+        local byte_size = data_type.bytesize
+        if byte_size then
             append("(")
-            append(bytesize)
+            append(byte_size)
             append(" BYTE)")
         end
     end
@@ -189,7 +188,7 @@ function M.new (query)
         if type == "DECIMAL" then
             append_decimal(data_type)
         elseif type == "VARCHAR" or type == "CHAR" then
-            append_char_or_varchar(data_type)
+            append_character_type(data_type)
         elseif type == "DOUBLE" or type == "DATE" or type == "BOOLEAN" then
             -- intentionally left empty
         elseif type == "TIMESTAMP" then
