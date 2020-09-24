@@ -8,7 +8,7 @@ local adapter = require("exasolrls.adapter")
 
 test_rls_adapter = {}
 
-function test_rls_adapter:test_drop_virtual_schema()
+function test_rls_adapter.test_drop_virtual_schema()
     luaunit.assertEquals(adapter.drop_virtual_schema(), {type="dropVirtualSchema"})
 end
 
@@ -23,7 +23,7 @@ function test_rls_adapter.test_create_virtual_schema()
     luaunit.assertEquals(actual, expected)
 end
 
-function test_rls_adapter:test_get_capabilites()
+function test_rls_adapter.test_get_capabilites()
     local expected = {type = "getCapabilities",
         capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
             "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",

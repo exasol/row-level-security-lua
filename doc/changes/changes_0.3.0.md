@@ -7,4 +7,8 @@ Code name:
 ## Features / Enhancements
 
 * #10: Added rendering for special cases of scalar functions.
-* #15: implemented missing data types rendering.
+* #15: Implemented missing data types rendering.
+
+## Refactoring
+
+* #19: Fixed luacheck findings.

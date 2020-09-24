@@ -1,5 +1,5 @@
-luaunit = require("luaunit")
-renderer = require("exasolvs.query_renderer")
+local luaunit = require("luaunit")
+local renderer = require("exasolvs.query_renderer")
 
 test_query_renderer = {}
 
@@ -383,12 +383,6 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             expected = "SELECT HASHTYPE_MD5('abc')"
         },
         {
-            func_name = "HASH_SHA",
-            arg_type = "literal_string",
-            arg_value = "abc",
-            expected = "SELECT HASH_SHA('abc')"
-        },
-        {
             func_name = "HASH_SHA1",
             arg_type = "literal_string",
             arg_value = "abc",
@@ -645,24 +639,24 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_type = "literal_string",
             first_arg_value = "Phone: +497003927877678",
             second_arg_type = "literal_string",
-            second_arg_value = "\+?\d+",
-            expected = "SELECT REGEXP_INSTR('Phone: +497003927877678', '\+?\d+')"
+            second_arg_value = "d+",
+            expected = "SELECT REGEXP_INSTR('Phone: +497003927877678', 'd+')"
         },
         {
             func_name = "REGEXP_REPLACE",
             first_arg_type = "literal_string",
             first_arg_value = "Phone: +497003927877678",
             second_arg_type = "literal_string",
-            second_arg_value = "\+?\d+",
-            expected = "SELECT REGEXP_REPLACE('Phone: +497003927877678', '\+?\d+')"
+            second_arg_value = "d+",
+            expected = "SELECT REGEXP_REPLACE('Phone: +497003927877678', 'd+')"
         },
         {
             func_name = "REGEXP_SUBSTR",
             first_arg_type = "literal_string",
             first_arg_value = "Phone: +497003927877678",
             second_arg_type = "literal_string",
-            second_arg_value = "\+?\d+",
-            expected = "SELECT REGEXP_SUBSTR('Phone: +497003927877678', '\+?\d+')"
+            second_arg_value = "d+",
+            expected = "SELECT REGEXP_SUBSTR('Phone: +497003927877678', 'd+')"
         },
         {
             func_name = "REPEAT",
@@ -1185,7 +1179,8 @@ function test_query_renderer.test_scalar_function_json_value()
                 expression = { type = 'literal_string', value = '*** error ***' }
             },
             data_type = { size = 1000, type = "VARCHAR", characterSet = "UTF8" },
-            expected = "SELECT JSON_VALUE('{\"a\": 1}', '$.a' RETURNING VARCHAR(1000) UTF8 DEFAULT '*** error ***' ON EMPTY DEFAULT '*** error ***' ON ERROR)"
+            expected = "SELECT JSON_VALUE('{\"a\": 1}', '$.a' RETURNING VARCHAR(1000) UTF8 " ..
+                    "DEFAULT '*** error ***' ON EMPTY DEFAULT '*** error ***' ON ERROR)"
         },
         {
             argument_1 = { type = 'literal_string', value = '{\"a\": 1}' },
@@ -1242,7 +1237,8 @@ function test_query_renderer.test_scalar_function_case()
             }
         }
     }
-    assert_renders_to(original_query, "SELECT CASE \"t\".\"grade\" WHEN 1 THEN 'GOOD' WHEN 2 THEN 'FAIR' WHEN 3 THEN 'POOR' ELSE 'INVALID' END")
+    assert_renders_to(original_query, "SELECT CASE \"t\".\"grade\" " ..
+            "WHEN 1 THEN 'GOOD' WHEN 2 THEN 'FAIR' WHEN 3 THEN 'POOR' ELSE 'INVALID' END")
 end
 
 function test_query_renderer.test_scalar_function_in_select_list()
@@ -1264,7 +1260,8 @@ function test_query_renderer.test_scalar_function_in_select_list()
             right = {type = "literal_string", value = "eve"}
         }
     }
-    assert_renders_to(original_query, 'SELECT "PEOPLE"."LASTNAME" FROM "PEOPLE" WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
+    assert_renders_to(original_query, 'SELECT "PEOPLE"."LASTNAME" FROM "PEOPLE" ' ..
+            'WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
 end
 
 function test_query_renderer.test_current_user()
