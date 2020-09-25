@@ -14,8 +14,8 @@ install:
   - sudo luarocks install remotelog
 
 script:
-  - luarocks path
-  - export LUA_PATH='/home/travis/build/exasol/row-level-security-lua/src/main/lua/?.lua;/home/travis/build/exasol/row-level-security-lua/src/test/lua/?.lua;/home/travis/.luarocks/share/lua/5.1/?.lua;/home/travis/.luarocks/share/lua/5.1/?/init.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/home/build/exsaol/row-level-security-lua/src/main/lua/?.lua;/home/build/exsaol/row-level-security-lua/src/test/lua/?.lua;'"$LUA_PATH"
+  - export PROJECT_BUILD="$HOME"'/build/exasol'
+  - export LUA_PATH="$PROJECT_BUILD"'/row-level-security-lua/src/main/lua/?.lua;'"$PROJECT_BUILD"'/row-level-security-lua/src/test/lua/?.lua;/home/travis/.luarocks/share/lua/5.1/?.lua;/home/travis/.luarocks/share/lua/5.1/?/init.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/home/build/exsaol/row-level-security-lua/src/main/lua/?.lua;/home/build/exsaol/row-level-security-lua/src/test/lua/?.lua;'"$LUA_PATH"
   - lua -lluacov src/test/lua/exasolvs/test_query_renderer.lua
   - lua -lluacov src/test/lua/exasolvs/test_request_dispatcher.lua
   - lua -lluacov src/test/lua/exasolrls/test_adapter.lua
@@ -23,7 +23,7 @@ script:
   - lua -lluacov src/test/lua/exasolrls/test_query_rewriter.lua
   - lua -lluacov src/test/lua/exasolrls/test_table_protection_reader.lua
   - lua -lluacov src/test/lua/exasolrls/test_user_information.lua
-  # - luacheck src
+  - luacheck src --codes --ignore 111 --ignore 112
 
 after_success:
   - luacov-coveralls
