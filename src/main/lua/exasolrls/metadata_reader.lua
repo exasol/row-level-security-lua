@@ -1,10 +1,9 @@
 local log = require("remotelog")
-local cjson require("cjson")
 
-M = {}
+_G.M = {}
 
 local function open_schema(schema_id)
-    local ok, result = exa.pquery('OPEN SCHEMA "' .. schema_id .. '"')
+    local ok, result = _G.exa.pquery('OPEN SCHEMA "' .. schema_id .. '"')
     if not ok  then
         error("E-MDR-1: Unable to open source schema " .. schema_id .. " for reading metadata. Caused by: "
             .. result.error_message)
@@ -12,7 +11,7 @@ local function open_schema(schema_id)
 end
 
 local function read_columns(table_id)
-    local ok, result = exa.pquery('DESCRIBE "' .. table_id .. '"')
+    local ok, result = _G.exa.pquery('DESCRIBE "' .. table_id .. '"')
     local columns = {}
     local tenant_protected, role_protected, group_protected
     if ok  then
@@ -36,8 +35,8 @@ local function read_columns(table_id)
     end
 end
 
-local function read_tables(schema_id)
-    local ok, result = exa.pquery('SELECT "TABLE_NAME" FROM "CAT"')
+local function read_tables()
+    local ok, result = _G.exa.pquery('SELECT "TABLE_NAME" FROM "CAT"')
     local tables = {}
     local table_protection = {}
     if ok then
@@ -68,8 +67,8 @@ end
 --
 function M.read(schema_id)
     open_schema(schema_id)
-    local tables, table_protection = read_tables(schema_id)
+    local tables, table_protection = read_tables()
     return {tables = tables, adapterNotes = table.concat(table_protection, ",")}
 end
 
-return M
+return _G.M

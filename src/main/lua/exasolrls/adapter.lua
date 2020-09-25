@@ -5,14 +5,14 @@ local M = {VERSION = "0.2.0", NAME = "Row-level Security adapter (LUA)"}
 
 ---
 -- Create a virtual schema.
--- 
--- @param exa_metadata Exasol metadata
--- 
+--
+-- @param exa_metadata Exasol metadata (not used)
+--
 -- @param request      virtual schema request
--- 
+--
 -- @return response containing the metadata for the virtual schema like table and column structure
--- 
-function M.create_virtual_schema(exa_metadata, request)
+--
+function M.create_virtual_schema(_, request)
     local properties = request.schemaMetadataInfo.properties
     local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
     return {type = "createVirtualSchema", schemaMetadata = schema_metadata}
@@ -21,30 +21,30 @@ end
 ---
 -- Drop the virtual schema
 --
--- @param exa_metadata Exasol metadata
--- 
--- @param request      virtual schema request
--- 
+-- @param exa_metadata Exasol metadata (not used)
+--
+-- @param request      virtual schema request (not used)
+--
 -- @return response confirming the request (otherwise empty)
--- 
-function M.drop_virtual_schema(exa_metadata, request)
+--
+function M.drop_virtual_schema()
     return {type = "dropVirtualSchema"}
 end
 
-function M.refresh(exa_metadata, request)
+function M.refresh()
 end
 
-function M.set_properties(exa_metadata, request)
+function M.set_properties()
 end
 
-function M.get_capabilities(exa_metadata, request)
+function M.get_capabilities()
     return {type = "getCapabilities",
             capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
                         "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",
                         "LIMIT_WITH_OFFSET"}}
 end
 
-function M.push_down(exa_metadata, request)
+function M.push_down(_, request)
     local properties = request.schemaMetadataInfo.properties
     local adapter_cache = request.schemaMetadataInfo.adapterNotes
     local rewritten_query = query_rewriter.rewrite(request.pushdownRequest, properties.SCHEMA_NAME, adapter_cache)

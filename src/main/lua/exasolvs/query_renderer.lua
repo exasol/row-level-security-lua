@@ -1,21 +1,22 @@
+local text = require("text")
+
 local M = {
     supported_scalar_functions_list = {
         -- Numeric functions
-        "ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "CEIL", "COS", "COSH", "COT", "DEGREES", "DIV", "EXP", "FLOOR",
-        "LN", "LOG", "MOD", "POWER", "RADIANS", "RAND", "ROUND", "SIGN", "SIN", "SINH", "SQRT", "TAN", "TANH",
-        "TO_CHAR", "TO_NUMBER", "TRUNC",
+        "ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "CEIL", "COS", "COSH", "COT", "DEGREES", "DIV", "EXP", "FLOOR", "LN",
+        "LOG", "MOD", "POWER", "RADIANS", "RAND", "ROUND", "SIGN", "SIN", "SINH", "SQRT", "TAN", "TANH", "TO_CHAR",
+        "TO_NUMBER", "TRUNC",
         -- String functions
-        "ASCII", "BIT_LENGTH", "CHR", "COLOGNE_PHONETIC", "CONCAT", "DUMP", "EDIT_DISTANCE", "INITCAP", "INSERT", "INSTR",
-        "LENGTH", "LOCATE", "LOWER", "LPAD", "LTRIM", "OCTET_LENGTH", "REGEXP_INSTR", "REGEXP_REPLACE",
+        "ASCII", "BIT_LENGTH", "CHR", "COLOGNE_PHONETIC", "CONCAT", "DUMP", "EDIT_DISTANCE", "INITCAP", "INSERT",
+        "INSTR", "LENGTH", "LOCATE", "LOWER", "LPAD", "LTRIM", "OCTET_LENGTH", "REGEXP_INSTR", "REGEXP_REPLACE",
         "REGEXP_SUBSTR", "REPEAT", "REPLACE", "REVERSE", "RIGHT", "RPAD", "RTRIM", "SOUNDEX", "SPACE", "SUBSTR",
         "TRANSLATE", "TRIM", "UNICODE", "UNICODECHR", "UPPER",
         -- Date/Time functions
-        "ADD_DAYS", "ADD_HOURS", "ADD_MINUTES", "ADD_MONTHS", "ADD_SECONDS", "ADD_WEEKS", "ADD_YEARS",
-        "CONVERT_TZ", "CURRENT_DATE", "CURRENT_TIMESTAMP", "DATE_TRUNC", "DAY", "DAYS_BETWEEN", "DBTIMEZONE",
-        "FROM_POSIX_TIME", "HOUR", "HOURS_BETWEEN", "LOCALTIMESTAMP", "MINUTE", "MINUTES_BETWEEN", "MONTH", "MONTH_BETWEEN",
-        "NUMTODSINTERVAL", "NUMTOYMINTERVAL", "POSIX_TIME", "SECOND", "SECONDS_BETWEEN", "SESSIONTIMEZONE",
-        "SYSDATE", "SYSTIMESTAMP", "TO_DATE", "TO_DSINTERVAL", "TO_TIMESTAMP", "TO_YMINTERVAL", "WEEK", "YEAR",
-        "YEARS_BETWEEN",
+        "ADD_DAYS", "ADD_HOURS", "ADD_MINUTES", "ADD_MONTHS", "ADD_SECONDS", "ADD_WEEKS", "ADD_YEARS", "CONVERT_TZ",
+        "CURRENT_DATE", "CURRENT_TIMESTAMP", "DATE_TRUNC", "DAY", "DAYS_BETWEEN", "DBTIMEZONE", "FROM_POSIX_TIME",
+        "HOUR", "HOURS_BETWEEN", "LOCALTIMESTAMP", "MINUTE", "MINUTES_BETWEEN", "MONTH", "MONTH_BETWEEN",
+        "NUMTODSINTERVAL", "NUMTOYMINTERVAL", "POSIX_TIME", "SECOND", "SECONDS_BETWEEN", "SESSIONTIMEZONE", "SYSDATE",
+        "SYSTIMESTAMP", "TO_DATE", "TO_DSINTERVAL", "TO_TIMESTAMP", "TO_YMINTERVAL", "WEEK", "YEAR", "YEARS_BETWEEN",
         -- Geospatial functions
         "ST_AREA", "ST_BOUNDARY", "ST_BUFFER", "ST_CENTROID", "ST_CONTAINS", "ST_CONVEXHULL", "ST_CROSSES",
         "ST_DIFFERENCE", "ST_DIMENSION", "ST_DISJOINT", "ST_DISTANCE", "ST_ENDPOINT", "ST_ENVELOPE", "ST_EQUALS",
@@ -28,7 +29,7 @@ local M = {
         "BIT_SET", "BIT_TO_NUM", "BIT_XOR",
         -- Other functions
         "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST", "HASH_MD5",
-        "HASHTYPE_MD5", "HASH_SHA", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
+        "HASHTYPE_MD5", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
         "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
         "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL", "SESSION_PARAMETER"
     },
@@ -39,11 +40,6 @@ for index = 1, #M.supported_scalar_functions_list do
     M.supported_scalar_functions[M.supported_scalar_functions_list[index]] = true
 end
 
--- TODO: Move to a separate module!
---
-function string.starts_with(text, start)
-    return start == string.sub(text, 1, string.len(start))
-end
 
 ---
 -- Create a new query renderer.
@@ -190,7 +186,7 @@ function M.new (query)
         elseif type == "VARCHAR" or type == "CHAR" then
             append_character_type(data_type)
         elseif type == "DOUBLE" or type == "DATE" or type == "BOOLEAN" then
-            -- intentionally left empty
+            append("")
         elseif type == "TIMESTAMP" then
             append_timestamp(data_type)
         elseif type == "GEOMETRY" then
@@ -261,7 +257,6 @@ function M.new (query)
     local function append_select_list_elements(select_list)
         for i = 1, #select_list do
             local element = select_list[i]
-            local type = element.type
             comma(i)
             append_expression(element)
         end
@@ -333,7 +328,7 @@ function M.new (query)
             append_scalar_function_json_value(expression)
         elseif (type == "function_scalar_case") then
             append_scalar_function_case(expression)
-        elseif (string.starts_with(type, "predicate_")) then
+        elseif (text.starts_with(type, "predicate_")) then
             append_predicate(expression)
         else
             error('E-VS-QR-1: Unable to render unknown SQL expression type "' .. expression.type .. '".')
@@ -341,7 +336,6 @@ function M.new (query)
     end
 
     append_unary_predicate = function (predicate)
-        local type = predicate.type
         append("(")
         append(OPERATORS[predicate.type])
         append(" ")
@@ -372,7 +366,7 @@ function M.new (query)
         end
         append(")")
     end
-    
+
     append_predicate_in = function (predicate)
         append("(")
         append_expression(predicate.expression)
