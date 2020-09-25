@@ -180,6 +180,7 @@
                                 <argument>exasolrls.query_rewriter</argument>
                                 <argument>exasolrls.user_information</argument>
                                 <argument>remotelog</argument>
+                                <argument>text</argument>
                             </arguments>
                         </configuration>
                     </execution>
