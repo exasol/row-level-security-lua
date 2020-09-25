@@ -12,3 +12,4 @@ Code name:
 ## Refactoring
 
 * #19: Fixed luacheck findings.
+* #14: Added Travis CI build with unit tests and luacheck.
