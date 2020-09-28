@@ -24,8 +24,15 @@ local function construct_tenant_protection_filter(table_id)
     }
 end
 
-local function construct_group_protection_filter(source_schema_id, table_id)
-    local groups = user.get_groups(source_schema_id)
+local function construct_single_group_protection_filter(table_id, group)
+    return {
+        type = "predicate_equal",
+        left = {type = "column", tableName = table_id, name = "EXA_ROW_GROUP"},
+        right = {type = "literal_string", value = group}
+    }
+end
+
+local function construct_multi_group_protection_filter(table_id, groups)
     local group_literals = {}
     for i = 1, #groups do
         group_literals[i] = {type = "literal_string", value = groups[i]}
@@ -35,6 +42,15 @@ local function construct_group_protection_filter(source_schema_id, table_id)
         expression = {type = "column", tableName = table_id, name = "EXA_ROW_GROUP"},
         arguments = group_literals
     }
+end
+
+local function construct_group_protection_filter(source_schema_id, table_id)
+    local groups = user.get_groups(source_schema_id)
+    if #groups == 1 then
+        return construct_single_group_protection_filter(table_id, groups[1])
+    else
+        return construct_multi_group_protection_filter(table_id, groups)
+    end
 end
 
 local function construct_role_protection_filter(source_schema_id, table_id)
