@@ -87,7 +87,7 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
             log.debug('Table "%s"."%s" is tenant-protected and role-protected. Adding filter for user or role.',
                 source_schema_id, table_id)
             return construct_or(construct_tenant_protection_filter(table_id),
-                construct_role_protection_filter(source_schema_id, table_id))        
+                construct_role_protection_filter(source_schema_id, table_id))
         else
             log.debug('Table "%s"."%s" is tenant-protected. Adding tenant as row filter.', source_schema_id, table_id)
             return construct_tenant_protection_filter(table_id)
@@ -115,15 +115,15 @@ end
 
 ---
 -- Rewrite the original query with RLS restrictions.
--- 
+--
 -- @param original_query structure containing the original push-down query
--- 
+--
 -- @param source_schema_id source schema RLS is put on top of
--- 
+--
 -- @param adapter_cache cache taken from the adapter notes
--- 
+--
 -- @return string containing the rewritten query
--- 
+--
 function M.rewrite(original_query, source_schema_id, adapter_cache)
     validate(original_query)
     local query = original_query

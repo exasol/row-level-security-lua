@@ -1,5 +1,5 @@
-luaunit = require("luaunit")
-renderer = require("exasolvs.query_renderer")
+local luaunit = require("luaunit")
+local renderer = require("exasolvs.query_renderer")
 
 test_query_renderer = {}
 
@@ -302,31 +302,31 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             func_name = "DAY",
             arg_type = "literal_date",
             arg_value = "2010-10-20",
-            expected = "SELECT DAY('2010-10-20')"
+            expected = "SELECT DAY(DATE '2010-10-20')"
         },
         {
             func_name = "MINUTE",
             arg_type = "literal_timestamp",
             arg_value = "2010-10-20 11:59:40.123",
-            expected = "SELECT MINUTE('2010-10-20 11:59:40.123')"
+            expected = "SELECT MINUTE(TIMESTAMP '2010-10-20 11:59:40.123')"
         },
         {
             func_name = "MONTH",
             arg_type = "literal_date",
             arg_value = "2010-10-20",
-            expected = "SELECT MONTH('2010-10-20')"
+            expected = "SELECT MONTH(DATE '2010-10-20')"
         },
         {
             func_name = "POSIX_TIME",
             arg_type = "literal_timestamp",
             arg_value = "2010-10-20 11:59:40.123",
-            expected = "SELECT POSIX_TIME('2010-10-20 11:59:40.123')"
+            expected = "SELECT POSIX_TIME(TIMESTAMP '2010-10-20 11:59:40.123')"
         },
         {
             func_name = "SECOND",
             arg_type = "literal_timestamp",
             arg_value = "2010-10-20 11:59:40.123",
-            expected = "SELECT SECOND('2010-10-20 11:59:40.123')"
+            expected = "SELECT SECOND(TIMESTAMP '2010-10-20 11:59:40.123')"
         },
         {
             func_name = "TO_DATE",
@@ -356,13 +356,13 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             func_name = "WEEK",
             arg_type = "literal_date",
             arg_value = "2012-01-05",
-            expected = "SELECT WEEK('2012-01-05')"
+            expected = "SELECT WEEK(DATE '2012-01-05')"
         },
         {
             func_name = "YEAR",
             arg_type = "literal_date",
             arg_value = "2012-01-05",
-            expected = "SELECT YEAR('2012-01-05')"
+            expected = "SELECT YEAR(DATE '2012-01-05')"
         },
         {
             func_name = "BIT_NOT",
@@ -381,12 +381,6 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             arg_type = "literal_string",
             arg_value = "abc",
             expected = "SELECT HASHTYPE_MD5('abc')"
-        },
-        {
-            func_name = "HASH_SHA",
-            arg_type = "literal_string",
-            arg_value = "abc",
-            expected = "SELECT HASH_SHA('abc')"
         },
         {
             func_name = "HASH_SHA1",
@@ -494,7 +488,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             func_name = "HOUR",
             arg_type = "literal_timestamp",
             arg_value = "2010-10-20 11:59:40.123",
-            expected = "SELECT HOUR('2010-10-20 11:59:40.123')"
+            expected = "SELECT HOUR(TIMESTAMP '2010-10-20 11:59:40.123')"
         },
         {
             func_name = "INITCAP",
@@ -645,24 +639,24 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_type = "literal_string",
             first_arg_value = "Phone: +497003927877678",
             second_arg_type = "literal_string",
-            second_arg_value = "\+?\d+",
-            expected = "SELECT REGEXP_INSTR('Phone: +497003927877678', '\+?\d+')"
+            second_arg_value = "d+",
+            expected = "SELECT REGEXP_INSTR('Phone: +497003927877678', 'd+')"
         },
         {
             func_name = "REGEXP_REPLACE",
             first_arg_type = "literal_string",
             first_arg_value = "Phone: +497003927877678",
             second_arg_type = "literal_string",
-            second_arg_value = "\+?\d+",
-            expected = "SELECT REGEXP_REPLACE('Phone: +497003927877678', '\+?\d+')"
+            second_arg_value = "d+",
+            expected = "SELECT REGEXP_REPLACE('Phone: +497003927877678', 'd+')"
         },
         {
             func_name = "REGEXP_SUBSTR",
             first_arg_type = "literal_string",
             first_arg_value = "Phone: +497003927877678",
             second_arg_type = "literal_string",
-            second_arg_value = "\+?\d+",
-            expected = "SELECT REGEXP_SUBSTR('Phone: +497003927877678', '\+?\d+')"
+            second_arg_value = "d+",
+            expected = "SELECT REGEXP_SUBSTR('Phone: +497003927877678', 'd+')"
         },
         {
             func_name = "REPEAT",
@@ -718,7 +712,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-02-28",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_DAYS('2000-02-28', 2)"
+            expected = "SELECT ADD_DAYS(DATE '2000-02-28', 2)"
         },
         {
             func_name = "ADD_HOURS",
@@ -726,7 +720,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-01-01 00:00:00",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_HOURS('2000-01-01 00:00:00', 2)"
+            expected = "SELECT ADD_HOURS(TIMESTAMP '2000-01-01 00:00:00', 2)"
         },
         {
             func_name = "ADD_MINUTES",
@@ -734,7 +728,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-01-01 00:00:00",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_MINUTES('2000-01-01 00:00:00', 2)"
+            expected = "SELECT ADD_MINUTES(TIMESTAMP '2000-01-01 00:00:00', 2)"
         },
         {
             func_name = "ADD_MONTHS",
@@ -742,7 +736,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-02-28",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_MONTHS('2000-02-28', 2)"
+            expected = "SELECT ADD_MONTHS(DATE '2000-02-28', 2)"
         },
         {
             func_name = "ADD_SECONDS",
@@ -750,7 +744,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-01-01 00:00:00",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_SECONDS('2000-01-01 00:00:00', 2)"
+            expected = "SELECT ADD_SECONDS(TIMESTAMP '2000-01-01 00:00:00', 2)"
         },
         {
             func_name = "ADD_WEEKS",
@@ -758,7 +752,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-02-28",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_WEEKS('2000-02-28', 2)"
+            expected = "SELECT ADD_WEEKS(DATE '2000-02-28', 2)"
         },
         {
             func_name = "ADD_YEARS",
@@ -766,7 +760,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-02-28",
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT ADD_YEARS('2000-02-28', 2)"
+            expected = "SELECT ADD_YEARS(DATE '2000-02-28', 2)"
         },
         {
             func_name = "DATE_TRUNC",
@@ -774,7 +768,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "month",
             second_arg_type = "literal_date",
             second_arg_value = "2006-12-31",
-            expected = "SELECT DATE_TRUNC('month', '2006-12-31')"
+            expected = "SELECT DATE_TRUNC('month', DATE '2006-12-31')"
         },
         {
             func_name = "DAYS_BETWEEN",
@@ -782,7 +776,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "1999-12-31",
             second_arg_type = "literal_date",
             second_arg_value = "2000-01-01",
-            expected = "SELECT DAYS_BETWEEN('1999-12-31', '2000-01-01')"
+            expected = "SELECT DAYS_BETWEEN(DATE '1999-12-31', DATE '2000-01-01')"
         },
         {
             func_name = "HOURS_BETWEEN",
@@ -790,7 +784,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-01-01 12:00:00",
             second_arg_type = "literal_timestamp",
             second_arg_value = "2000-01-01 11:01:05.1",
-            expected = "SELECT HOURS_BETWEEN('2000-01-01 12:00:00', '2000-01-01 11:01:05.1')"
+            expected = "SELECT HOURS_BETWEEN(TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2000-01-01 11:01:05.1')"
         },
         {
             func_name = "MINUTES_BETWEEN",
@@ -798,7 +792,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-01-01 12:00:00",
             second_arg_type = "literal_timestamp",
             second_arg_value = "2000-01-01 11:01:05.1",
-            expected = "SELECT MINUTES_BETWEEN('2000-01-01 12:00:00', '2000-01-01 11:01:05.1')"
+            expected = "SELECT MINUTES_BETWEEN(TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2000-01-01 11:01:05.1')"
         },
         {
             func_name = "MONTH_BETWEEN",
@@ -806,7 +800,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "1999-12-31",
             second_arg_type = "literal_date",
             second_arg_value = "2000-01-01",
-            expected = "SELECT MONTH_BETWEEN('1999-12-31', '2000-01-01')"
+            expected = "SELECT MONTH_BETWEEN(DATE '1999-12-31', DATE '2000-01-01')"
         },
         {
             func_name = "NUMTODSINTERVAL",
@@ -830,7 +824,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "2000-01-01 12:00:00",
             second_arg_type = "literal_timestamp",
             second_arg_value = "2000-01-01 11:01:05.1",
-            expected = "SELECT SECONDS_BETWEEN('2000-01-01 12:00:00', '2000-01-01 11:01:05.1')"
+            expected = "SELECT SECONDS_BETWEEN(TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2000-01-01 11:01:05.1')"
         },
         {
             func_name = "YEARS_BETWEEN",
@@ -838,7 +832,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = "1999-12-31",
             second_arg_type = "literal_date",
             second_arg_value = "2000-01-01",
-            expected = "SELECT YEARS_BETWEEN('1999-12-31', '2000-01-01')"
+            expected = "SELECT YEARS_BETWEEN(DATE '1999-12-31', DATE '2000-01-01')"
         },
         {
             func_name = "BIT_AND",
@@ -967,7 +961,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_three_argu
             second_arg_value = "UTC",
             third_arg_type = "literal_string",
             third_arg_value = "Europe/Berlin",
-            expected = "SELECT CONVERT_TZ('2012-05-10 12:00:00', 'UTC', 'Europe/Berlin')"
+            expected = "SELECT CONVERT_TZ(TIMESTAMP '2012-05-10 12:00:00', 'UTC', 'Europe/Berlin')"
         },
     }
     for _, parameter in ipairs(parameters) do
@@ -1024,6 +1018,229 @@ function test_query_renderer.test_scalar_function_in_select_list_with_four_argum
     end
 end
 
+function test_query_renderer.test_scalar_function_extract()
+    local parameters = {
+        {
+            to_extract = 'YEAR',
+            argument = {
+                columnNr = 0,
+                name = "col_1",
+                tableName = "t",
+                type = "column"
+            },
+            expected = 'SELECT EXTRACT(YEAR FROM "t"."col_1")'
+        },
+        {
+            to_extract = 'MONTH',
+            argument = {
+                columnNr = 0,
+                name = "col_1",
+                tableName = "t",
+                type = "column"
+            },
+            expected = 'SELECT EXTRACT(MONTH FROM "t"."col_1")'
+        },
+        {
+            to_extract = 'SECOND',
+            argument = { type = 'literal_timestamp', value = '2019-02-12 12:07:00' },
+            expected = "SELECT EXTRACT(SECOND FROM TIMESTAMP '2019-02-12 12:07:00')"
+        }
+    }
+    for _, parameter in ipairs(parameters) do
+        local original_query = {
+            type = "select",
+            selectList = {
+                {
+                    type = "function_scalar_extract",
+                    name = "EXTRACT",
+                    toExtract = parameter.to_extract,
+                    arguments = { parameter.argument }
+                }
+            }
+        }
+        assert_renders_to(original_query, parameter.expected)
+    end
+end
+
+function test_query_renderer.test_scalar_function_cast()
+    local parameters = {
+        {
+            argument = {
+                columnNr = 0,
+                name = "col_1",
+                tableName = "t",
+                type = "column"
+            },
+            data_type = { size = 10, type = "VARCHAR" },
+            expected = 'SELECT CAST("t"."col_1" AS VARCHAR(10))'
+        },
+        {
+            argument = { type = 'literal_string', value = '100' },
+            data_type = { size = 100, type = "CHAR", characterSet = "UTF8" },
+            expected = "SELECT CAST('100' AS CHAR(100) UTF8)"
+        },
+        {
+            argument = { type = 'literal_string', value = '1999-12-31' },
+            data_type = { type = "DATE" },
+            expected = "SELECT CAST('1999-12-31' AS DATE)"
+        },
+        {
+            argument = { type = 'literal_string', value = '1999-12-31 23:59:00' },
+            data_type = { type = "TIMESTAMP", withLocalTimeZone = true },
+            expected = "SELECT CAST('1999-12-31 23:59:00' AS TIMESTAMP WITH LOCAL TIME ZONE)"
+        },
+        {
+            argument = { type = 'literal_string', value = 'true' },
+            data_type = { type = "BOOLEAN" },
+            expected = "SELECT CAST('true' AS BOOLEAN)"
+        },
+        {
+            argument = { type = 'literal_string', value = '100' },
+            data_type = { type = "DOUBLE" },
+            expected = "SELECT CAST('100' AS DOUBLE)"
+        },
+        {
+            argument = { type = 'literal_string', value = 'POINT (1 2)' },
+            data_type = { type = "GEOMETRY", srid = 1 },
+            expected = "SELECT CAST('POINT (1 2)' AS GEOMETRY(1))"
+        },
+        {
+            argument = { type = 'literal_string', value = '2 12:50:10.123' },
+            data_type = { type = "INTERVAL", fromTo = "DAY TO SECONDS", precision = 3, fraction = 4 },
+            expected = "SELECT CAST('2 12:50:10.123' AS INTERVAL DAY(3) TO SECOND(4))"
+        },
+        {
+            argument = { type = 'literal_string', value = '5-3' },
+            data_type = { type = "INTERVAL", fromTo = "YEAR TO MONTH", precision = 3 },
+            expected = "SELECT CAST('5-3' AS INTERVAL YEAR(3) TO MONTH)"
+        },
+        {
+            argument = { type = 'literal_string', value = '550e8400-e29b-11d4-a716' },
+            data_type = { type = "HASHTYPE", bytesize = 10 },
+            expected = "SELECT CAST('550e8400-e29b-11d4-a716' AS HASHTYPE(10 BYTE))"
+        },
+        {
+            argument = { type = 'literal_string', value = '100' },
+            data_type = { precision = 10, scale = 0, type = "DECIMAL" },
+            expected = "SELECT CAST('100' AS DECIMAL(10,0))"
+        }
+    }
+    for _, parameter in ipairs(parameters) do
+        local original_query = {
+            type = "select",
+            selectList = {
+                {
+                    type = "function_scalar_cast",
+                    name = "CAST",
+                    dataType = parameter.data_type,
+                    arguments = { parameter.argument }
+                }
+            }
+        }
+        assert_renders_to(original_query, parameter.expected)
+    end
+end
+
+function test_query_renderer.test_scalar_function_session_parameter()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {
+                arguments =
+                {
+                    { arguments = {}, name = "CURRENT_SESSION", type = "function_scalar" },
+                    {
+                        columnNr = 0,
+                        name = "col_1",
+                        tableName = "t",
+                        type = "column"
+                    }
+                },
+                name = "SESSION_PARAMETER",
+                numArgs = 2,
+                type = "function_scalar"
+            }
+        }
+    }
+    assert_renders_to(original_query, 'SELECT SESSION_PARAMETER(CURRENT_SESSION, "t"."col_1")')
+end
+
+function test_query_renderer.test_scalar_function_json_value()
+    local parameters = {
+        {
+            argument_1 = { type = 'literal_string', value = '{\"a\": 1}' },
+            argument_2 = { type = 'literal_string', value = '$.a' },
+            empty_behavior = {
+                type = "DEFAULT",
+                expression = { type = 'literal_string', value = '*** error ***' }
+            },
+            error_behavior = {
+                type = "DEFAULT",
+                expression = { type = 'literal_string', value = '*** error ***' }
+            },
+            data_type = { size = 1000, type = "VARCHAR", characterSet = "UTF8" },
+            expected = "SELECT JSON_VALUE('{\"a\": 1}', '$.a' RETURNING VARCHAR(1000) UTF8 " ..
+                    "DEFAULT '*** error ***' ON EMPTY DEFAULT '*** error ***' ON ERROR)"
+        },
+        {
+            argument_1 = { type = 'literal_string', value = '{\"a\": 1}' },
+            argument_2 = { type = 'literal_string', value = '$.a' },
+            empty_behavior = { type = "NULL", },
+            error_behavior = { type = "ERROR" },
+            data_type = { size = 100, type = "VARCHAR" },
+            expected = "SELECT JSON_VALUE('{\"a\": 1}', '$.a' RETURNING VARCHAR(100) NULL ON EMPTY ERROR ON ERROR)"
+        },
+    }
+    for _, parameter in ipairs(parameters) do
+        local original_query = {
+            type = "select",
+            selectList = {
+                {
+                    type = "function_scalar_json_value",
+                    name = "JSON_VALUE",
+                    dataType = parameter.data_type,
+                    arguments = { parameter.argument_1, parameter.argument_2 },
+                    returningDataType = parameter.data_type,
+                    emptyBehavior = parameter.empty_behavior,
+                    errorBehavior = parameter.error_behavior
+                }
+            }
+        }
+        assert_renders_to(original_query, parameter.expected)
+    end
+end
+
+function test_query_renderer.test_scalar_function_case()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {
+                type = "function_scalar_case",
+                name = "CASE",
+                basis = {
+                    columnNr = 1,
+                    name = "grade",
+                    tableName = "t",
+                    type = "column"
+                },
+                arguments = {
+                    { type = "literal_exactnumeric", value = "1" },
+                    { type = "literal_exactnumeric", value = "2" },
+                    { type = "literal_exactnumeric", value = "3" }
+                },
+                results = {
+                    { type = "literal_string", value = "GOOD" },
+                    { type = "literal_string", value = "FAIR" },
+                    { type = "literal_string", value = "POOR" },
+                    { type = "literal_string", value = "INVALID" }
+                }
+            }
+        }
+    }
+    assert_renders_to(original_query, "SELECT CASE \"t\".\"grade\" " ..
+            "WHEN 1 THEN 'GOOD' WHEN 2 THEN 'FAIR' WHEN 3 THEN 'POOR' ELSE 'INVALID' END")
+end
+
 function test_query_renderer.test_scalar_function_in_select_list()
     local original_query = {
         type = "select",
@@ -1043,7 +1260,8 @@ function test_query_renderer.test_scalar_function_in_select_list()
             right = {type = "literal_string", value = "eve"}
         }
     }
-    assert_renders_to(original_query, 'SELECT "PEOPLE"."LASTNAME" FROM "PEOPLE" WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
+    assert_renders_to(original_query, 'SELECT "PEOPLE"."LASTNAME" FROM "PEOPLE" ' ..
+            'WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
 end
 
 function test_query_renderer.test_current_user()
