@@ -1,0 +1,29 @@
+language: java
+
+sudo: required
+
+install:
+  - sudo apt-get update
+  - sudo apt install luarocks
+  - sudo luarocks install luacheck
+  - sudo luarocks install luacov
+  - sudo luarocks install luacov-coveralls
+  - sudo luarocks install LuaUnit
+  - sudo luarocks install Mockagne
+  - sudo luarocks install lua-cjson
+  - sudo luarocks install remotelog
+
+script:
+  - export PROJECT_BUILD="$HOME"'/build/exasol'
+  - export LUA_PATH="$PROJECT_BUILD"'/row-level-security-lua/src/main/lua/?.lua;'"$PROJECT_BUILD"'/row-level-security-lua/src/test/lua/?.lua;'`luarocks path --lr-path`
+  - lua -lluacov src/test/lua/exasolvs/test_query_renderer.lua
+  - lua -lluacov src/test/lua/exasolvs/test_request_dispatcher.lua
+  - lua -lluacov src/test/lua/exasolrls/test_adapter.lua
+  - lua -lluacov src/test/lua/exasolrls/test_metadata_reader.lua
+  - lua -lluacov src/test/lua/exasolrls/test_query_rewriter.lua
+  - lua -lluacov src/test/lua/exasolrls/test_table_protection_reader.lua
+  - lua -lluacov src/test/lua/exasolrls/test_user_information.lua
+  - luacheck src --codes --ignore 111 --ignore 112
+
+after_success:
+  - luacov-coveralls
