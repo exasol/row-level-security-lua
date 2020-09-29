@@ -49,7 +49,7 @@ function test_query_rewriter:test_tenant_protected_table()
         'SELECT "PROT"."C1" FROM "S"."PROT" WHERE ("PROT"."EXA_ROW_TENANT" = CURRENT_USER)')
 end
 
-function test_query_rewriter:test_group_protected_table()
+function test_query_rewriter:test_group_protected_table_with_multiple_groups()
     when(self.user.get_groups(any())).thenAnswer({"G1", "G2"})
     local original_query = {
         type = "select",
@@ -60,6 +60,19 @@ function test_query_rewriter:test_group_protected_table()
     }
     self:assert_rewrite(original_query, "S", "PROT:-g-",
         'SELECT "PROT"."C1" FROM "S"."PROT" WHERE ("PROT"."EXA_ROW_GROUP" IN (\'G1\', \'G2\'))')
+end
+
+function test_query_rewriter:test_group_protected_table_with_single_group()
+    when(self.user.get_groups(any())).thenAnswer({"G1"})
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "column", name = "C1", tableName = "PROT"},
+        },
+        from = {type  = "table", name = "PROT"}
+    }
+    self:assert_rewrite(original_query, "S", "PROT:-g-",
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE ("PROT"."EXA_ROW_GROUP" = \'G1\')')
 end
 
 function test_query_rewriter:test_tenant_plus_group_protected_table()
