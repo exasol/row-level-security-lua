@@ -308,27 +308,31 @@ function M.new (query)
         local type = expression.type
         if type == "column" then
             append_column_reference(expression)
-        elseif(type == "literal_exactnumeric" or type == "literal_boolean" or type == "literal_double") then
+        elseif type == "literal_null" then
+            append("null")
+        elseif type == "literal_bool" then
+            append(expression and "true" or "false")
+        elseif (type == "literal_exactnumeric") or (type == "literal_double") then
             append(expression.value)
-        elseif (type == "literal_string") then
+        elseif type == "literal_string" then
             append_quoted_literal_expression(expression)
-        elseif (type == 'literal_date') then
+        elseif type == "literal_date" then
             append("DATE ")
             append_quoted_literal_expression(expression)
-        elseif (type == 'literal_timestamp') then
+        elseif (type == "literal_timestamp") or (type == "literal_timestamputc") then
             append("TIMESTAMP ")
             append_quoted_literal_expression(expression)
-        elseif (type == "function_scalar") then
+        elseif type == "function_scalar" then
             append_scalar_function(expression)
-        elseif (type == "function_scalar_extract") then
+        elseif type == "function_scalar_extract" then
             append_scalar_function_extract(expression)
-        elseif (type == "function_scalar_cast") then
+        elseif type == "function_scalar_cast" then
             append_scalar_function_cast(expression)
-        elseif (type == "function_scalar_json_value") then
+        elseif type == "function_scalar_json_value" then
             append_scalar_function_json_value(expression)
-        elseif (type == "function_scalar_case") then
+        elseif type == "function_scalar_case" then
             append_scalar_function_case(expression)
-        elseif (text.starts_with(type, "predicate_")) then
+        elseif text.starts_with(type, "predicate_") then
             append_predicate(expression)
         else
             error('E-VS-QR-1: Unable to render unknown SQL expression type "' .. expression.type .. '".')

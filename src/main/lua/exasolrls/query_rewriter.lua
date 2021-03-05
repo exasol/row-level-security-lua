@@ -12,7 +12,7 @@ local function validate(query)
     local push_down_type = query.type
     if(push_down_type ~= "select") then
         error('E-RLS-QRW-2: Unable to rewrite push-down request of type "' .. push_down_type
-                .. '". Only SELECT is supported.')
+            .. '". Only SELECT is supported.')
     end
 end
 
@@ -64,8 +64,8 @@ local function construct_role_protection_filter(source_schema_id, table_id)
                 {type = "column", tableName = table_id, name = "EXA_ROW_ROLES"},
                 {type = "literal_exactnumeric", value = role_mask}
             }
-         },
-         right = {type = "literal_exactnumeric", value = 0}
+        },
+        right = {type = "literal_exactnumeric", value = 0}
     }
 end
 
@@ -113,6 +113,19 @@ local function rewrite_with_protection(query, source_schema_id, table_id, protec
     end
 end
 
+local function expand_select_list(query)
+    if query.selectList == nil then
+        log.debug('Missing select list interpreted as SELECT *.')
+    elseif  next(query.selectList) == nil then
+        log.debug('Empty select list pushed down. Replacing with constant expression to retrieve correct number of rows.')
+        query.selectList = {{type = "literal_bool", value = "true"}}
+    end
+end
+
+local function rewrite_common(query)
+    expand_select_list(query)
+end
+
 ---
 -- Rewrite the original query with RLS restrictions.
 --
@@ -127,6 +140,7 @@ end
 function M.rewrite(original_query, source_schema_id, adapter_cache)
     validate(original_query)
     local query = original_query
+    rewrite_common(query)
     local table_id = query.from.name
     query.from.schema = source_schema_id
     local protection = protection_reader.read(adapter_cache, table_id)
