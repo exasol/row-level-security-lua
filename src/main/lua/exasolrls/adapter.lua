@@ -1,7 +1,7 @@
 local metadata_reader = require("exasolrls.metadata_reader")
 local query_rewriter = require("exasolrls.query_rewriter")
 
-local M = {VERSION = "0.2.0", NAME = "Row-level Security adapter (LUA)"}
+local M = {VERSION = "0.4.0", NAME = "Row-level Security adapter (LUA)"}
 
 ---
 -- Create a virtual schema.
@@ -39,9 +39,9 @@ end
 
 function M.get_capabilities()
     return {type = "getCapabilities",
-            capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
-                        "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",
-                        "LIMIT_WITH_OFFSET"}}
+        capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
+            "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",
+            "LIMIT_WITH_OFFSET"}}
 end
 
 function M.push_down(_, request)

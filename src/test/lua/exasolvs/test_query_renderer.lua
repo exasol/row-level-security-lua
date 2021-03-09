@@ -4,7 +4,7 @@ local renderer = require("exasolvs.query_renderer")
 test_query_renderer = {}
 
 local function assert_renders_to(original_query, expected)
-    luaunit.assertEquals(renderer.new(original_query).render(), expected);
+    luaunit.assertEquals(renderer.new(original_query).render(), expected)
 end
 
 function test_query_renderer.test_render_simple_select()
@@ -16,7 +16,51 @@ function test_query_renderer.test_render_simple_select()
         },
         from = {type  = "table", name = "T1"}
     }
-    assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1"');
+    assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1"')
+end
+
+function test_query_renderer.test_render_literal_in_select_list()
+    local literals = {
+        {
+            input = {type = "literal_null"},
+            expected = "null"
+        },
+        {
+            input = {type = "literal_string", value = "a_string"},
+            expected = "'a_string'"
+        },
+        {
+            input = {type = "literal_double", value = 3.1415},
+            expected = "3.1415"},
+        {
+            input = {type = "literal_exactnumeric", value = 9876543210},
+            expected = "9876543210"
+        },
+        {
+            input = {type = "literal_bool", value = true},
+            expected = "true"
+        },
+        {
+            input = {type = "literal_date", value = "2015-12-01"},
+            expected = "DATE '2015-12-01'"
+        },
+        {
+            input = {type = "literal_timestamp", value = "2015-12-01 12:01:01.1234"},
+            expected = "TIMESTAMP '2015-12-01 12:01:01.1234'"
+        },
+        {
+            input = {type = "literal_timestamputc", value = "2015-12-01 12:01:01.1234"},
+            expected = "TIMESTAMP '2015-12-01 12:01:01.1234'"
+        }
+    }
+    for _, literal in ipairs(literals) do
+        local original_query = {
+            type = "select",
+            selectList = { literal.input },
+            from = {type  = "table", name = "T1"}
+        }
+        assert_renders_to(original_query, 'SELECT ' .. literal.expected ..' FROM "T1"')
+    end
 end
 
 function test_query_renderer.test_render_with_single_predicate_filter()
@@ -30,7 +74,7 @@ function test_query_renderer.test_render_with_single_predicate_filter()
             right = {type = "literal_exactnumeric", value = "30"}
         }
     }
-    assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS" WHERE ("MONTHS"."DAYS_IN_MONTH" > 30)');
+    assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS" WHERE ("MONTHS"."DAYS_IN_MONTH" > 30)')
 end
 
 function test_query_renderer.test_render_nested_predicate_filter()
@@ -53,7 +97,7 @@ function test_query_renderer.test_render_nested_predicate_filter()
         }
     }
     assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
-        .. ' WHERE ((\'Q3\' = "MONTHS"."QUARTER") AND ("MONTHS"."DAYS_IN_MONTH" > 30))');
+        .. ' WHERE ((\'Q3\' = "MONTHS"."QUARTER") AND ("MONTHS"."DAYS_IN_MONTH" > 30))')
 end
 
 function test_query_renderer.test_render_unary_not_filter()
@@ -71,7 +115,7 @@ function test_query_renderer.test_render_unary_not_filter()
         }
     }
     assert_renders_to(original_query, 'SELECT "MONTHS"."NAME" FROM "MONTHS"'
-        .. ' WHERE (NOT (\'Q3\' = "MONTHS"."QUARTER"))');
+        .. ' WHERE (NOT (\'Q3\' = "MONTHS"."QUARTER"))')
 end
 
 function test_query_renderer.test_scalar_function_in_select_list_without_arguments()
@@ -1180,7 +1224,7 @@ function test_query_renderer.test_scalar_function_json_value()
             },
             data_type = { size = 1000, type = "VARCHAR", characterSet = "UTF8" },
             expected = "SELECT JSON_VALUE('{\"a\": 1}', '$.a' RETURNING VARCHAR(1000) UTF8 " ..
-                    "DEFAULT '*** error ***' ON EMPTY DEFAULT '*** error ***' ON ERROR)"
+            "DEFAULT '*** error ***' ON EMPTY DEFAULT '*** error ***' ON ERROR)"
         },
         {
             argument_1 = { type = 'literal_string', value = '{\"a\": 1}' },
@@ -1238,7 +1282,7 @@ function test_query_renderer.test_scalar_function_case()
         }
     }
     assert_renders_to(original_query, "SELECT CASE \"t\".\"grade\" " ..
-            "WHEN 1 THEN 'GOOD' WHEN 2 THEN 'FAIR' WHEN 3 THEN 'POOR' ELSE 'INVALID' END")
+        "WHEN 1 THEN 'GOOD' WHEN 2 THEN 'FAIR' WHEN 3 THEN 'POOR' ELSE 'INVALID' END")
 end
 
 function test_query_renderer.test_scalar_function_in_select_list()
@@ -1261,7 +1305,7 @@ function test_query_renderer.test_scalar_function_in_select_list()
         }
     }
     assert_renders_to(original_query, 'SELECT "PEOPLE"."LASTNAME" FROM "PEOPLE" ' ..
-            'WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
+        'WHERE (LOWER("PEOPLE"."FIRSTNAME") = \'eve\')')
 end
 
 function test_query_renderer.test_current_user()
