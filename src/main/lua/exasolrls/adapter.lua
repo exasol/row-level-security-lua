@@ -47,7 +47,8 @@ end
 function M.push_down(_, request)
     local properties = request.schemaMetadataInfo.properties
     local adapter_cache = request.schemaMetadataInfo.adapterNotes
-    local rewritten_query = query_rewriter.rewrite(request.pushdownRequest, properties.SCHEMA_NAME, adapter_cache)
+    local rewritten_query =
+        query_rewriter.rewrite(request.pushdownRequest, properties.SCHEMA_NAME, adapter_cache, request.involvedTables)
     return {type = "pushdown", sql = rewritten_query}
 end
 
