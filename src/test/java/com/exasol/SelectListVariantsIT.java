@@ -16,7 +16,7 @@ import com.exasol.dbbuilder.VirtualSchema;
 @Testcontainers
 class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
     @Test
-    void testSelectStar() throws IOException, SQLException {
+    void testSelectStarOnUnprotectedTable() throws IOException, SQLException {
         final String sourceSchemaName = "SELECT_STAR_SCHEMA";
         final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN").insert(true).insert(false);

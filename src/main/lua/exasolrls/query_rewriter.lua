@@ -177,7 +177,7 @@ end
 -- @param source_schema_id source schema RLS is put on top of
 --
 -- @param adapter_cache cache taken from the adapter notes
--- 
+--
 -- @param involved_tables list of tables that appear in the query
 --
 -- @return string containing the rewritten query
