@@ -22,7 +22,7 @@ class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
         final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN").insert(true).insert(false);
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
-        final User user = factory.createLoginUser("SELECT_STAR_USER").grant(virtualSchema, ObjectPrivilege.SELECT);
+        final User user = createUserWithVirtualSchemaAccess("SELECT_STAR_USER", virtualSchema);
         assertThat(executeRlsQueryWithUser("SELECT * FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user),
                 table().row(true).row(false).matches());
     }
