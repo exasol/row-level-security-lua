@@ -19,7 +19,7 @@ class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
     @Test
     void testSelectStar() throws IOException, SQLException {
         final String sourceSchemaName = "SELECT_STAR_SCHEMA";
-        final Schema sourceSchema = factory.createSchema(sourceSchemaName);
+        final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN").insert(true).insert(false);
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
         final User user = factory.createLoginUser("SELECT_STAR_USER").grant(virtualSchema, ObjectPrivilege.SELECT);
@@ -27,20 +27,18 @@ class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
                 table().row(true).row(false).matches());
     }
 
-    // Too understand, why this test is necessary, you need to realize that constant expressions are evaluated by the
-    // core database before the push-down.
-    // This means that in the case below you actually get a push-down query with an empty select list, that the adapter
-    // internally needs to fill with a dummy expression that only serves the purpose of providing the right number of
-    // rows in the result set.
+    // This test case describes a situation where a push-down query request with an empty select list is received. This
+    // might happen because the core database evaluates constant expressions before performing the push-down query to
+    // the Virtual Schema. In such cases the adapter internally fills the select list with a dummy expression that only
+    // serves the purpose of providing the right number of rows in the result set.
     @Test
     void testEmptySelectList() throws IOException, SQLException {
         final String sourceSchemaName = "EMPTY_SELECT_SCHEMA";
-        final Schema sourceSchema = factory.createSchema(sourceSchemaName);
+        final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN").insert(true).insert(false);
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
-        final User user = factory.createLoginUser("EMPTY_SELECT_USER").grant(virtualSchema, ObjectPrivilege.SELECT);
+        final User user = createUserWithVirtualSchemaAccess("EMPTY_SELECT_USER", virtualSchema);
         assertThat(executeRlsQueryWithUser("SELECT 'foo' FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user),
                 table().row("foo").row("foo").matches());
     }
-
 }

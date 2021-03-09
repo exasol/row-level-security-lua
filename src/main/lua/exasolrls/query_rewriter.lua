@@ -113,11 +113,19 @@ local function rewrite_with_protection(query, source_schema_id, table_id, protec
     end
 end
 
+local function is_select_star (select_list)
+    return select_list == nil
+end
+
+local function is_empty_select_list(select_list)
+    return next(select_list) == nil
+end
+
 local function expand_select_list(query)
-    if query.selectList == nil then
-        log.debug('Missing select list interpreted as SELECT *.')
-    elseif  next(query.selectList) == nil then
-        log.debug('Empty select list pushed down. Replacing with constant expression to retrieve correct number of rows.')
+    if is_select_star(query.selectList) then
+        log.debug('Missing select list interpreted as: SELECT *')
+    elseif is_empty_select_list(query.selectList) then
+        log.debug('Empty select list pushed down. Replacing with constant expression to get correct number of rows.')
         query.selectList = {{type = "literal_bool", value = "true"}}
     end
 end

@@ -1,4 +1,4 @@
-# row-level-security-lua, released 2020-03-??
+# row-level-security-lua 0.4.0, released 2020-03-??
 
 Code name: Single group optimization
 
@@ -14,4 +14,5 @@ Release 0.4.0 brings support for empty push-down select lists &mdash; which can 
 
 ### Test Dependency Updates
 
+* Updated `com.exasol:exasol-testcontainers:3.0.0` to `3.5.1`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.1.0` to `1.4.0`

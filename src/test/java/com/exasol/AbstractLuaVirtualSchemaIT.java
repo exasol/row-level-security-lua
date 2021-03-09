@@ -17,6 +17,7 @@ import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.AdapterScript;
 import com.exasol.dbbuilder.AdapterScript.Language;
 import com.exasol.dbbuilder.ExasolObjectFactory;
+import com.exasol.dbbuilder.ObjectPrivilege;
 import com.exasol.dbbuilder.Schema;
 import com.exasol.dbbuilder.User;
 import com.exasol.dbbuilder.VirtualSchema;
@@ -24,6 +25,7 @@ import com.exasol.dbbuilder.VirtualSchema;
 abstract class AbstractLuaVirtualSchemaIT {
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-0.4.0.lua");
     // FIXME: replace by officially released version once available
+    // https://github.com/exasol/row-level-security-lua/issues/39
     @Container
     private static ExasolContainer<? extends ExasolContainer<?>> container = //
             new ExasolContainer<>("exasol/docker-db:7.0.0") //
@@ -70,5 +72,13 @@ abstract class AbstractLuaVirtualSchemaIT {
                 .createStatement();
         final ResultSet result = statement.executeQuery(query);
         return result;
+    }
+
+    protected User createUserWithVirtualSchemaAccess(String name, final VirtualSchema virtualSchema) {
+        return factory.createLoginUser(name).grant(virtualSchema, ObjectPrivilege.SELECT);
+    }
+
+    protected Schema createSchema(final String sourceSchemaName) {
+        return factory.createSchema(sourceSchemaName);
     }
 }

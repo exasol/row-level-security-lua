@@ -47,11 +47,13 @@ To make this process easier, the [Maven POM file](../../pom.xml) contains an exe
 
 Note that the entry point `request_dispatcher.lua` is a regular Lua script that must be added to the bundle using the `-s` switch and its relative path. The remaining bundle elements are Lua modules and must be listed in dot-notation.
 
-To only make a bundle via Maven run the following command:
+To make a bundle via Maven run the following command:
 
 ```bash
 mvn exec:exec@bundle
 ```
+
+This is quite fast since it skips the other Maven steps.
 
 ## How to Run Lua Unit Tests
 

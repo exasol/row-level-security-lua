@@ -19,12 +19,12 @@ class RequestDispatcherIT extends AbstractLuaVirtualSchemaIT {
     @Test
     void testUnprotected() throws IOException, SQLException {
         final String sourceSchemaName = "UNPROTECTED";
-        final Schema sourceSchema = factory.createSchema(sourceSchemaName);
+        final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN") //
                 .insert("true") //
                 .insert("false");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
-        final User user = factory.createLoginUser("UP_USER").grant(virtualSchema, ObjectPrivilege.SELECT);
+        final User user = createUserWithVirtualSchemaAccess("UP_USER", virtualSchema);
         assertThat(executeRlsQueryWithUser("SELECT C1 FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user),
                 table("BOOLEAN").row(true).row(false).matches());
     }
