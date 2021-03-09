@@ -103,7 +103,20 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
     end
 end
 
+local function replace_empty_select_list_with_constant_expression(select_list)
+    log.debug('Empty select list pushed down. Replacing with constant expression to retrieve correct number of rows.')
+    select_list = {{type = "literal_bool", value = "true"}}
+end
+
+local function expand_select_list_with_protection(select_list)
+    if select_list == nil then
+        log.debug('Expanding SELECT * to explicit column list.')
+    elseif  next(select_list) == nil then
+    end
+end
+
 local function rewrite_with_protection(query, source_schema_id, table_id, protection)
+    expand_select_list_with_protection(query.selectList)
     local protection_filter = construct_protection_filter(source_schema_id, table_id, protection)
     local original_filter = query.filter
     if original_filter then
@@ -113,17 +126,15 @@ local function rewrite_with_protection(query, source_schema_id, table_id, protec
     end
 end
 
-local function expand_select_list(query)
-    if query.selectList == nil then
-        log.debug('Missing select list interpreted as SELECT *.')
-    elseif  next(query.selectList) == nil then
+local function expand_select_list_unprotected(query)
+    if next(query.selectList) == nil then
         log.debug('Empty select list pushed down. Replacing with constant expression to retrieve correct number of rows.')
         query.selectList = {{type = "literal_bool", value = "true"}}
     end
 end
 
-local function rewrite_common(query)
-    expand_select_list(query)
+local function rewrite_unprotected(query)
+    expand_select_list_unprotected(query)
 end
 
 ---
@@ -140,7 +151,6 @@ end
 function M.rewrite(original_query, source_schema_id, adapter_cache)
     validate(original_query)
     local query = original_query
-    rewrite_common(query)
     local table_id = query.from.name
     query.from.schema = source_schema_id
     local protection = protection_reader.read(adapter_cache, table_id)
@@ -148,6 +158,7 @@ function M.rewrite(original_query, source_schema_id, adapter_cache)
         rewrite_with_protection(query, source_schema_id, table_id, protection)
     else
         log.debug('Table "%s" is not protected. No filters added.', table_id)
+        rewrite_unprotected(query)
     end
     return renderer.new(query).render()
 end
