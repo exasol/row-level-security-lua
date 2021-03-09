@@ -74,7 +74,7 @@ abstract class AbstractLuaVirtualSchemaIT {
         return result;
     }
 
-    protected User createUserWithVirtualSchemaAccess(String name, final VirtualSchema virtualSchema) {
+    protected User createUserWithVirtualSchemaAccess(final String name, final VirtualSchema virtualSchema) {
         return factory.createLoginUser(name).grant(virtualSchema, ObjectPrivilege.SELECT);
     }
 

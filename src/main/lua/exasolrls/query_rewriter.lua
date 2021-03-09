@@ -116,18 +116,38 @@ local function replace_empty_select_list_with_constant_expression(query)
     query.selectList = {{type = "literal_bool", value = "true"}}
 end
 
-local function expand_protected_select_list(query)
+local function define_column(table_name, column_name, index)
+    return {
+        type = "column",
+        name = column_name,
+        columnNr = index,
+        tableName = table_name
+    }
+end
+
+local function replace_star_with_payload_columns(query, involved_tables)
+    local select_list = {}
+    local index = 1
+    for _, involved_table in ipairs(involved_tables) do
+        for _, column in ipairs(involved_table.columns) do
+            select_list[index] = define_column(involved_table.name, column.name, index)
+            index = index + 1
+        end
+    end
+    query.selectList = select_list
+end
+
+local function expand_protected_select_list(query, involved_tables)
     if is_select_star(query.selectList) then
         log.debug('Expanding missing select list in push-down request to list of all payload columns.')
-        -- * expansion is only necessary in protected scenario. Will be done with this ticket:
-        -- https://github.com/exasol/row-level-security-lua/issues/30
+        replace_star_with_payload_columns(query, involved_tables)
     elseif is_empty_select_list(query.selectList) then
         replace_empty_select_list_with_constant_expression(query)
     end
 end
 
-local function rewrite_with_protection(query, source_schema_id, table_id, protection)
-    expand_protected_select_list(query)
+local function rewrite_with_protection(query, source_schema_id, table_id, protection, involved_tables)
+    expand_protected_select_list(query, involved_tables)
     local protection_filter = construct_protection_filter(source_schema_id, table_id, protection)
     local original_filter = query.filter
     if original_filter then
@@ -137,7 +157,7 @@ local function rewrite_with_protection(query, source_schema_id, table_id, protec
     end
 end
 
-local function expand_unprotected_select_list(query)
+local function expand_select_list_without_protection(query)
     if is_select_star(query.selectList) then
         log.debug('Missing select list interpreted as: SELECT *')
     elseif is_empty_select_list(query.selectList) then
@@ -146,7 +166,7 @@ local function expand_unprotected_select_list(query)
 end
 
 local function rewrite_without_protection(query)
-    expand_unprotected_select_list(query)
+    expand_select_list_without_protection(query)
 end
 
 ---
@@ -158,16 +178,18 @@ end
 --
 -- @param adapter_cache cache taken from the adapter notes
 --
+-- @param involved_tables list of tables that appear in the query
+--
 -- @return string containing the rewritten query
 --
-function M.rewrite(original_query, source_schema_id, adapter_cache)
+function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
     validate(original_query)
     local query = original_query
     local table_id = query.from.name
     query.from.schema = source_schema_id
     local protection = protection_reader.read(adapter_cache, table_id)
     if protection.protected then
-        rewrite_with_protection(query, source_schema_id, table_id, protection)
+        rewrite_with_protection(query, source_schema_id, table_id, protection, involved_tables)
     else
         rewrite_without_protection(query)
         log.debug('Table "%s" is not protected. No filters added.', table_id)

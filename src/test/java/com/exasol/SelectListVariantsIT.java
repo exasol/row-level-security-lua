@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.ObjectPrivilege;
 import com.exasol.dbbuilder.Schema;
 import com.exasol.dbbuilder.User;
 import com.exasol.dbbuilder.VirtualSchema;
@@ -17,7 +16,7 @@ import com.exasol.dbbuilder.VirtualSchema;
 @Testcontainers
 class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
     @Test
-    void testSelectStar() throws IOException, SQLException {
+    void testSelectStarOnUnprotectedTable() throws IOException, SQLException {
         final String sourceSchemaName = "SELECT_STAR_SCHEMA";
         final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN").insert(true).insert(false);
@@ -25,6 +24,19 @@ class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
         final User user = createUserWithVirtualSchemaAccess("SELECT_STAR_USER", virtualSchema);
         assertThat(executeRlsQueryWithUser("SELECT * FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user),
                 table().row(true).row(false).matches());
+    }
+
+    @Test
+    void testSelectStarOnProtectedTable() throws IOException, SQLException {
+        final String sourceSchemaName = "SELECT_STAR_PROTECTED_SCHEMA";
+        final Schema sourceSchema = createSchema(sourceSchemaName);
+        sourceSchema.createTable("T", "C1", "BOOLEAN", "EXA_ROW_TENANT", "VARCHAR(128)") //
+                .insert(true, "SELECT_STAR_PROTECTED_USER") //
+                .insert(false, "NOONE");
+        final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
+        final User user = createUserWithVirtualSchemaAccess("SELECT_STAR_PROTECTED_USER", virtualSchema);
+        assertThat(executeRlsQueryWithUser("SELECT * FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user),
+                table().row(true).matches());
     }
 
     // This test case describes a situation where a push-down query request with an empty select list is received. This
