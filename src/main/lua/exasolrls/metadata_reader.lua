@@ -28,9 +28,9 @@ local function translate_column_metadata(column)
     end
 end
 
-local function read_columns(table_id)
+local function translate_columns_metadata(table_id)
     local ok, result = _G.exa.pquery('DESCRIBE "' .. table_id .. '"')
-    local columns = {}
+    local translated_columns = {}
     local tenant_protected, role_protected, group_protected
     if ok then
         for i = 1, #result do
@@ -43,10 +43,10 @@ local function read_columns(table_id)
             elseif(column_id == "EXA_ROW_GROUP") then
                 group_protected = true
             else
-                table.insert(columns, translate_column_metadata(column))
+                table.insert(translated_columns, translate_column_metadata(column))
             end
         end
-        return columns, tenant_protected, role_protected, group_protected
+        return translated_columns, tenant_protected, role_protected, group_protected
     else
         error("E-MDR-3: Unable to read column metadata from source table " .. table_id .. ".  Caused by: "
             .. result.error_message)
@@ -57,7 +57,7 @@ local function is_rls_metadata_table(table_id)
     return (table_id == "EXA_RLS_USERS") or (table_id == "EXA_ROLE_MAPPING") or (table_id == "EXA_GROUP_MEMBERS")
 end
 
-local function read_tables()
+local function translate_table_metadata()
     local ok, result = _G.exa.pquery('SELECT "TABLE_NAME" FROM "CAT"')
     local tables = {}
     local table_protection = {}
@@ -66,7 +66,7 @@ local function read_tables()
             local table_id = result[i].TABLE_NAME
             if not is_rls_metadata_table(table_id)
             then
-                local columns, tenant_protected, role_protected, group_protected = read_columns(table_id)
+                local columns, tenant_protected, role_protected, group_protected = translate_columns_metadata(table_id)
                 table.insert(tables, {name = table_id, columns = columns})
                 local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
                         .. (group_protected and "g" or "-")
@@ -89,7 +89,7 @@ end
 --
 function M.read(schema_id)
     open_schema(schema_id)
-    local tables, table_protection = read_tables()
+    local tables, table_protection = translate_table_metadata()
     return {tables = tables, adapterNotes = table.concat(table_protection, ",")}
 end
 
