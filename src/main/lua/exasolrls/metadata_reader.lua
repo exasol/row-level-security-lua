@@ -11,13 +11,13 @@ local function open_schema(schema_id)
     end
 end
 
-local function translate_varchar_type(column_name, column_type)
+local function translate_varchar_type(column_id, column_type)
     local size, character_set = string.match(column_type, "VARCHAR%((%d+)%) (%w+)")
     return {name = column_id, dataType = {type = "VARCHAR", size = tonumber(size), characterSet = character_set}}
 end
 
 local function translate_column_metadata(column)
-    local column_name = column.COLUMN_NAME
+    local column_id = column.COLUMN_NAME
     local column_type = column.SQL_TYPE
     if (column_type == "BOOLEAN") or (column_type == "DATE") or (column_type == "DOUBLE PRECISION")  then
         return {name = column_id, dataType = {type = column_type}}
