@@ -10,6 +10,7 @@ On protected tables a `SELECT *` is now turned into the explicit column list min
 
 ## Bugfixes
 
+* #27: Added validation for Virtual Schema properties.
 * #30: Added support for `SELECT *` on protected tables.
 * #33: Fixed table indexing when skipping RLS metadata tables.
 * #35: Now replacing empty select lists with constant dummy expression to get back a dummy result set where only the number of rows matters.

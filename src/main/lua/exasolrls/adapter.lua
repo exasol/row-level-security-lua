@@ -3,6 +3,14 @@ local query_rewriter = require("exasolrls.query_rewriter")
 
 local M = {VERSION = "0.4.0", NAME = "Row-level Security adapter (LUA)"}
 
+local function validate(properties)
+    local schema_id = properties.SCHEMA_NAME
+    if not schema_id or (schema_id == "") then
+        error('F-LRLS-ADA-1: Missing mandatory property "SCHEMA_NAME". '
+        .. 'Please define the name of the source schema with this property.');
+    end
+end
+
 ---
 -- Create a virtual schema.
 --
@@ -14,6 +22,7 @@ local M = {VERSION = "0.4.0", NAME = "Row-level Security adapter (LUA)"}
 --
 function M.create_virtual_schema(_, request)
     local properties = request.schemaMetadataInfo.properties
+    validate(properties)
     local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
     return {type = "createVirtualSchema", schemaMetadata = schema_metadata}
 end
