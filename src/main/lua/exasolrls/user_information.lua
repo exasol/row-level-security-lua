@@ -13,6 +13,7 @@ function M.get_groups(source_schema_id)
     local groups = {}
     local sql = 'SELECT "EXA_RLS_GROUP" FROM "' .. source_schema_id
         .. '"."EXA_GROUP_MEMBERS" WHERE "EXA_RLS_USER_NAME" = CURRENT_USER'
+    log.trace("Querying group information: " .. sql)
     local ok, result = _G.exa.pquery(sql)
     if ok then
         for i = 1, #result do
@@ -35,6 +36,7 @@ function M.get_role_mask(source_schema_id)
     local sql = 'SELECT "EXA_ROLE_MASK" FROM "' .. source_schema_id
         .. '"."EXA_RLS_USERS" WHERE "EXA_USER_NAME" = CURRENT_USER'
     log.debug("Reading user's role mask: " .. sql)
+    log.trace("Querying role information: " .. sql)
     local ok, result = _G.exa.pquery(sql)
     if ok then
         return result[1][1] or 0
