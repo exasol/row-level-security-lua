@@ -46,4 +46,18 @@ function test_metadata_reader.test_hide_control_columns()
         }, adapterNotes = "T3:tr-,T4:--g" })
 end
 
+function test_metadata_reader.test_varchar_column_translation()
+        local exa_mock = mockagne.getMock()
+    _G.exa = exa_mock
+    mockagne.when(exa_mock.pquery('OPEN SCHEMA "S"')).thenAnswer(true)
+    mockagne.when(exa_mock.pquery('SELECT "TABLE_NAME" FROM "CAT"'))
+        .thenAnswer(true, {{TABLE_NAME = "T5"}})
+    mockagne.when(exa_mock.pquery('DESCRIBE "T5"'))
+        .thenAnswer(true, {{COLUMN_NAME = "C5_1", SQL_TYPE = "VARCHAR(70) UTF8"}})
+    luaunit.assertEquals(reader.read("S"),
+        {tables = {
+            {name = "T5", columns = {{name = "C5_1", dataType = {type = "VARCHAR", characterSet = "UTF8", size = 70}}}}
+        }, adapterNotes = "T5:---" })
+end
+
 os.exit(luaunit.LuaUnit.run())
