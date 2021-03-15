@@ -13,18 +13,17 @@ import com.exasol.dbbuilder.AdapterScript;
 import com.exasol.dbbuilder.VirtualSchema;
 
 @Testcontainers
-class PropertiesValdidationIT extends AbstractLuaVirtualSchemaIT {
+class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {
     @Test
-    void testValdiationErrorReachesCallingSqlCode() throws IOException {
+    void testCreateVirtualSchemaWithMissingSchemaName() throws IOException {
         final String virtualSchemaName = "VIRTUAL_SCHEMA_FOR_MISSING_SCHEMA_PROPERTY";
         final AdapterScript adapter = createAdapterScript("SCHEMA_FOR_MISSING_SCHEMA_PROPERTY");
         final VirtualSchema.Builder virtualSchemaBuilder = factory.createVirtualSchemaBuilder(virtualSchemaName) //
                 .adapterScript(adapter) //
-                // Note that the source schema is missing here on purpose!
                 .properties(DEBUG_PROPERTIES);
         final Exception exception = assertThrows(Exception.class, () -> virtualSchemaBuilder.build());
         assertThat(exception.getCause().getMessage(), //
                 equalTo("F-RLS-ADA-1: Missing mandatory property \"SCHEMA_NAME\". "
-                        + "Please define the name of the source schema in this property."));
+                        + "Please define the name of the source schema."));
     }
 }
