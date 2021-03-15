@@ -1,7 +1,7 @@
 package com.exasol;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -22,8 +22,6 @@ class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {
                 .adapterScript(adapter) //
                 .properties(DEBUG_PROPERTIES);
         final Exception exception = assertThrows(Exception.class, () -> virtualSchemaBuilder.build());
-        assertThat(exception.getCause().getMessage(), //
-                equalTo("F-RLS-ADA-1: Missing mandatory property \"SCHEMA_NAME\". "
-                        + "Please define the name of the source schema."));
+        assertThat(exception.getCause().getMessage(), containsString("Missing mandatory property \"SCHEMA_NAME\"."));
     }
 }
