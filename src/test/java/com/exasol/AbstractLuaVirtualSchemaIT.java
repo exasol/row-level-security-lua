@@ -23,6 +23,8 @@ import com.exasol.dbbuilder.User;
 import com.exasol.dbbuilder.VirtualSchema;
 
 abstract class AbstractLuaVirtualSchemaIT {
+    protected static final Map<String, String> DEBUG_PROPERTIES = Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS",
+            "172.17.0.1:3000");
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-0.4.0.lua");
     // FIXME: replace by officially released version once available
     // https://github.com/exasol/row-level-security-lua/issues/39
@@ -55,12 +57,16 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) throws IOException {
         final String name = sourceSchema.getName();
-        final String content = EXASOL_LUA_MODULE_LOADER_WORKAROUND + Files.readString(RLS_PACKAGE_PATH);
-        final AdapterScript adapterScript = scriptSchema.createAdapterScript(name + "_ADAPTER", Language.LUA, content);
+        final AdapterScript adapterScript = createAdapterScript(name);
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS", "172.17.0.1:3000")).build();
+                .properties(DEBUG_PROPERTIES).build();
+    }
+
+    protected AdapterScript createAdapterScript(final String prefix) throws IOException {
+        final String content = EXASOL_LUA_MODULE_LOADER_WORKAROUND + Files.readString(RLS_PACKAGE_PATH);
+        return scriptSchema.createAdapterScript(prefix + "_ADAPTER", Language.LUA, content);
     }
 
     protected String getVirtualSchemaName(final String sourceSchemaName) {
