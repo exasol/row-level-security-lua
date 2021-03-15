@@ -7,11 +7,11 @@ local M  = {}
 
 local function validate(query)
     if not query then
-        error("E-RLS-QRW-1: Unable to rewrite query because it was <nil>.")
+        error("E-LRLS-QRW-1: Unable to rewrite query because it was <nil>.")
     end
     local push_down_type = query.type
     if(push_down_type ~= "select") then
-        error('E-RLS-QRW-2: Unable to rewrite push-down request of type "' .. push_down_type
+        error('E-LRLS-QRW-2: Unable to rewrite push-down request of type "' .. push_down_type
             .. '". Only SELECT is supported.')
     end
 end
@@ -99,7 +99,7 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
         log.debug('Table "%s"."%s" is role-protected. Adding role mask as row filter.', source_schema_id, table_id)
         return construct_role_protection_filter(source_schema_id, table_id)
     else
-        error("E-RLS-QRW-3: Illegal protection scheme used. Allowed schemes are: tenant, group, tenant + group")
+        error("E-LRLS-QRW-3: Illegal protection scheme used. Allowed schemes are: tenant, group, tenant + group")
     end
 end
 

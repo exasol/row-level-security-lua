@@ -27,7 +27,7 @@ function M.read(adapter_cache, table_id)
             }
         end
     end
-    error('E-RLS-TPR-1: Could not find table protection cache entry for table "' .. table_id .. '".')
+    error('E-LRLS-TPR-1: Could not find table protection cache entry for table "' .. table_id .. '".')
 end
 
 return M;

@@ -61,7 +61,8 @@ abstract class AbstractLuaVirtualSchemaIT {
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(DEBUG_PROPERTIES).build();
+                .properties(DEBUG_PROPERTIES) //
+                .build();
     }
 
     protected AdapterScript createAdapterScript(final String prefix) throws IOException {

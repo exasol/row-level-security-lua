@@ -10,8 +10,7 @@ end
 
 local function validate(properties)
     if not is_schema_name_property_present(properties) then
-        error('F-LRLS-ADA-1: Missing mandatory property "SCHEMA_NAME". '
-        .. 'Please define the name of the source schema with this property.');
+        error('F-LRLS-ADA-1: Missing mandatory property "SCHEMA_NAME". Please define the name of the source schema.');
     end
 end
 
