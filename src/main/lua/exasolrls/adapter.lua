@@ -3,9 +3,13 @@ local query_rewriter = require("exasolrls.query_rewriter")
 
 local M = {VERSION = "0.4.0", NAME = "Row-level Security adapter (LUA)"}
 
-local function validate(properties)
+local function is_schema_name_property_present(properties)
     local schema_id = properties.SCHEMA_NAME
-    if not schema_id or (schema_id == "") then
+    return schema_id and (schema_id ~= "")
+end
+
+local function validate(properties)
+    if not is_schema_name_property_present(properties) then
         error('F-LRLS-ADA-1: Missing mandatory property "SCHEMA_NAME". '
         .. 'Please define the name of the source schema with this property.');
     end
