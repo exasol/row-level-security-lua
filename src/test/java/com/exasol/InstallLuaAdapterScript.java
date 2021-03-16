@@ -3,16 +3,11 @@ package com.exasol;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.logging.Logger;
 
+import com.exasol.dbbuilder.*;
 import com.exasol.dbbuilder.AdapterScript.Language;
-import com.exasol.dbbuilder.DatabaseObjectFactory;
-import com.exasol.dbbuilder.ExasolObjectFactory;
-import com.exasol.dbbuilder.Schema;
 
 /**
  * This class contains an installation helper intended to simplify declaring Lua adapter scripts.

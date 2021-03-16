@@ -1,26 +1,22 @@
 package com.exasol;
 
+import static com.exasol.RlsTestConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Map;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
-import com.exasol.dbbuilder.AdapterScript;
+import com.exasol.dbbuilder.*;
 import com.exasol.dbbuilder.AdapterScript.Language;
-import com.exasol.dbbuilder.ExasolObjectFactory;
-import com.exasol.dbbuilder.ObjectPrivilege;
-import com.exasol.dbbuilder.Schema;
-import com.exasol.dbbuilder.User;
-import com.exasol.dbbuilder.VirtualSchema;
 
 abstract class AbstractLuaVirtualSchemaIT {
     protected static final Map<String, String> DEBUG_PROPERTIES = Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS",
@@ -29,7 +25,7 @@ abstract class AbstractLuaVirtualSchemaIT {
     // FIXME: replace by officially released version once available
     // https://github.com/exasol/row-level-security-lua/issues/39
     @Container
-    private static ExasolContainer<? extends ExasolContainer<?>> container = //
+    protected static ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>("exasol/docker-db:7.0.0") //
                     .withRequiredServices() //
                     .withExposedPorts(8563) //
@@ -50,14 +46,19 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     @BeforeAll
     static void beforeAll() throws NoDriverFoundException, SQLException {
-        connection = container.createConnection("");
+        connection = EXASOL.createConnection("");
         factory = new ExasolObjectFactory(connection);
         scriptSchema = factory.createSchema("L");
     }
 
-    protected VirtualSchema createVirtualSchema(final Schema sourceSchema) throws IOException {
+    protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
         final String name = sourceSchema.getName();
-        final AdapterScript adapterScript = createAdapterScript(name);
+        AdapterScript adapterScript;
+        try {
+            adapterScript = createAdapterScript(name);
+        } catch (final IOException exception) {
+            throw new AssertionError("Unable to prepare adapter script \"" + name + "\" required for test", exception);
+        }
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
@@ -75,10 +76,19 @@ abstract class AbstractLuaVirtualSchemaIT {
     }
 
     protected ResultSet executeRlsQueryWithUser(final String query, final User user) throws SQLException {
-        final Statement statement = container.createConnectionForUser(user.getName(), user.getPassword())
+        final Statement statement = EXASOL.createConnectionForUser(user.getName(), user.getPassword())
                 .createStatement();
         final ResultSet result = statement.executeQuery(query);
         return result;
+    }
+
+    protected Table createUserConfigurationTable(final Schema schema) {
+        return schema.createTable(USERS_TABLE, USER_NAME_COLUMN, IDENTIFIER_TYPE, ROLE_MASK_COLUMN, ROLE_MASK_TYPE);
+    }
+
+    protected Table creatGroupMembershipTable(final Schema sourceSchema) {
+        return sourceSchema.createTable(GROUP_MEMBERSHIP_TABLE, USER_NAME_COLUMN, IDENTIFIER_TYPE, ROW_GROUP_COLUMN,
+                IDENTIFIER_TYPE);
     }
 
     protected User createUserWithVirtualSchemaAccess(final String name, final VirtualSchema virtualSchema) {
@@ -87,5 +97,13 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected Schema createSchema(final String sourceSchemaName) {
         return factory.createSchema(sourceSchemaName);
+    }
+
+    protected void assertRlsQueryWithUser(final String sql, final User user, final Matcher<ResultSet> expected) {
+        try {
+            assertThat(executeRlsQueryWithUser(sql, user), expected);
+        } catch (final SQLException exception) {
+            throw new AssertionError("Unable to run assertion query.", exception);
+        }
     }
 }
