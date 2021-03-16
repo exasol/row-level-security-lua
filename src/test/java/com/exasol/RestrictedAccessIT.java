@@ -14,11 +14,6 @@ import com.exasol.dbbuilder.*;
 
 @Testcontainers
 class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
-    /**
-     * Test accessing a role-protected table with a user who does not have any roles
-     *
-     * This is a regression test for <a href="https://github.com/exasol/row-level-security-lua/issues/32">#32</a>
-     */
     @Test
     void testAccessRoleProtectedTableWithoutRole() {
         final Schema schema = createSchema("SCHEMA_FOR_ACCESS_WITHOUT_ROLE");
@@ -31,16 +26,6 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user, table().matches());
     }
 
-    /**
-     * Test accessing a role-protected table with a user who does not have any roles
-     *
-     * <p>
-     * This is a regression test for <a href="https://github.com/exasol/row-level-security-lua/issues/32">#32</a>.
-     * </p>
-     * <p>
-     * Note the the LuaVS prototype based on Exasol 7.0 contains a bug that causes an internal server error if
-     * <code>pquery</code> fails (e.g. because of missing tables). This test requires 7.1 or later.
-     */
     @Test
     void testAccessRoleProtectedTableWhenUserMappingIsMissing() {
         assumeExasolSevenOneOrLater();
