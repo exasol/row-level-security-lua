@@ -35,11 +35,15 @@ end
 function M.get_role_mask(source_schema_id)
     local sql = 'SELECT "EXA_ROLE_MASK" FROM "' .. source_schema_id
         .. '"."EXA_RLS_USERS" WHERE "EXA_USER_NAME" = CURRENT_USER'
-    log.debug("Reading user's role mask: " .. sql)
     log.trace("Querying role information: " .. sql)
     local ok, result = _G.exa.pquery(sql)
     if ok then
-        return result[1][1] or 0
+        if(#result == 0) then
+            log.debug("Current user has no role assignment entry.")
+            return 0
+        else
+            return result[1][1] or 0
+        end
     else
         log.warn("W-LRLS-USI-2: Unable to determine the current user's RLS roles. Cause: %s", result)
         return 0;
