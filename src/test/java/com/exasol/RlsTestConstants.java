@@ -10,6 +10,7 @@ public final class RlsTestConstants {
     public static final String ROLE_MASK_COLUMN = "EXA_ROLE_MASK";
     public static final String ROLE_MASK_TYPE = "DECIMAL(20,0)";
     public static final String IDENTIFIER_TYPE = "VARCHAR(128)";
+    public static final int PUBLIC_ROLE_BIT_INDEX = 63;
 
     private RlsTestConstants() {
         // prevent instantiation

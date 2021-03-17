@@ -3,7 +3,7 @@ local protection_reader = require("exasolrls.table_protection_reader")
 local user = require("exasolrls.user_information")
 local log = require("remotelog")
 
-local M  = {}
+local M  = { PUBLIC_ROLE_BIT_INDEX = 63 }
 
 local function validate(query)
     if not query then
@@ -62,7 +62,14 @@ local function construct_role_protection_filter(source_schema_id, table_id)
             name = "BIT_AND",
             arguments = {
                 {type = "column", tableName = table_id, name = "EXA_ROW_ROLES"},
-                {type = "literal_exactnumeric", value = role_mask}
+                {
+                    type = "function_scalar",
+                    name = "BIT_SET",
+                    arguments = {
+                        {type = "literal_exactnumeric", value = role_mask},
+                        {type = "literal_exactnumeric", value = M.PUBLIC_ROLE_BIT_INDEX}
+                    }
+                }
             }
         },
         right = {type = "literal_exactnumeric", value = 0}
