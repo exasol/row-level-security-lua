@@ -76,8 +76,7 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
     void testPublicAccessRoleWithNonMatchingRole() {
         final Schema schema = createSchema("SCHEMA_PUBLIC_ACCESS_NON_MATCHING_ROLE");
         final Table table = schema.createTable("T", "C1", "VARCHAR(20)", ROW_ROLES_COLUMN, ROLE_MASK_TYPE) //
-                .insert("FOR ROLE 1", bitsToLong(0)) //
-                .insert("FOR_ROLE_2", bitsToLong(1));
+                .insert("FOR ROLE 1", bitsToLong(0));
         addPublicRoleEntry(table, "PUBLIC");
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
         final User user = createUserWithVirtualSchemaAccess("USER_PUBLIC_ACCESS_NON_MATCHING_ROLE", virtualSchema) //
@@ -85,6 +84,6 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
         createUserConfigurationTable(schema) //
                 .insert(user.getName(), bitsToLong(1));
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T ORDER BY C1", user,
-                table().row("FOR_ROLE_2").row("PUBLIC").matches());
+                table().row("PUBLIC").matches());
     }
 }
