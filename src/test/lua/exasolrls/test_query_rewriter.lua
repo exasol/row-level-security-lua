@@ -99,7 +99,7 @@ function test_query_rewriter:test_role_protected_table()
         from = {type  = "table", name = "PROT"}
     }
     self:assert_rewrite(original_query, "S", "PROT:--r",
-        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (BIT_AND("PROT"."EXA_ROW_ROLES", 5) <> 0)')
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (BIT_AND("PROT"."EXA_ROW_ROLES", BIT_SET(5, 63)) <> 0)')
 end
 
 function test_query_rewriter:test_tenant_plus_role_protected_table()
@@ -113,7 +113,7 @@ function test_query_rewriter:test_tenant_plus_role_protected_table()
     }
     self:assert_rewrite(original_query, "S", "PROT:t-r",
         'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (("PROT"."EXA_ROW_TENANT" = CURRENT_USER)'
-            ..' OR (BIT_AND("PROT"."EXA_ROW_ROLES", 13) <> 0))')
+            ..' OR (BIT_AND("PROT"."EXA_ROW_ROLES", BIT_SET(13, 63)) <> 0))')
 end
 
 os.exit(luaunit.LuaUnit.run())
