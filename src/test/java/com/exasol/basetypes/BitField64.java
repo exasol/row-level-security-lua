@@ -29,7 +29,6 @@ public class BitField64 {
 
     private BitField64(final int... bitIndices) {
         for (final int bitIndex : bitIndices) {
-            validateBitIndex(bitIndex);
             set(bitIndex);
         }
     }
