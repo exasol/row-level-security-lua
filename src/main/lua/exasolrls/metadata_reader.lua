@@ -11,9 +11,14 @@ local function open_schema(schema_id)
     end
 end
 
-local function translate_varchar_type(column_id, column_type)
-    local size, character_set = string.match(column_type, "VARCHAR%((%d+)%) (%w+)")
-    return {name = column_id, dataType = {type = "VARCHAR", size = tonumber(size), characterSet = character_set}}
+local function translate_decimal_type(column_id, column_type)
+    local precision, scale = string.match(column_type, "DECIMAL%((%d+),(%d+)%)")
+    return {name = column_id, dataType = {type = "DECIMAL", precision = tonumber(precision), scale = tonumber(scale)}}
+end
+
+local function translate_char_type(column_id, column_type)
+    local type, size, character_set = string.match(column_type, "(%a+)%((%d+)%) (%w+)")
+    return {name = column_id, dataType = {type = type, size = tonumber(size), characterSet = character_set}}
 end
 
 local function translate_column_metadata(column)
@@ -21,8 +26,10 @@ local function translate_column_metadata(column)
     local column_type = column.SQL_TYPE
     if (column_type == "BOOLEAN") or (column_type == "DATE") or (column_type == "DOUBLE PRECISION")  then
         return {name = column_id, dataType = {type = column_type}}
-    elseif text.starts_with(column_type, "VARCHAR") then
-        return translate_varchar_type(column_id, column_type)
+    elseif text.starts_with(column_type, "DECIMAL") then
+        return translate_decimal_type(column_id, column_type)
+    elseif text.starts_with(column_type, "CHAR") or text.starts_with(column_type, "VARCHAR") then
+        return translate_char_type(column_id, column_type)
     else
         error('E-LVS-MDR-4: Column "' .. column_id .. '" has unsupported type "' .. column_type .. ".");
     end
