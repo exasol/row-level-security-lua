@@ -8,6 +8,10 @@ Release 0.4.0 brings support for empty push-down select lists &mdash; which can 
 
 On protected tables a `SELECT *` is now turned into the explicit column list minus the hidden columns.
 
+## Features
+
+* #36: Added support for the public-access role.
+
 ## Bugfixes
 
 * #27: Added validation for Virtual Schema properties.
