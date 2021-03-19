@@ -121,7 +121,7 @@ local function mock_table_with_single_column_of_type(exa_mock, type)
     )
 end
 
-local function assert_column_type_translation(exa_mock, translation)
+local function assert_column_type_translation(translation)
     luaunit.assertEquals(reader.read("S"),
         {
             tables =
@@ -136,91 +136,91 @@ end
 function test_metadata_reader.test_boolean_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"BOOLEAN")
-    assert_column_type_translation(exa_mock, {type = "BOOLEAN"})
+    assert_column_type_translation({type = "BOOLEAN"})
 end
 
 function test_metadata_reader.test_date_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"DATE")
-    assert_column_type_translation(exa_mock, {type = "DATE"})
+    assert_column_type_translation({type = "DATE"})
 end
 
 function test_metadata_reader.test_decimal_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"DECIMAL(13,8)")
-    assert_column_type_translation(exa_mock, {type = "DECIMAL", precision = 13, scale = 8})
+    assert_column_type_translation({type = "DECIMAL", precision = 13, scale = 8})
 end
 
 function test_metadata_reader.test_double_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"DOUBLE PRECISION")
-    assert_column_type_translation(exa_mock, {type = "DOUBLE PRECISION"})
+    assert_column_type_translation({type = "DOUBLE PRECISION"})
 end
 
 function test_metadata_reader.test_char_utf8_column_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"CHAR(130) UTF8")
-    assert_column_type_translation(exa_mock, {type = "CHAR", characterSet = "UTF8", size = 130})
+    assert_column_type_translation({type = "CHAR", characterSet = "UTF8", size = 130})
 end
 
 function test_metadata_reader.test_char_ascii_column_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"CHAR(2000000) ASCII")
-    assert_column_type_translation(exa_mock, {type = "CHAR", characterSet = "ASCII", size = 2000000})
+    assert_column_type_translation({type = "CHAR", characterSet = "ASCII", size = 2000000})
 end
 
 function test_metadata_reader.test_varchar_utf8_column_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"VARCHAR(70) UTF8")
-    assert_column_type_translation(exa_mock, {type = "VARCHAR", characterSet = "UTF8", size = 70})
+    assert_column_type_translation({type = "VARCHAR", characterSet = "UTF8", size = 70})
 end
 
 function test_metadata_reader.test_varchar_ascii_column_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"VARCHAR(2000000) ASCII")
-    assert_column_type_translation(exa_mock, {type = "VARCHAR", characterSet = "ASCII", size = 2000000})
+    assert_column_type_translation({type = "VARCHAR", characterSet = "ASCII", size = 2000000})
 end
 
 function test_metadata_reader.test_hashtype_bit_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"HASHTYPE(5 BYTE)")
-    assert_column_type_translation(exa_mock, {type = "HASHTYPE", bytesize = 5})
+    assert_column_type_translation({type = "HASHTYPE", bytesize = 5})
 end
 
 function test_metadata_reader.test_timestamp_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"TIMESTAMP")
-    assert_column_type_translation(exa_mock, {type = "TIMESTAMP"})
+    assert_column_type_translation({type = "TIMESTAMP"})
 end
 
 function test_metadata_reader.test_timestamp_with_local_time_zone_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"TIMESTAMP WITH LOCAL TIME ZONE")
-    assert_column_type_translation(exa_mock, {type = "TIMESTAMP", withLocalTimeZone = true})
+    assert_column_type_translation({type = "TIMESTAMP", withLocalTimeZone = true})
 end
 
 function test_metadata_reader.test_geometry_with_default_srid_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"GEOMETRY")
-    assert_column_type_translation(exa_mock, {type = "GEOMETRY", srid = 0})
+    assert_column_type_translation({type = "GEOMETRY", srid = 0})
 end
 
 function test_metadata_reader.test_geometry_with_srid_translation()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"GEOMETRY(4)")
-    assert_column_type_translation(exa_mock, {type = "GEOMETRY", srid = 4})
+    assert_column_type_translation({type = "GEOMETRY", srid = 4})
 end
 
 function test_metadata_reader.test_interval_year_to_month()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"INTERVAL YEAR(6) TO MONTH")
-    assert_column_type_translation(exa_mock, {type = "INTERVAL", fromTo= "YEAR TO MONTH", precision = 6})
+    assert_column_type_translation({type = "INTERVAL", fromTo= "YEAR TO MONTH", precision = 6})
 end
 
 function test_metadata_reader.test_interval_day_to_second()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"INTERVAL DAY(9) TO SECOND(5)")
-    assert_column_type_translation(exa_mock, {type = "INTERVAL", fromTo= "DAY TO SECONDS", precision = 9, fraction = 5})
+    assert_column_type_translation({type = "INTERVAL", fromTo= "DAY TO SECONDS", precision = 9, fraction = 5})
 end
 
 os.exit(luaunit.LuaUnit.run())
