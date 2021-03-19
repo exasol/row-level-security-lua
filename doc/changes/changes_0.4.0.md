@@ -1,6 +1,6 @@
-# row-level-security-lua 0.4.0, released 2020-03-??
+# row-level-security-lua 0.4.0, released 2020-03-19
 
-Code name: Single group optimization
+Code name: Prototype fixes
 
 ## Summary
 
