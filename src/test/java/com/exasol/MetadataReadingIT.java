@@ -48,6 +48,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                 .column("DO", "DOUBLE") //
                 .column("DE", "DECIMAL(15,9)") //
                 .column("G1", "GEOMETRY(7)") //
+                .column("G2", "GEOMETRY") //
                 .column("H1", "HASHTYPE(32 BIT)") //
                 .column("H2", "HASHTYPE(20 BYTE)") //
                 .column("I1", "INTERVAL YEAR TO MONTH") //
@@ -71,6 +72,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                         .row("DO", "DOUBLE", anything(), anything(), anything())
                         .row("DE", "DECIMAL(15,9)", anything(), anything(), anything())
                         .row("G1", "GEOMETRY(7)", anything(), anything(), anything())
+                        .row("G2", "GEOMETRY", anything(), anything(), anything())
                         .row("H1", "HASHTYPE(4 BYTE)", anything(), anything(), anything())
                         .row("H2", "HASHTYPE(20 BYTE)", anything(), anything(), anything())
                         .row("I1", "INTERVAL YEAR(2) TO MONTH", anything(), anything(), anything())
