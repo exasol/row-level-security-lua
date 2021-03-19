@@ -30,7 +30,7 @@ end
 -- Note that while users can optionally specify hash sizes in BITS, this is just a convenience method. Exasol
 -- internally always stores hash size in bytes.
 local function translate_hash_type(column_id, column_type)
-    local size, unit = string.match(column_type, "HASHTYPE%((%d+) BYTE%)")
+    local size = string.match(column_type, "HASHTYPE%((%d+) BYTE%)")
     return {name = column_id, dataType = {type = "HASHTYPE", bytesize = tonumber(size)}}
 end
 
@@ -44,7 +44,7 @@ end
 
 local function translate_geometry_type(column_id, column_type)
     local srid = string.match(column_type, "GEOMETRY%((%d+)%)")
-    return {name = column_id, dataType = {type = "GEOMETRY", srid = (srid and tonumber(srid) or M.DEFAULT_SRID)}}
+    return {name = column_id, dataType = {type = "GEOMETRY", srid = (srid and tonumber(srid) or _G.M.DEFAULT_SRID)}}
 end
 
 local function translate_interval_year_to_month_type(column_id, column_type)
