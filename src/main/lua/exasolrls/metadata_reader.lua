@@ -27,14 +27,14 @@ local function translate_char_type(column_id, column_type)
     return {name = column_id, dataType = {type = type, size = tonumber(size), characterSet = character_set}}
 end
 
--- Note that while users can optionally specify hash sizes in BITS, that this is just a convenience method. Exasol
+-- Note that while users can optionally specify hash sizes in BITS, this is just a convenience method. Exasol
 -- internally always stores hash size in bytes.
 local function translate_hash_type(column_id, column_type)
     local size, unit = string.match(column_type, "HASHTYPE%((%d+) BYTE%)")
     return {name = column_id, dataType = {type = "HASHTYPE", bytesize = tonumber(size)}}
 end
 
-local function translate_timestamp(column_id, local_time)
+local function translate_timestamp_type(column_id, local_time)
     if local_time then
         return {name = column_id, dataType = {type = "TIMESTAMP", withLocalTimeZone = true}}
     else
@@ -42,12 +42,12 @@ local function translate_timestamp(column_id, local_time)
     end
 end
 
-local function translate_geometry(column_id, column_type)
+local function translate_geometry_type(column_id, column_type)
     local srid = string.match(column_type, "GEOMETRY%((%d+)%)")
     return {name = column_id, dataType = {type = "GEOMETRY", srid = (srid and tonumber(srid) or M.DEFAULT_SRID)}}
 end
 
-local function translate_interval_year_to_month(column_id, column_type)
+local function translate_interval_year_to_month_type(column_id, column_type)
     local precision =  string.match(column_type, "INTERVAL YEAR%((%d+)%) TO MONTH")
     return
     {
@@ -83,13 +83,13 @@ local function translate_column_metadata(column)
     elseif text.starts_with(column_type, "HASHTYPE") then
         return translate_hash_type(column_id, column_type)
     elseif column_type == "TIMESTAMP" then
-        return translate_timestamp(column_id, false)
+        return translate_timestamp_type(column_id, false)
     elseif column_type == "TIMESTAMP WITH LOCAL TIME ZONE" then
-        return translate_timestamp(column_id, true)
+        return translate_timestamp_type(column_id, true)
     elseif text.starts_with(column_type, "GEOMETRY") then
-        return translate_geometry(column_id, column_type)
+        return translate_geometry_type(column_id, column_type)
     elseif text.starts_with(column_type, "INTERVAL YEAR") then
-        return translate_interval_year_to_month(column_id, column_type)
+        return translate_interval_year_to_month_type(column_id, column_type)
     elseif text.starts_with(column_type, "INTERVAL DAY") then
         return translate_interval_day_to_second(column_id, column_type)
     else
