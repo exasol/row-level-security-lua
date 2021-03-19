@@ -181,4 +181,46 @@ function test_metadata_reader.test_varchar_ascii_column_translation()
     assert_column_type_translation(exa_mock, {type = "VARCHAR", characterSet = "ASCII", size = 2000000})
 end
 
+function test_metadata_reader.test_hashtype_bit_translation()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"HASHTYPE(5 BYTE)")
+    assert_column_type_translation(exa_mock, {type = "HASHTYPE", bytesize = 5})
+end
+
+function test_metadata_reader.test_timestamp_translation()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"TIMESTAMP")
+    assert_column_type_translation(exa_mock, {type = "TIMESTAMP"})
+end
+
+function test_metadata_reader.test_timestamp_with_local_time_zone_translation()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"TIMESTAMP WITH LOCAL TIME ZONE")
+    assert_column_type_translation(exa_mock, {type = "TIMESTAMP", withLocalTimeZone = true})
+end
+
+function test_metadata_reader.test_geometry_with_default_srid_translation()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"GEOMETRY")
+    assert_column_type_translation(exa_mock, {type = "GEOMETRY", srid = 0})
+end
+
+function test_metadata_reader.test_geometry_with_srid_translation()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"GEOMETRY(4)")
+    assert_column_type_translation(exa_mock, {type = "GEOMETRY", srid = 4})
+end
+
+function test_metadata_reader.test_interval_year_to_month()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"INTERVAL YEAR(6) TO MONTH")
+    assert_column_type_translation(exa_mock, {type = "INTERVAL", fromTo= "YEAR TO MONTH", precision = 6})
+end
+
+function test_metadata_reader.test_interval_day_to_second()
+    local exa_mock = mockagne.getMock()
+    mock_table_with_single_column_of_type(exa_mock,"INTERVAL DAY(9) TO SECOND(5)")
+    assert_column_type_translation(exa_mock, {type = "INTERVAL", fromTo= "DAY TO SECONDS", precision = 9, fraction = 5})
+end
+
 os.exit(luaunit.LuaUnit.run())

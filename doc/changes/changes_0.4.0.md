@@ -10,6 +10,7 @@ On protected tables a `SELECT *` is now turned into the explicit column list min
 
 ## Features
 
++ #29: Added support for all column types.
 * #36: Added support for the public-access role.
 
 ## Bugfixes
