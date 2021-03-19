@@ -6,6 +6,8 @@ Code name: Prototype fixes
 
 Release 0.4.0 brings support for empty push-down select lists &mdash; which can happen in case all selected expressions are constants or things that are not covered by capabilities (e.g. `IPROC()`). We also added literals for booleans, the null value and UTC timestamps.
 
+All Exasol column types are now supported.
+
 On protected tables a `SELECT *` is now turned into the explicit column list minus the hidden columns.
 
 ## Features
