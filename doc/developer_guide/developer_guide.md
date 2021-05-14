@@ -88,7 +88,7 @@ If you want to run all unit tests including code coverage and static code analys
 tools/runtests.sh
 ```
 
-The test output contains summaries and you will find reports in the directories `luaunit-reports` and `luacov-reports`.
+The test output contains summaries and you will find reports in the `luaunit-reports` and `luacov-reports` directories.
 
 ### Running the Unit Tests From Intellij IDEA
 
