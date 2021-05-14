@@ -41,7 +41,7 @@ sudo luarocks install luacov-coveralls
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.
 
-The libraries `luacov` and `luacov-coveralls` take care of measuring and reporting code coverage in the tests.
+The `luacov` and `luacov-coveralls` libraries take care of measuring and reporting code coverage in the tests.
 
 ### Bundling the Main Script and the Modules
 
@@ -81,6 +81,14 @@ After that you can try to run any test file:
 ```bash
 lua src/test/lua/exasolvs/test_query_renderer.lua 
 ```
+
+If you want to run all unit tests including code coverage and static code analysis, issue the following command:
+
+```bash
+tools/runtests.sh
+```
+
+The test output contains summaries and you will find reports in the `luaunit-reports` and `luacov-reports` directories.
 
 ### Running the Unit Tests From Intellij IDEA
 
