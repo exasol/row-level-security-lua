@@ -4,3 +4,4 @@
 *.md.html
 /.dbeaver
 Scripts
+*.out
