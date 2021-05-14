@@ -26,7 +26,7 @@ function create_target_directories {
 ##
 # Run the unit tests and collect code coverage.
 #
-# Returns error status in case there were failures.
+# Return error status in case there were failures.
 #
 function run_tests {
     cd "$test_module_path"
@@ -59,7 +59,7 @@ function run_tests {
 ##
 # Collect the coverage results into a single file.
 #
-# Returns exit status of coverage collector.
+# Return exit status of coverage collector.
 #
 function collect_coverage_results {
     echo
@@ -71,7 +71,7 @@ function collect_coverage_results {
 ##
 # Move the coverage results into the target directory.
 #
-# Returns exit status of `mv` command.
+# Return exit status of `mv` command.
 #
 function move_coverage_results {
     echo "Moving coverage results to $luacov_dir"
@@ -87,7 +87,7 @@ function print_coverage_summary {
 ##
 # Analyze the Lua code with "luacheck".
 #
-# Returns exit status of code coverage.
+# Return exit status of code coverage.
 #
 function run_static_code_analysis {
     echo

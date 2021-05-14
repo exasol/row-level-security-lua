@@ -82,6 +82,14 @@ After that you can try to run any test file:
 lua src/test/lua/exasolvs/test_query_renderer.lua 
 ```
 
+If you want to run all unit tests including code coverage and static code analysis, issue the following command:
+
+```bash
+tools/runtests.sh
+```
+
+The test output contains summaries and you will find reports in the directories `luaunit-reports` and `luacov-reports`.
+
 ### Running the Unit Tests From Intellij IDEA
 
 First, you need to install a plug-in that handles Lua code. We recommend to use `lua` plugin by `sylvanaar`.
