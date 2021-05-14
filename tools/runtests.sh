@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script finds and runs Lua unit tests.
+# This script finds and runs Lua unit tests, collects coverage and runs static code analysis.
 
 readonly script_dir=$(dirname "$(readlink -f "$0")")
 if [[ -v $1 ]]
@@ -26,7 +26,7 @@ function create_target_directories {
 ##
 # Run the unit tests and collect code coverage.
 #
-# Returns the number of failed tests
+# Returns error status in case there were failures.
 #
 function run_tests {
     cd "$test_module_path"
@@ -59,6 +59,8 @@ function run_tests {
 ##
 # Collect the coverage results into a single file.
 #
+# Returns exit status of coverage collector.
+#
 function collect_coverage_results {
     echo
     echo "Collecting code coverage results"
@@ -68,6 +70,8 @@ function collect_coverage_results {
 
 ##
 # Move the coverage results into the target directory.
+#
+# Returns exit status of `mv` command.
 #
 function move_coverage_results {
     echo "Moving coverage results to $luacov_dir"
@@ -82,6 +86,8 @@ function print_coverage_summary {
 
 ##
 # Analyze the Lua code with "luacheck".
+#
+# Returns exit status of code coverage.
 #
 function run_static_code_analysis {
     echo
