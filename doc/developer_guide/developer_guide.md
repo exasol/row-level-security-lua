@@ -41,7 +41,7 @@ sudo luarocks install luacov-coveralls
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.
 
-The libraries `luacov` and `luacov-coveralls` take care of measuring and reporting code coverage in the tests.
+The `luacov` and `luacov-coveralls` libraries take care of measuring and reporting code coverage in the tests.
 
 ### Bundling the Main Script and the Modules
 
