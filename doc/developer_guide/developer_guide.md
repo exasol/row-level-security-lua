@@ -9,7 +9,7 @@ Before you can build and test the application, you need to install Lua packages 
 First install the package manager LuaRocks.
 
 ```bash
-apt install luarocks
+sudo apt install luarocks
 ```
 
 Now update your `LUA_PATH`, so that it contains the packages (aka. "rocks"). You can auto-generate that path.
@@ -35,9 +35,13 @@ sudo luarocks install LuaUnit
 sudo luarocks install Mockagne
 sudo luarocks install lua-cjson
 sudo luarocks install remotelog
+sudo luarocks install luacov
+sudo luarocks install luacov-coveralls
 ```
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.
+
+The `luacov` and `luacov-coveralls` libraries take care of measuring and reporting code coverage in the tests.
 
 ### Bundling the Main Script and the Modules
 
@@ -77,6 +81,14 @@ After that you can try to run any test file:
 ```bash
 lua src/test/lua/exasolvs/test_query_renderer.lua 
 ```
+
+If you want to run all unit tests including code coverage and static code analysis, issue the following command:
+
+```bash
+tools/runtests.sh
+```
+
+The test output contains summaries and you will find reports in the `luaunit-reports` and `luacov-reports` directories.
 
 ### Running the Unit Tests From Intellij IDEA
 
