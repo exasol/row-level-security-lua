@@ -7,6 +7,18 @@ local function assert_renders_to(original_query, expected)
     luaunit.assertEquals(renderer.new(original_query).render(), expected)
 end
 
+local function assert_rendering_error_contains(original_query, message)
+    luaunit.assertErrorMsgContains(message, renderer.new(original_query).render)
+end
+
+function test_query_renderer.test_render_select_star()
+    local original_query = {
+        type = "select",
+        from = {type  = "table", name = "T1"}
+    }
+    assert_renders_to(original_query, 'SELECT * FROM "T1"')
+end
+
 function test_query_renderer.test_render_simple_select()
     local original_query = {
         type = "select",
@@ -1332,6 +1344,158 @@ function test_query_renderer.test_predicate_in_constlist()
         }
     }
     assert_renders_to(original_query, 'SELECT \'hello\' FROM "T1" WHERE ("T1"."C1" IN (\'A1\', \'A2\'))')
+end
+
+function test_query_renderer.test_subselect()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "column", name = "NAME", tableName = "FRUITS"},
+            {type = "column", name = "SUGAR_PERCENTAGE", tableName = "FRUITS"}
+        },
+        from = {type = "table", name = "FRUITS"},
+        filter = {
+            type = "predicate_greater",
+            left = {type = "column", name = "SUGAR_PERCENTAGE", tableName = "FRUITS"},
+            right = {
+                type = "sub_select",
+                selectList ={{type = "column", name = "SUGAR_PERCENTAGE", tableName = "SNACKS"}},
+                from = {type = "table", name = "SNACKS"},
+                filter = {
+                    type = "predicate_equal",
+                    left = {type = "column", name = "CATEGORY", tableName = "SNACKS"},
+                    right = {type = "literal_string", value = "desert"}
+                }
+            }
+        }
+    }
+    assert_renders_to(original_query,
+        'SELECT "FRUITS"."NAME", "FRUITS"."SUGAR_PERCENTAGE" FROM "FRUITS"'
+        .. ' WHERE ("FRUITS"."SUGAR_PERCENTAGE"'
+        .. ' > ('
+        .. 'SELECT "SNACKS"."SUGAR_PERCENTAGE" FROM "SNACKS" WHERE ("SNACKS"."CATEGORY" = \'desert\'))'
+        .. ')'
+    )
+end
+
+function test_query_renderer.test_join()
+    for join_type, join_keyword in pairs(renderer.join_types) do
+        local original_query = {
+            type = "select",
+            selectList = {
+                {type = "column", name = "AMOUNT", tableName = "ORDERS"},
+                {type = "column", name = "NAME", tableName = "ITEMS"},
+            },
+            from = {
+                type = "join",
+                join_type = join_type,
+                left = {type = "table", name = "ORDERS"},
+                right = {type = "table", name = "ITEMS"},
+                condition = {
+                    type = "predicate_equal",
+                    left = {type = "column", name = "ITEM_ID", tableName = "ORDERS"},
+                    right = {type = "column", name = "ITEM_ID", tableName = "ITEMS"}
+                }
+            }
+        }
+        assert_renders_to(original_query,
+            'SELECT "ORDERS"."AMOUNT", "ITEMS"."NAME"'
+            .. ' FROM "ORDERS" ' .. join_keyword .. ' JOIN "ITEMS"'
+            .. ' ON ("ORDERS"."ITEM_ID" = "ITEMS"."ITEM_ID")'
+        )
+    end
+end
+
+function test_query_renderer.test_exists()
+        local original_query = {
+        type = "select",
+        selectList = {
+            {type = "literal_string", value = "yes"}
+        },
+        filter = {
+            type = "predicate_exists",
+            query = {
+                type = "sub_select",
+                selectList ={{type = "literal_bool", value = true}},
+            }
+        }
+    }
+    assert_renders_to(original_query,
+        "SELECT 'yes' WHERE EXISTS(SELECT true)"
+    )
+end
+
+function test_query_renderer.test_unknown_from_type_throws_error()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "literal_bool", value = false}
+        },
+        from = {
+            type = "unknown"
+        }
+    }
+    assert_rendering_error_contains(original_query, "unknown SQL FROM clause type")
+end
+
+function test_query_renderer.test_unknown_join_type_throws_error()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "literal_bool", value = false}
+        },
+        from = {
+            type = "join",
+            join_type = "illegal"
+        }
+    }
+    assert_rendering_error_contains(original_query, "unknown join type")
+end
+
+function test_query_renderer.test_unknown_predicate_type_throws_error()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "predicate_illegal"}
+        }
+    }
+    assert_rendering_error_contains(original_query, "unknown SQL predicate type")
+end
+
+function test_query_renderer.test_unknown_expression_type_throws_error()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "illegal"}
+        },
+    }
+    assert_rendering_error_contains(original_query, "unknown SQL expression type")
+end
+
+function test_query_renderer.test_unknown_scalar_function_type_throws_error()
+    local original_query = {
+        type = "select",
+        selectList = {
+            {type = "function_scalar", name = "illegal"}
+        },
+    }
+    assert_rendering_error_contains(original_query, "unsupported scalar function type")
+end
+
+function test_query_renderer.test_unknown_data_type_throws_error()
+    local original_query = {
+       type = "select",
+       selectList = {
+            {
+                type = "function_scalar_cast", name = "CAST",
+                dataType = {type = "illegal"},
+                arguments = {
+                    {type = "literal_string", value = "100"}
+                }
+            }
+       }
+    }
+    assert_rendering_error_contains(original_query, "unknown data type")
 end
 
 os.exit(luaunit.LuaUnit.run())

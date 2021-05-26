@@ -146,7 +146,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${project.basedir}/tools/unittest.sh</executable>
+                            <executable>${project.basedir}/tools/runtests.sh</executable>
                             <useMavenLogger>true</useMavenLogger>
                             <arguments>
                               <argument>${project.basedir}</argument>
@@ -178,7 +178,6 @@
                                 <argument>exasolrls.metadata_reader</argument>
                                 <argument>exasolrls.table_protection_reader</argument>
                                 <argument>exasolrls.query_rewriter</argument>
-                                <argument>exasolrls.user_information</argument>
                                 <argument>remotelog</argument>
                                 <argument>text</argument>
                             </arguments>

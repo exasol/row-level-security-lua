@@ -49,7 +49,7 @@ function test_query_rewriter:test_tenant_protected_table()
         'SELECT "PROT"."C1" FROM "S"."PROT" WHERE ("PROT"."EXA_ROW_TENANT" = CURRENT_USER)')
 end
 
-function test_query_rewriter:test_group_protected_table_with_multiple_groups()
+function test_query_rewriter:test_group_protected_table()
     when(self.user.get_groups(any())).thenAnswer({"G1", "G2"})
     local original_query = {
         type = "select",
@@ -59,20 +59,9 @@ function test_query_rewriter:test_group_protected_table_with_multiple_groups()
         from = {type  = "table", name = "PROT"}
     }
     self:assert_rewrite(original_query, "S", "PROT:-g-",
-        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE ("PROT"."EXA_ROW_GROUP" IN (\'G1\', \'G2\'))')
-end
-
-function test_query_rewriter:test_group_protected_table_with_single_group()
-    when(self.user.get_groups(any())).thenAnswer({"G1"})
-    local original_query = {
-        type = "select",
-        selectList = {
-            {type = "column", name = "C1", tableName = "PROT"},
-        },
-        from = {type  = "table", name = "PROT"}
-    }
-    self:assert_rewrite(original_query, "S", "PROT:-g-",
-        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE ("PROT"."EXA_ROW_GROUP" = \'G1\')')
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE EXISTS('
+        .. 'SELECT 1 FROM "S"."EXA_GROUP_MEMBERS" WHERE (("EXA_GROUP_MEMBERS"."EXA_GROUP" = "PROT"."EXA_ROW_GROUP")'
+        .. ' AND ("EXA_GROUP_MEMBERS"."EXA_USER_NAME" = CURRENT_USER)))')
 end
 
 function test_query_rewriter:test_tenant_plus_group_protected_table()
@@ -86,11 +75,12 @@ function test_query_rewriter:test_tenant_plus_group_protected_table()
     }
     self:assert_rewrite(original_query, "S", "PROT:tg-",
         'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (("PROT"."EXA_ROW_TENANT" = CURRENT_USER) '
-        .. 'OR ("PROT"."EXA_ROW_GROUP" IN (\'G1\', \'G2\')))')
+        .. 'OR EXISTS('
+        .. 'SELECT 1 FROM "S"."EXA_GROUP_MEMBERS" WHERE (("EXA_GROUP_MEMBERS"."EXA_GROUP" = "PROT"."EXA_ROW_GROUP")'
+        .. ' AND ("EXA_GROUP_MEMBERS"."EXA_USER_NAME" = CURRENT_USER))))')
 end
 
 function test_query_rewriter:test_role_protected_table()
-    when(self.user.get_role_mask(any())).thenAnswer(5)
     local original_query = {
         type = "select",
         selectList = {
@@ -99,7 +89,11 @@ function test_query_rewriter:test_role_protected_table()
         from = {type  = "table", name = "PROT"}
     }
     self:assert_rewrite(original_query, "S", "PROT:--r",
-        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (BIT_AND("PROT"."EXA_ROW_ROLES", BIT_SET(5, 63)) <> 0)')
+        'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (BIT_CHECK("PROT"."EXA_ROW_ROLES", 63)'
+        .. ' OR EXISTS('
+        .. 'SELECT 1 FROM "S"."EXA_RLS_USERS"'
+        .. ' WHERE (("EXA_RLS_USERS"."EXA_USER_NAME" = CURRENT_USER)'
+        .. ' AND (BIT_AND("PROT"."EXA_ROW_ROLES", "EXA_RLS_USERS"."EXA_ROLE_MASK") <> 0))))')
 end
 
 function test_query_rewriter:test_tenant_plus_role_protected_table()
@@ -113,7 +107,11 @@ function test_query_rewriter:test_tenant_plus_role_protected_table()
     }
     self:assert_rewrite(original_query, "S", "PROT:t-r",
         'SELECT "PROT"."C1" FROM "S"."PROT" WHERE (("PROT"."EXA_ROW_TENANT" = CURRENT_USER)'
-            ..' OR (BIT_AND("PROT"."EXA_ROW_ROLES", BIT_SET(13, 63)) <> 0))')
+            ..' OR BIT_CHECK("PROT"."EXA_ROW_ROLES", 63)'
+            ..' OR EXISTS('
+        .. 'SELECT 1 FROM "S"."EXA_RLS_USERS"'
+        .. ' WHERE (("EXA_RLS_USERS"."EXA_USER_NAME" = CURRENT_USER)'
+        .. ' AND (BIT_AND("PROT"."EXA_ROW_ROLES", "EXA_RLS_USERS"."EXA_ROLE_MASK") <> 0))))')
 end
 
 os.exit(luaunit.LuaUnit.run())

@@ -79,6 +79,9 @@ function move_coverage_results {
     return "$?"
 }
 
+##
+# Print the summary section of the code coverage report to the console
+#
 function print_coverage_summary {
     echo
     grep --after 500 'File\s*Hits' "$luacov_dir/luacov.report.out"

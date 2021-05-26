@@ -45,7 +45,7 @@ class RequestDispatcherIT extends AbstractLuaVirtualSchemaIT {
         sourceSchema.createTable("G", "C1", "BOOLEAN", "C2", "DATE", ROW_GROUP_COLUMN, IDENTIFIER_TYPE) //
                 .insert("false", "2020-01-01", "G1") //
                 .insert("true", "2020-02-02", "G2");
-        creatGroupMembershipTable(sourceSchema) //
+        createGroupToUserMappingTable(sourceSchema) //
                 .insert("G1", "GROUP_USER") //
                 .insert("G2", "OTHER_GROUP_USER");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
