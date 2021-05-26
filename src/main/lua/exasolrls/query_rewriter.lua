@@ -72,7 +72,7 @@ local function _user_has_row_group(source_schema_id, table_id)
             },
             from = _table(source_schema_id, "EXA_GROUP_MEMBERS"),
             filter = _and(
-                _equal(_column("EXA_GROUP_MEMBERS", "EXA_GROUP"),_column(table_id, "EXA_ROW_GROUP")),
+                _equal(_column("EXA_GROUP_MEMBERS", "EXA_GROUP"), _column(table_id, "EXA_ROW_GROUP")),
                 _equal(_column("EXA_GROUP_MEMBERS", "EXA_USER_NAME"), _current_user())
             )
         }
