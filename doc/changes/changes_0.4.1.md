@@ -12,3 +12,4 @@ Run `tools/runtests.sh` to execute the unit test, collect code coverage and run 
 ## Refactoring
 
 * #50: Improve unit test runner script
+* #25: Made sure project version from POM is the same as in installer and Lua main module

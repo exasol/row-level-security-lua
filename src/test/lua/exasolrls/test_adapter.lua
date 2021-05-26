@@ -8,6 +8,10 @@ local adapter = require("exasolrls.adapter")
 
 test_rls_adapter = {}
 
+function test_rls_adapter.test_version_matches_maven_pom()
+    luaunit.fail("not implemented yet")
+end
+
 function test_rls_adapter.test_drop_virtual_schema()
     luaunit.assertEquals(adapter.drop_virtual_schema(), {type="dropVirtualSchema"})
 end

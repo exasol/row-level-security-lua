@@ -18,11 +18,13 @@ import org.testcontainers.junit.jupiter.Container;
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.*;
 import com.exasol.dbbuilder.AdapterScript.Language;
+import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
     protected static final Map<String, String> DEBUG_PROPERTIES = Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS",
             "172.17.0.1:3000");
-    private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-0.4.1.lua");
+    private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
+    private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     // FIXME: replace by officially released version once available
     // https://github.com/exasol/row-level-security-lua/issues/39
     private static final String DOCKER_DB = "exasol/docker-db:7.0.0";
