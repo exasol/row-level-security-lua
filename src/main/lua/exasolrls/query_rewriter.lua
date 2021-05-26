@@ -1,6 +1,5 @@
 local renderer = require("exasolvs.query_renderer")
 local protection_reader = require("exasolrls.table_protection_reader")
-local user = require("exasolrls.user_information")
 local log = require("remotelog")
 
 local M  = { PUBLIC_ROLE_BIT_INDEX = 63 }
@@ -16,71 +15,94 @@ local function validate(query)
     end
 end
 
-local function construct_tenant_protection_filter(table_id)
-    return {
-        type = "predicate_equal",
-        left = {type = "column", tableName = table_id, name = "EXA_ROW_TENANT"},
-        right = {type = "function_scalar", name = "CURRENT_USER"}
-    }
+local function _numeric(value)
+    return {type = "literal_exactnumeric", value = value}
 end
 
-local function construct_single_group_protection_filter(table_id, group)
-    return {
-        type = "predicate_equal",
-        left = {type = "column", tableName = table_id, name = "EXA_ROW_GROUP"},
-        right = {type = "literal_string", value = group}
-    }
+local function _or(...)
+    return {type = "predicate_or", expressions = {...}}
 end
 
-local function construct_multi_group_protection_filter(table_id, groups)
-    local group_literals = {}
-    for i = 1, #groups do
-        group_literals[i] = {type = "literal_string", value = groups[i]}
-    end
-    return {
-        type = "predicate_in_constlist",
-        expression = {type = "column", tableName = table_id, name = "EXA_ROW_GROUP"},
-        arguments = group_literals
-    }
+local function _and(...)
+    return {type = "predicate_and", expressions = {...}}
 end
 
-local function construct_group_protection_filter(source_schema_id, table_id)
-    local groups = user.get_groups(source_schema_id)
-    if #groups == 1 then
-        return construct_single_group_protection_filter(table_id, groups[1])
-    else
-        return construct_multi_group_protection_filter(table_id, groups)
-    end
+local function _bit_and(...)
+    return {type = "function_scalar", name = "BIT_AND", arguments = {...}}
 end
 
-local function construct_role_protection_filter(source_schema_id, table_id)
-    local role_mask = user.get_role_mask(source_schema_id)
-    return {
-        type = "predicate_notequal",
-        left = {
-            type = "function_scalar",
-            name = "BIT_AND",
-            arguments = {
-                {type = "column", tableName = table_id, name = "EXA_ROW_ROLES"},
-                {
-                    type = "function_scalar",
-                    name = "BIT_SET",
-                    arguments = {
-                        {type = "literal_exactnumeric", value = role_mask},
-                        {type = "literal_exactnumeric", value = M.PUBLIC_ROLE_BIT_INDEX}
-                    }
-                }
-            }
-        },
-        right = {type = "literal_exactnumeric", value = 0}
-    }
+local function _bit_check(value, position)
+    return {type = "function_scalar", name = "BIT_CHECK", arguments = {value, _numeric(position)}}
 end
 
-local function construct_or(...)
-    return {
-        type = "predicate_or",
-        expressions = {...}
-    }
+local function _column(table_id, column_id, index)
+    return {type = "column", tableName = table_id, name = column_id, columnNr = index} -- index is optional
+end
+
+local function _table(schema_id, table_id)
+    return {type = "table", schema = schema_id, name = table_id}
+end
+
+local function _equal(left, right)
+    return {type = "predicate_equal", left = left, right = right}
+end
+
+local function _not_equal(left, right)
+    return {type = "predicate_notequal", left = left, right = right}
+end
+
+local function _current_user()
+    return {type = "function_scalar", name = "CURRENT_USER"}
+end
+
+local function _exists(sub_query)
+    return {type = "predicate_exists", query = sub_query}
+end
+
+local function _user_owns_row(table_id)
+    return _equal(_column(table_id, "EXA_ROW_TENANT"), _current_user())
+end
+
+local function _user_has_row_group(source_schema_id, table_id)
+    return _exists(
+        {
+            type = "select",
+            selectList = {
+                _numeric(1)
+            },
+            from = _table(source_schema_id, "EXA_GROUP_MEMBERS"),
+            filter = _and(
+                _equal(_column("EXA_GROUP_MEMBERS", "EXA_GROUP"),_column(table_id, "EXA_ROW_GROUP")),
+                _equal(_column("EXA_GROUP_MEMBERS", "EXA_USER_NAME"), _current_user())
+            )
+        }
+    )
+end
+
+local function _row_has_public_role(table_id)
+    return _bit_check(_column(table_id, "EXA_ROW_ROLES"), 63)
+end
+
+local function _user_has_row_role(source_schema_id, table_id)
+    return _exists(
+        {
+            type = "select",
+            selectList = {
+                _numeric(1)
+            },
+            from = _table(source_schema_id, "EXA_RLS_USERS"),
+            filter = _and(
+                _equal(
+                    _column("EXA_RLS_USERS", "EXA_USER_NAME"),
+                    _current_user()
+                ),
+                _not_equal(
+                    _bit_and(_column(table_id, "EXA_ROW_ROLES"), _column("EXA_RLS_USERS", "EXA_ROLE_MASK")),
+                    _numeric(0)
+                )
+            )
+        }
+    )
 end
 
 local function construct_protection_filter(source_schema_id, table_id, protection)
@@ -88,29 +110,29 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
         if protection.group_protected then
             log.debug('Table "%s"."%s" is tenant-protected and group-protected. Adding filter for user or a group.',
                 source_schema_id, table_id)
-            return construct_or(construct_tenant_protection_filter(table_id),
-                construct_group_protection_filter(source_schema_id, table_id))
+            return _or(_user_owns_row(table_id),
+                _user_has_row_group(source_schema_id, table_id))
         elseif protection.role_protected then
             log.debug('Table "%s"."%s" is tenant-protected and role-protected. Adding filter for user or role.',
                 source_schema_id, table_id)
-            return construct_or(construct_tenant_protection_filter(table_id),
-                construct_role_protection_filter(source_schema_id, table_id))
+            return _or(_user_owns_row(table_id), _row_has_public_role(table_id),
+                _user_has_row_role(source_schema_id, table_id))
         else
             log.debug('Table "%s"."%s" is tenant-protected. Adding tenant as row filter.', source_schema_id, table_id)
-            return construct_tenant_protection_filter(table_id)
+            return _user_owns_row(table_id)
         end
     elseif protection.group_protected then
-        log.debug('Table "%s"."%s" is group-protected. Adding group as row filter.', source_schema_id, table_id)
-        return construct_group_protection_filter(source_schema_id, table_id)
+        log.debug('Table "%s"."%s" is group-protected. Joining groups as row filter.', source_schema_id, table_id)
+        return _user_has_row_group(source_schema_id, table_id)
     elseif protection.role_protected then
         log.debug('Table "%s"."%s" is role-protected. Adding role mask as row filter.', source_schema_id, table_id)
-        return construct_role_protection_filter(source_schema_id, table_id)
+        return _or(_row_has_public_role(table_id), _user_has_row_role(source_schema_id, table_id))
     else
         error("E-LRLS-QRW-3: Illegal protection scheme used. Allowed schemes are: tenant, group, tenant + group")
     end
 end
 
-local function is_select_star (select_list)
+local function is_select_star(select_list)
     return select_list == nil
 end
 
@@ -123,21 +145,12 @@ local function replace_empty_select_list_with_constant_expression(query)
     query.selectList = {{type = "literal_bool", value = "true"}}
 end
 
-local function define_column(table_name, column_name, index)
-    return {
-        type = "column",
-        name = column_name,
-        columnNr = index,
-        tableName = table_name
-    }
-end
-
 local function replace_star_with_payload_columns(query, involved_tables)
     local select_list = {}
     local index = 1
     for _, involved_table in ipairs(involved_tables) do
         for _, column in ipairs(involved_table.columns) do
-            select_list[index] = define_column(involved_table.name, column.name, index)
+            select_list[index] = _column(involved_table.name, column.name, index)
             index = index + 1
         end
     end
@@ -153,15 +166,19 @@ local function expand_protected_select_list(query, involved_tables)
     end
 end
 
-local function rewrite_with_protection(query, source_schema_id, table_id, protection, involved_tables)
-    expand_protected_select_list(query, involved_tables)
-    local protection_filter = construct_protection_filter(source_schema_id, table_id, protection)
+local function rewrite_filter(query, source_schema_id, table_id, protection)
     local original_filter = query.filter
+    local protection_filter = construct_protection_filter(source_schema_id, table_id, protection)
     if original_filter then
         query.filter = {type = "predicate_and", expressions = {protection_filter, original_filter}}
     else
         query.filter = protection_filter
     end
+end
+
+local function rewrite_with_protection(query, source_schema_id, table_id, protection, involved_tables)
+    expand_protected_select_list(query, involved_tables)
+    rewrite_filter(query, source_schema_id, table_id, protection)
 end
 
 local function expand_select_list_without_protection(query)

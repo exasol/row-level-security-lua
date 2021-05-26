@@ -24,8 +24,8 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
         final String userName = "USER_FOR_LATE_REGISTERED_TABLE";
         final Schema sourceSchema = createSchema(sourceSchemaName);
         final String groupName = "GROUP_THE_USER_HAS";
-        creatGroupMembershipTable(sourceSchema) //
-                .insert(userName, groupName);
+        createGroupToUserMappingTable(sourceSchema) //
+                .insert(groupName, userName);
         sourceSchema.createTable("T", "C1", "BOOLEAN", ROW_GROUP_COLUMN, IDENTIFIER_TYPE) //
                 .insert(true, groupName) //
                 .insert(false, "GROUP_THE_USER_DOES_NOT_HAVE");

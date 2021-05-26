@@ -33,7 +33,13 @@ local M = {
         "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
         "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL", "SESSION_PARAMETER"
     },
-    supported_scalar_functions = {}
+    supported_scalar_functions = {},
+    join_types = {
+        inner = "INNER",
+        left_outer = "LEFT OUTER",
+        right_outer = "RIGHT OUTER",
+        full_outer = "FULL OUTER"
+    }
 }
 
 for index = 1, #M.supported_scalar_functions_list do
@@ -57,7 +63,7 @@ function M.new (query)
 
     -- forward declarations
     local append_unary_predicate, append_binary_predicate, append_iterated_predicate, append_expression,
-        append_predicate_in
+        append_predicate_in, append_select, append_sub_select
 
     local function append(value)
         self.query_elements[#self.query_elements + 1] = value
@@ -82,7 +88,7 @@ function M.new (query)
         if M.supported_scalar_functions[function_name] then
             append(function_name)
             if function_name ~= "CURRENT_USER" and function_name ~= "SYSDATE" and function_name ~= "CURRENT_SCHEMA"
-                    and function_name ~= "CURRENT_SESSION" and function_name ~= "CURRENT_STATEMENT" then
+                and function_name ~= "CURRENT_SESSION" and function_name ~= "CURRENT_STATEMENT" then
                 append("(")
                 local arguments = scalar_function.arguments
                 if (arguments) then
@@ -262,8 +268,7 @@ function M.new (query)
         end
     end
 
-    local function append_select_list()
-        local select_list = self.original_query.selectList
+    local function append_select_list(select_list)
         if not select_list then
             append("*")
         else
@@ -271,16 +276,49 @@ function M.new (query)
         end
     end
 
-    local function append_from()
-        if self.original_query.from then
-            append(' FROM "')
-            if self.original_query.from.schema then
-                append(self.original_query.from.schema)
-                append('"."')
-            end
-            append(self.original_query.from.name)
-            append('"')
+    local function append_table(table)
+        append('"')
+        if table.schema then
+            append(table.schema)
+            append('"."')
         end
+        append(table.name)
+        append('"')
+    end
+
+    local function append_join(join)
+        local join_type_keyword = M.join_types[join.join_type]
+        if join_type_keyword then
+            append_table(join.left)
+            append(' ')
+            append(join_type_keyword)
+            append(' JOIN ')
+            append_table(join.right)
+            append(' ON ')
+            append_expression(join.condition)
+        else
+            error('E-VS-QR-6: Unable to render unknown join type "' .. join.join_type .. '".')
+        end
+    end
+
+    local function append_from(from)
+        if from then
+            append(' FROM ')
+            local type = from.type
+            if type == "table" then
+                append_table(from)
+            elseif type == "join" then
+                append_join(from)
+            else
+                error('E-VS-QR-5: Unable to render unknown SQL FROM clause type "' .. type .. '".')
+            end
+        end
+    end
+
+    local function append_exists(clause)
+        append("EXISTS(")
+        append_select(clause.query)
+        append(")")
     end
 
     local function append_predicate(operand)
@@ -293,6 +331,8 @@ function M.new (query)
             append_iterated_predicate(operand)
         elseif type == "in_constlist" then
             append_predicate_in(operand)
+        elseif type == "exists" then
+            append_exists(operand)
         else
             error('E-VS-QR-2: Unable to render unknown SQL predicate type "' .. type .. '".')
         end
@@ -334,6 +374,8 @@ function M.new (query)
             append_scalar_function_case(expression)
         elseif text.starts_with(type, "predicate_") then
             append_predicate(expression)
+        elseif type == "sub_select" then
+            append_sub_select(expression)
         else
             error('E-VS-QR-1: Unable to render unknown SQL expression type "' .. expression.type .. '".')
         end
@@ -383,11 +425,24 @@ function M.new (query)
         append("))")
     end
 
-    local function append_filter()
-        if self.original_query.filter then
+    local function append_filter(filter)
+        if filter then
             append(" WHERE ")
-            append_predicate(self.original_query.filter)
+            append_predicate(filter)
         end
+    end
+
+    append_sub_select = function(sub_query)
+        append("(")
+        append_select(sub_query)
+        append(")")
+    end
+
+    append_select = function (sub_query)
+        append("SELECT ")
+        append_select_list(sub_query.selectList)
+        append_from(sub_query.from)
+        append_filter(sub_query.filter)
     end
 
     --- Render the query to a string.
@@ -395,10 +450,7 @@ function M.new (query)
     -- @return query as string
     --
     local function render()
-        append("SELECT ")
-        append_select_list()
-        append_from()
-        append_filter()
+        append_select(self.original_query)
         return table.concat(self.query_elements, "")
     end
 
