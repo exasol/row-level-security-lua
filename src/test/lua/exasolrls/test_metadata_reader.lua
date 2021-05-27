@@ -4,16 +4,14 @@ local reader = require("exasolrls.metadata_reader")
 
 test_metadata_reader = {}
 
-local function mock_open_schema(exa_mock)
-    mockagne.when(exa_mock.pquery('OPEN SCHEMA "S"')).thenAnswer(true)
-end
-
-local function mock_describe_table(exa_mock, table, columns)
-    mockagne.when(exa_mock.pquery('DESCRIBE "' .. table ..'"')).thenAnswer(true, columns)
+local function mock_describe_table(exa_mock, table_id, columns)
+    mockagne.when(exa_mock.pquery('SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
+    .. ' WHERE "COLUMN_SCHEMA" = \'S\' AND "COLUMN_TABLE" = \'' .. table_id .. "'")).thenAnswer(true, columns)
 end
 
 local function mock_read_table_catalog(exa_mock, tables)
-    mockagne.when(exa_mock.pquery('SELECT "TABLE_NAME" FROM "CAT"')).thenAnswer(true, tables)
+    mockagne.when(exa_mock.pquery('SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \'S\''))
+        .thenAnswer(true, tables)
 end
 
 ---
@@ -35,7 +33,6 @@ end
 --
 local function mock_tables(exa_mock, ...)
     _G.exa = exa_mock
-    mock_open_schema(exa_mock)
     local tables = {}
     local i = 1
     for _, table_definition in ipairs({...}) do

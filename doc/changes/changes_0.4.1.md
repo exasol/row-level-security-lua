@@ -16,3 +16,4 @@ To remove the necessity for `pquery` in push-down, we packed the complete check 
 * #37: Blocked unsupported combination of group and role security
 * #50: Improved unit test runner script
 * #52: Replaced `pquery` in push-down
+* #57: Replaced `OPEN SCHEMA` + `CAT` with direct reading from system tables
