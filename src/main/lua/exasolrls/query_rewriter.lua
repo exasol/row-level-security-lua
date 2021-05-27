@@ -193,6 +193,13 @@ local function rewrite_without_protection(query)
     expand_select_list_without_protection(query)
 end
 
+local function validate_protection_scheme(schema_id, table_id, protection)
+    if protection.group_protected and protection.role_protected then
+        error('Illegal protection scheme in table "' .. schema_id .. '"."' .. table_id
+            .. '" Combination of role and group security not supported.')
+    end
+end
+
 ---
 -- Rewrite the original query with RLS restrictions.
 --
@@ -213,6 +220,7 @@ function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tab
     query.from.schema = source_schema_id
     local protection = protection_reader.read(adapter_cache, table_id)
     if protection.protected then
+        validate_protection_scheme(source_schema_id, table_id, protection)
         rewrite_with_protection(query, source_schema_id, table_id, protection, involved_tables)
     else
         rewrite_without_protection(query)
