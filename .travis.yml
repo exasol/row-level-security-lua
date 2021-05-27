@@ -17,4 +17,5 @@ script:
   - tools/runtests.sh
 
 after_success:
+  - cd target/luacov_reports
   - luacov-coveralls
