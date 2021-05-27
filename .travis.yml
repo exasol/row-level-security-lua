@@ -14,7 +14,7 @@ install:
   - sudo luarocks install remotelog
 
 script:
-  - tools/runtests.sh
+  - mvn verify
 
 after_success:
   - cd target/luacov-reports
