@@ -8,8 +8,19 @@ local adapter = require("exasolrls.adapter")
 
 test_rls_adapter = {}
 
+local function get_pom_version()
+    local pom = assert(io.open("pom.xml", "r"))
+    local pom_version
+    repeat
+        local line = pom:read("*l")
+        pom_version = string.match(line,"<version>%s*([0-9.]+)")
+    until pom_version or (line == nil)
+    pom:close()
+    return pom_version
+end
+
 function test_rls_adapter.test_version_matches_maven_pom()
-    luaunit.fail("not implemented yet")
+    luaunit.assertEquals(adapter.VERSION, get_pom_version())
 end
 
 function test_rls_adapter.test_drop_virtual_schema()
