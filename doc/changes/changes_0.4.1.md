@@ -13,5 +13,6 @@ To remove the necessity for `pquery` in push-down, we packed the complete check 
 ## Refactoring
 
 * #25: Made sure project version from POM is the same as in installer and Lua main module
+* #37: Blocked unsupported combination of group and role security
 * #50: Improved unit test runner script
 * #52: Replaced `pquery` in push-down
