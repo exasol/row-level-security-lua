@@ -38,7 +38,8 @@ function run_tests {
     do
         ((test_suites++))
         testname=$(echo "$testcase" | sed -e s'/.\///' -e s'/\//./g' -e s'/.lua$//')
-        LUA_PATH="$src_module_path/?.lua;$(luarocks path --lr-path)" lua -lluacov "$testcase" -o junit -n "$reports_dir/$testname"
+        LUA_PATH="$src_module_path/?.lua;$(luarocks path --lr-path)" \
+            lua -lluacov "$testcase" -o junit -n "$reports_dir/$testname"
         if [[ "$?" -eq 0 ]]
         then
             ((successes++))
@@ -47,11 +48,13 @@ function run_tests {
         fi
         echo
     done
-    echo "Ran $test_suites test suites. $successes successes, $failures failures."
-    if [[ "$failed_tests" -eq 0 ]]
+    echo -n "Ran $test_suites test suites. $successes successes, "
+    if [[ "$failures" -eq 0 ]]
     then
+        echo -e "\e[1m\e[32m$failures failures.\e[0m"
         return "$exit_ok"
     else
+        echo -e "\e[1m\e[31m$failures failures.\e[0m"
         return "$exit_software"
     fi
 }

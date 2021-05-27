@@ -90,7 +90,7 @@ local function translate_column_metadata(column)
 end
 
 local function translate_columns_metadata(schema_id, table_id)
-    local sql = 'SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
+    local sql = '/*snapshot execution*/ SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
         .. ' WHERE "COLUMN_SCHEMA" = \'' .. schema_id .. '\' AND "COLUMN_TABLE" = \'' .. table_id .. "'"
     local ok, result = _G.exa.pquery(sql)
     local translated_columns = {}
@@ -121,7 +121,8 @@ local function is_rls_metadata_table(table_id)
 end
 
 local function translate_table_metadata(schema_id)
-    local sql = 'SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \'' .. schema_id .. "'"
+    local sql = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \''
+        .. schema_id .. "'"
     local ok, result = _G.exa.pquery(sql)
     local tables = {}
     local table_protection = {}
