@@ -51,10 +51,10 @@ function run_tests {
     echo -n "Ran $test_suites test suites. $successes successes, "
     if [[ "$failures" -eq 0 ]]
     then
-        echo -e "\e[1m\e[32m$failures failures.\e[0m"
+        echo -e "\e[1m\e[32m$failures failures\e[0m."
         return "$exit_ok"
     else
-        echo -e "\e[1m\e[31m$failures failures.\e[0m"
+        echo -e "\e[1m\e[31m$failures failures\e[0m."
         return "$exit_software"
     fi
 }
