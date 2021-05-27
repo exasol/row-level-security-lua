@@ -91,6 +91,11 @@
             <version>0.2.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>maven-project-version-getter</artifactId>
+            <version>0.1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -149,7 +154,7 @@
                             <executable>${project.basedir}/tools/runtests.sh</executable>
                             <useMavenLogger>true</useMavenLogger>
                             <arguments>
-                              <argument>${project.basedir}</argument>
+                                <argument>${project.basedir}</argument>
                             </arguments>
                         </configuration>
                     </execution>
