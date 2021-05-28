@@ -50,9 +50,6 @@ class RequestDispatcherIT extends AbstractLuaVirtualSchemaIT {
                 .insert("G2", "OTHER_GROUP_USER");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
         final User user = factory.createLoginUser("GROUP_USER").grant(virtualSchema, SELECT);
-        // FIXME: Remove this line once the permissions of Lua VS are based on owner instead of caller.
-        // https://github.com/exasol/row-level-security-lua/issues/12
-        user.grant(sourceSchema, SELECT);
         assertRlsQueryWithUser("SELECT C1 FROM " + getVirtualSchemaName(sourceSchemaName) + ".G", user,
                 table("BOOLEAN").row(false).matches());
     }
@@ -68,9 +65,6 @@ class RequestDispatcherIT extends AbstractLuaVirtualSchemaIT {
         createUserConfigurationTable(sourceSchema) //
                 .insert("ROLE_USER", "5");
         final User user = factory.createLoginUser("ROLE_USER").grant(virtualSchema, SELECT);
-        // FIXME: Remove this line once the permissions of Lua VS are based on owner instead of caller.
-        // https://github.com/exasol/row-level-security-lua/issues/12
-        user.grant(sourceSchema, SELECT);
         assertRlsQueryWithUser("SELECT C1 FROM " + getVirtualSchemaName(sourceSchemaName) + ".R", user,
                 table("BOOLEAN").row(false).matches());
     }
