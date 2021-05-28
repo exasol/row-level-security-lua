@@ -4,16 +4,17 @@ local reader = require("exasolrls.metadata_reader")
 
 test_metadata_reader = {}
 
-local function mock_open_schema(exa_mock)
-    mockagne.when(exa_mock.pquery('OPEN SCHEMA "S"')).thenAnswer(true)
-end
-
-local function mock_describe_table(exa_mock, table, columns)
-    mockagne.when(exa_mock.pquery('DESCRIBE "' .. table ..'"')).thenAnswer(true, columns)
+local function mock_describe_table(exa_mock, table_id, columns)
+    mockagne.when(exa_mock.pquery('/*snapshot execution*/ '
+        .. 'SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
+        .. ' WHERE "COLUMN_SCHEMA" = \'S\' AND "COLUMN_TABLE" = \'' .. table_id .. "'"))
+        .thenAnswer(true, columns)
 end
 
 local function mock_read_table_catalog(exa_mock, tables)
-    mockagne.when(exa_mock.pquery('SELECT "TABLE_NAME" FROM "CAT"')).thenAnswer(true, tables)
+    mockagne.when(exa_mock.pquery('/*snapshot execution*/ '
+        .. 'SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \'S\''))
+        .thenAnswer(true, tables)
 end
 
 ---
@@ -35,7 +36,6 @@ end
 --
 local function mock_tables(exa_mock, ...)
     _G.exa = exa_mock
-    mock_open_schema(exa_mock)
     local tables = {}
     local i = 1
     for _, table_definition in ipairs({...}) do
@@ -52,7 +52,7 @@ function test_metadata_reader.test_hide_control_tables()
     mock_tables(exa_mock,
         {
             table = "T2",
-            columns = {{COLUMN_NAME = "C2", SQL_TYPE = "DATE"}}
+            columns = {{COLUMN_NAME = "C2", COLUMN_TYPE = "DATE"}}
         },
         {
             table = "EXA_RLS_USERS"
@@ -81,7 +81,7 @@ function test_metadata_reader.test_hide_control_columns()
         {
             table = "T3",
             columns = {
-                {COLUMN_NAME = "C3_1", SQL_TYPE = "BOOLEAN"},
+                {COLUMN_NAME = "C3_1", COLUMN_TYPE = "BOOLEAN"},
                 {COLUMN_NAME = "EXA_ROW_TENANT"},
                 {COLUMN_NAME = "EXA_ROW_ROLES"}
             }
@@ -89,7 +89,7 @@ function test_metadata_reader.test_hide_control_columns()
         {
             table = "T4",
             columns = {
-                {COLUMN_NAME = "C4_1", SQL_TYPE = "DATE"},
+                {COLUMN_NAME = "C4_1", COLUMN_TYPE = "DATE"},
                 {COLUMN_NAME = "EXA_ROW_GROUP"}
             }
         }
@@ -116,7 +116,7 @@ local function mock_table_with_single_column_of_type(exa_mock, type)
     mock_tables(exa_mock,
         {
             table = "T",
-            columns = {{COLUMN_NAME = "C1", SQL_TYPE = type}}
+            columns = {{COLUMN_NAME = "C1", COLUMN_TYPE = type}}
         }
     )
 end

@@ -1,5 +1,4 @@
 local luaunit = require("luaunit")
-
 local mockagne = require("mockagne")
 local metadata_reader_mock = mockagne.getMock()
 package.preload["exasolrls.metadata_reader"] = function () return metadata_reader_mock end
@@ -8,8 +7,13 @@ local adapter = require("exasolrls.adapter")
 
 test_rls_adapter = {}
 
+local function get_base_path()
+    return "../../.."
+end
+
 local function get_pom_version()
-    local pom = assert(io.open("pom.xml", "r"))
+    local base_path = get_base_path()
+    local pom = assert(io.open(base_path .. "/pom.xml", "r"))
     local pom_version
     repeat
         local line = pom:read("*l")

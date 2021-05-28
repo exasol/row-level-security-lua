@@ -13,8 +13,10 @@ install:
   - sudo luarocks install lua-cjson
   - sudo luarocks install remotelog
 
+# FIXME: Note that until the Lua VS docker image is released, we can only run up to and excluding integration tests.
 script:
-  - tools/runtests.sh
+  - mvn package
 
 after_success:
+  - cd target/luacov-reports
   - luacov-coveralls

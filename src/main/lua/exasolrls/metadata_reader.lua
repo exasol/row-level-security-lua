@@ -5,14 +5,6 @@ _G.M = {
     DEFAULT_SRID = 0,
 }
 
-local function open_schema(schema_id)
-    local ok, result = _G.exa.pquery('OPEN SCHEMA "' .. schema_id .. '"')
-    if not ok  then
-        error("E-MDR-1: Unable to open source schema " .. schema_id .. " for reading metadata. Caused by: "
-            .. result.error_message)
-    end
-end
-
 local function translate_parameterless_type(column_id, column_type)
     return {name = column_id, dataType = {type = column_type}}
 end
@@ -73,7 +65,7 @@ end
 
 local function translate_column_metadata(column)
     local column_id = column.COLUMN_NAME
-    local column_type = column.SQL_TYPE
+    local column_type = column.COLUMN_TYPE
     if (column_type == "BOOLEAN") or (column_type == "DATE") or text.starts_with(column_type, "DOUBLE") then
         return translate_parameterless_type(column_id, column_type)
     elseif text.starts_with(column_type, "DECIMAL") then
@@ -97,8 +89,10 @@ local function translate_column_metadata(column)
     end
 end
 
-local function translate_columns_metadata(table_id)
-    local ok, result = _G.exa.pquery('DESCRIBE "' .. table_id .. '"')
+local function translate_columns_metadata(schema_id, table_id)
+    local sql = '/*snapshot execution*/ SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
+        .. ' WHERE "COLUMN_SCHEMA" = \'' .. schema_id .. '\' AND "COLUMN_TABLE" = \'' .. table_id .. "'"
+    local ok, result = _G.exa.pquery(sql)
     local translated_columns = {}
     local tenant_protected, role_protected, group_protected
     if ok then
@@ -126,8 +120,10 @@ local function is_rls_metadata_table(table_id)
     return (table_id == "EXA_RLS_USERS") or (table_id == "EXA_ROLE_MAPPING") or (table_id == "EXA_GROUP_MEMBERS")
 end
 
-local function translate_table_metadata()
-    local ok, result = _G.exa.pquery('SELECT "TABLE_NAME" FROM "CAT"')
+local function translate_table_metadata(schema_id)
+    local sql = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \''
+        .. schema_id .. "'"
+    local ok, result = _G.exa.pquery(sql)
     local tables = {}
     local table_protection = {}
     if ok then
@@ -135,7 +131,8 @@ local function translate_table_metadata()
             local table_id = result[i].TABLE_NAME
             if not is_rls_metadata_table(table_id)
             then
-                local columns, tenant_protected, role_protected, group_protected = translate_columns_metadata(table_id)
+                local columns, tenant_protected, role_protected, group_protected =
+                    translate_columns_metadata(schema_id, table_id)
                 table.insert(tables, {name = table_id, columns = columns})
                 local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
                         .. (group_protected and "g" or "-")
@@ -157,8 +154,7 @@ end
 -- @return schema metadata
 --
 function M.read(schema_id)
-    open_schema(schema_id)
-    local tables, table_protection = translate_table_metadata()
+    local tables, table_protection = translate_table_metadata(schema_id)
     return {tables = tables, adapterNotes = table.concat(table_protection, ",")}
 end
 
