@@ -2,7 +2,6 @@ package com.exasol;
 
 import static com.exasol.RlsTestConstants.IDENTIFIER_TYPE;
 import static com.exasol.RlsTestConstants.ROW_GROUP_COLUMN;
-import static com.exasol.dbbuilder.ObjectPrivilege.SELECT;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static org.hamcrest.Matchers.anything;
 
@@ -30,8 +29,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                 .insert(true, groupName) //
                 .insert(false, "GROUP_THE_USER_DOES_NOT_HAVE");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
-        final User user = createUserWithVirtualSchemaAccess(userName, virtualSchema) //
-                .grant(sourceSchema, SELECT); // FIXME: https://github.com/exasol/row-level-security-lua/issues/39
+        final User user = createUserWithVirtualSchemaAccess(userName, virtualSchema);
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user, table().row(true).matches());
     }
 
@@ -61,8 +59,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                 .column("VU", "VARCHAR(12) UTF8") //
                 .build();
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
-        final User user = createUserWithVirtualSchemaAccess(userName, virtualSchema) //
-                .grant(sourceSchema, SELECT); // FIXME: https://github.com/exasol/row-level-security-lua/issues/39
+        final User user = createUserWithVirtualSchemaAccess(userName, virtualSchema);
         assertRlsQueryWithUser("DESCRIBE " + virtualSchema.getName() + ".T", user, //
                 table() //
                         .row("BO", "BOOLEAN", anything(), anything(), anything())

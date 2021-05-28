@@ -28,7 +28,6 @@ abstract class AbstractLuaVirtualSchemaIT {
     // FIXME: replace by officially released version once available
     // https://github.com/exasol/row-level-security-lua/issues/39
     private static final String DOCKER_DB = "exasol/docker-db:7.0.0";
-    // private static final String DOCKER_DB = "exasol/docker-db:7.1.0-dev7";
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //

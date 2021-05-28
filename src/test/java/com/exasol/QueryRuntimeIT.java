@@ -25,7 +25,7 @@ class QueryRuntimeIT extends AbstractLuaVirtualSchemaIT {
         final Duration duration = assertTimedRlsQueryWithUser(
                 "SELECT C1 FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user,
                 table().row(true).row(false).matches(NO_JAVA_TYPE_CHECK));
-        assertRanInLessThan(testInfo, duration, Duration.ofMillis(50));
+        assertRanInLessThan(testInfo, duration, Duration.ofMillis(250));
     }
 
     private void assertRanInLessThan(final TestInfo testInfo, final Duration duration, final Duration maximumDuration) {

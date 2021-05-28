@@ -3,7 +3,6 @@ package com.exasol;
 import static com.exasol.RlsTestConstants.ROLE_MASK_TYPE;
 import static com.exasol.RlsTestConstants.ROW_ROLES_COLUMN;
 import static com.exasol.basetypes.BitField64.bitsToLong;
-import static com.exasol.dbbuilder.ObjectPrivilege.SELECT;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -24,8 +23,7 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
                 .insert("NOT ACESSIBLE", bitsToLong(0));
         createUserConfigurationTable(schema);
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
-        final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_ROLE", virtualSchema) //
-                .grant(schema, SELECT); // FIXME: https://github.com/exasol/row-level-security-lua/issues/39
+        final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_ROLE", virtualSchema);
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user, table("VARCHAR").matches());
     }
 
@@ -36,8 +34,7 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
         schema.createTable("T", "C1", "VARCHAR(20)", ROW_ROLES_COLUMN, ROLE_MASK_TYPE) //
                 .insert("NOT ACESSIBLE", bitsToLong(0));
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
-        final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_ROLE", virtualSchema) //
-                .grant(schema, SELECT); // FIXME: https://github.com/exasol/row-level-security-lua/issues/39
+        final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_ROLE", virtualSchema);
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user, table("VARCHAR").matches());
     }
 
@@ -54,8 +51,7 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
                 .insert("FOR ROLE 1", bitsToLong(0));
         addPublicRoleEntry(table, "PUBLIC");
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
-        final User user = createUserWithVirtualSchemaAccess("USER_PUBLIC_ACCESS_NO_ROLE", virtualSchema) //
-                .grant(schema, SELECT); // FIXME: https://github.com/exasol/row-level-security-lua/issues/39
+        final User user = createUserWithVirtualSchemaAccess("USER_PUBLIC_ACCESS_NO_ROLE", virtualSchema);
         createUserConfigurationTable(schema);
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user,
                 table().row("PUBLIC").matches());
@@ -79,8 +75,7 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
                 .insert("FOR ROLE 1", bitsToLong(0));
         addPublicRoleEntry(table, "PUBLIC");
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
-        final User user = createUserWithVirtualSchemaAccess("USER_PUBLIC_ACCESS_NON_MATCHING_ROLE", virtualSchema) //
-                .grant(schema, SELECT); // FIXME: https://github.com/exasol/row-level-security-lua/issues/39
+        final User user = createUserWithVirtualSchemaAccess("USER_PUBLIC_ACCESS_NON_MATCHING_ROLE", virtualSchema);
         createUserConfigurationTable(schema) //
                 .insert(user.getName(), bitsToLong(1));
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T ORDER BY C1", user,
