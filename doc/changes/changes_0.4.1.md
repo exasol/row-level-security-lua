@@ -1,4 +1,4 @@
-# row-level-security-lua 0.4.0, released 2020-05-28
+# row-level-security-lua 0.4.1, released 2021-05-28
 
 Code name: Query-free push-down and validation improvements
 
@@ -13,7 +13,6 @@ To remove the necessity for `pquery` in push-down, we packed the complete check 
 ## Refactoring
 
 * #12: Change #52 made the "grant workaround" unnecessary, so we removed it.
-       Even if the problem still persists in the current development version Lua VS database, it no longer affects Lua RLS.
 * #25: Made sure project version from POM is the same as in installer and Lua main module
 * #37: Blocked unsupported combination of group and role security
 * #50: Improved unit test runner script
