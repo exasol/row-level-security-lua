@@ -1,10 +1,5 @@
-name: Build and test Lua project
-on:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
-    
+name: "Build and test Lua project"
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
