@@ -27,4 +27,4 @@ jobs:
       - name: "Collect Lua coverage"
         run: |
           cd target/luacov-reports
-            luacov-coveralls
+          luacov-coveralls
