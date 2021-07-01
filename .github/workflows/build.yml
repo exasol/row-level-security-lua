@@ -24,7 +24,8 @@ jobs:
       - name: "Build with Maven"
         run: |
           mvn package
-      - name: "Collect Lua coverage"
-        run: |
-          cd target/luacov-reports
-          luacov-coveralls
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: luacov.report.out
+          path: target/luacov-reports/luacov.report.out
