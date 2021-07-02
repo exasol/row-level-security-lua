@@ -1,7 +1,7 @@
 local metadata_reader = require("exasolrls.metadata_reader")
 local query_rewriter = require("exasolrls.query_rewriter")
 
-local M = {VERSION = "0.4.1", NAME = "Row-level Security adapter (LUA)"}
+local M = {VERSION = "0.4.2", NAME = "Row-level Security adapter (LUA)"}
 
 local function is_schema_name_property_present(properties)
     local schema_id = properties.SCHEMA_NAME
