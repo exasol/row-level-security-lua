@@ -92,7 +92,7 @@ end
 local function translate_columns_metadata(schema_id, table_id)
     local sql = '/*snapshot execution*/ SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
         .. ' WHERE "COLUMN_SCHEMA" = \'' .. schema_id .. '\' AND "COLUMN_TABLE" = \'' .. table_id .. "'"
-    local ok, result = _G.exa.pquery(sql)
+    local ok, result = _G.exa.pquery_no_preprocessing(sql)
     local translated_columns = {}
     local tenant_protected, role_protected, group_protected
     if ok then
@@ -123,7 +123,7 @@ end
 local function translate_table_metadata(schema_id)
     local sql = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \''
         .. schema_id .. "'"
-    local ok, result = _G.exa.pquery(sql)
+    local ok, result = _G.exa.pquery_no_preprocessing(sql)
     local tables = {}
     local table_protection = {}
     if ok then

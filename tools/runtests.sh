@@ -29,7 +29,7 @@ function create_target_directories {
 # Return error status in case there were failures.
 #
 function run_tests {
-    cd "$test_module_path"
+    cd "$test_module_path" || exit
     readonly tests="$(find . -name '*.lua')"
     test_suites=0
     failures=0
@@ -38,9 +38,8 @@ function run_tests {
     do
         ((test_suites++))
         testname=$(echo "$testcase" | sed -e s'/.\///' -e s'/\//./g' -e s'/.lua$//')
-        LUA_PATH="$src_module_path/?.lua;$(luarocks path --lr-path)" \
-            lua -lluacov "$testcase" -o junit -n "$reports_dir/$testname"
-        if [[ "$?" -eq 0 ]]
+        search_path="$src_module_path/?.lua;$(luarocks path --lr-path)"
+        if LUA_PATH="$search_path" lua -lluacov "$testcase" -o junit -n "$reports_dir/$testname"
         then
             ((successes++))
         else
