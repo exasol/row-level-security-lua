@@ -1,6 +1,6 @@
 # Row Level Security Tutorial
 
-Please follow a [Java-based RLS tutorial](https://github.com/exasol/row-level-security/blob/main/doc/user_guide/tutorial.md) till the `Protecting the Data with RLS` section and then come back here.
+Please follow the [Java-based RLS tutorial](https://github.com/exasol/row-level-security/blob/main/doc/user_guide/tutorial.md) till the `Protecting the Data with RLS` section and then return back here.
 
 ## Protecting the Data with RLS
 
@@ -18,6 +18,8 @@ Execute the following SQL statements as user `SYS`.
 CREATE SCHEMA RLS_VSADAPTER_SCHEMA;
 
 CREATE OR REPLACE LUA ADAPTER SCRIPT RLS_VSADAPTER_SCHEMA.RLS_VSADAPTER AS
+    <lua module loading preamble here>
+    
     <lua script here>
 /
 ;

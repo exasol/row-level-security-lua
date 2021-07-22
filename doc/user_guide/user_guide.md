@@ -1,10 +1,10 @@
 # Row Level Security
 
-Row-Level Security (short "RLS") is a security mechanism based on Exasol's Virtual Schemas. It allows database administrators control access to a table's row depending on a user's roles and username.
+Row-Level Security (short "RLS") is a security mechanism based on Exasol's Virtual Schemas. It allows database administrators to control access to a table's row depending on a user's roles, group membership or username.
 
 RLS only supports Exasol databases. That means you cannot use RLS between Exasol and a 3rd-party data source.
 
-The RLS installation package contains everything you need to extend an existing Exasol installation with row-level security.
+The RLS installation package contains everything you need to extend an existing Exasol installation with Row-Level Security.
 
 ## Introduction
 
@@ -37,7 +37,7 @@ This is an important distinction since it allows for separation of concerns. Dat
 
 *Group-based* also allows multiple users to access one row. Users can be members of multiple groups, but each row can belong to only one group.
 
-All the flavors allow for *public* data &mdash; as the name suggests, this data is accessible for all users, independently of roles or whether they own the data.
+All the flavors also allow data to be marked *public*. As the name suggests, this data is accessible for all users, independently of roles, groups or whether they own the data.
 
 ### Protection Scopes of RLS
 
@@ -306,7 +306,7 @@ In this section we discuss which combinations of protection schemes are supporte
 
 ### Tenant- Plus Role-Security
 
-If a table is protected with tenant- and role-security, a user must be the tenant *and* have the right role to access a row.
+If a table is protected with tenant- and role-security, a user must be the tenant or have the right role to access a row.
 
 ### Tenant- Plus Group-Security
 
@@ -347,7 +347,7 @@ CREATE OR REPLACE LUA ADAPTER SCRIPT RLS_SCHEMA.RLS_ADAPTER AS
 /
 ;
 ```
-
+The first fixed part is a module loading preamble that is required with 7.1.0. Later versions will make this unnecessary, the user guide will be updated accordingly if an Exasol release is available that incorporates that module loading feature by default.
 ### Creating Virtual Schema
 
 ```sql
@@ -394,4 +394,5 @@ To recap: data in an RLS-protected schema is publicly readable if
 
 * `SELECT *` is not yet supported due to an issue between the core database and the LUA Virtual Schemas in push-down requests (SPOT-10626)
 * RLS only works with Exasol as source and destination of the Virtual Schema.
+* Source Schema and Virtual Schema must be on the same database.
 * RLS Virtual Schema do not support JOIN capabilities.
