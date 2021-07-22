@@ -357,12 +357,6 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
     SCHEMA_NAME     = '<schema name>'
 ```
 
-### Additional optional properties
-
-Property                  | Value
-------------------------- | -----------
-`EXCLUDED_CAPABILITIES`   | A comma-separated list of capabilities that you want to deactivate (although the adapter might support them).
-
 ### Granting Access to the Virtual Schema
 
 Remember that RLS is an additional layer of access control _on top_ of the measures built into the core database. So in order to read columns in an RLS Virtual Schema, users first need to be allowed to access that schema.

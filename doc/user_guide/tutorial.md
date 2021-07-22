@@ -10,8 +10,6 @@ Lua row-level security is a Lua implementation of [Virtual Schemas](https://docs
 
 A Virtual Schema is a projection of an underlying concrete schema. In the case of RLS, it adds a filter layer that makes sure that users only see what they are supposed to.
 
-Please refer to the [user guide](user_guide.md#creating-the-virtual-schema) for detailed instructions on how to install the RLS package.
-
 Execute the following SQL statements as user `SYS`.
 
 ```sql
@@ -23,7 +21,11 @@ CREATE OR REPLACE LUA ADAPTER SCRIPT RLS_VSADAPTER_SCHEMA.RLS_VSADAPTER AS
     <lua script here>
 /
 ;
+```
 
+Check the [user guide (section "Creating Virtual Schema Adapter Script")](user_guide.md#creating-virtual-schema-adapter-script) for more details.
+
+```sql
 CREATE VIRTUAL SCHEMA RLS_CHICAGO_TAXI_VS 
 USING RLS_VSADAPTER_SCHEMA.RLS_VSADAPTER 
 WITH
