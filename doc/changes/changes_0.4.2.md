@@ -9,3 +9,7 @@ Switched build from Travis CI to GitHub Actions
 ## Refactoring
 
 * #63: Switched build from Travis CI to GitHub Actions
+  
+## Documentation
+
+* #26: Added a user guide and a tutorial.
