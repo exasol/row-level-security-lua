@@ -1,6 +1,6 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.tools.TestsConstants.DOCKER_DB;
+import static com.exasol.rls.administration.TestsConstants.DOCKER_DB;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;

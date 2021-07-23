@@ -1,21 +1,19 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.tools.TestsConstants.EXA_GROUP_MEMBERS_TABLE_NAME;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
+import com.exasol.dbbuilder.dialects.Table;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.tools.TestsConstants;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import static com.exasol.rls.administration.TestsConstants.EXA_GROUP_MEMBERS_TABLE_NAME;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 
 @Tag("integration")
 @Tag("slow")

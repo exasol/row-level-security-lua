@@ -1,4 +1,4 @@
-package com.exasol.tools;
+package com.exasol.rls.administration;
 
 import java.math.BigInteger;
 import java.nio.file.Path;

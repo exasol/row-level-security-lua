@@ -1,16 +1,8 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
-import static com.exasol.tools.TestsConstants.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.stream.Stream;
-
+import com.exasol.dbbuilder.dialects.Table;
+import com.exasol.matcher.ResultSetStructureMatcher;
+import com.exasol.matcher.ResultSetStructureMatcher.Builder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -22,9 +14,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.matcher.ResultSetStructureMatcher;
-import com.exasol.matcher.ResultSetStructureMatcher.Builder;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.stream.Stream;
+
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
+import static com.exasol.rls.administration.TestsConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 // [itest->dsn~delete-a-role~1]
 @Tag("integration")
@@ -65,11 +64,11 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
     }
 
     // [itest->dsn~delete-rls-role-removes-a-role-from-administrative-tables~1]
-    @CsvSource({ "'Sales', 'Development', 'Finance', 'Support'", "'Development', 'Finance', 'Sales', 'Support'",
-            "'Finance', 'Development', 'Sales', 'Support'", "'Support',  'Development', 'Finance', 'Sales'" })
+    @CsvSource({"'Sales', 'Development', 'Finance', 'Support'", "'Development', 'Finance', 'Sales', 'Support'",
+            "'Finance', 'Development', 'Sales', 'Support'", "'Support',  'Development', 'Finance', 'Sales'"})
     @ParameterizedTest
     void testDeleteRlsRoleFromExaRolesMapping(final String roleToDelete, final String remainingRole1,
-            final String remainingRole2, final String remainingRole3) throws SQLException {
+                                              final String remainingRole2, final String remainingRole3) throws SQLException {
         createRolesMapping();
         script.execute(roleToDelete);
         assertThat(query("SELECT ROLE_NAME FROM " + getRolesMappingTableName() + " ORDER BY ROLE_NAME"),
@@ -114,10 +113,10 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
     }
 
     private static Stream<Arguments> provideValuesForTestDeleteRlsRoleFromExaRlsUsers() {
-        return Stream.of(Arguments.of("Sales", new Object[][] { { "RLS_USR_1", 14 }, { "RLS_USR_2", 8 } }), //
-                Arguments.of("Development", new Object[][] { { "RLS_USR_1", 13 }, { "RLS_USR_2", 9 } }), //
-                Arguments.of("Finance", new Object[][] { { "RLS_USR_1", 11 }, { "RLS_USR_2", 9 } }), //
-                Arguments.of("Support", new Object[][] { { "RLS_USR_1", 7 }, { "RLS_USR_2", 1 } }));
+        return Stream.of(Arguments.of("Sales", new Object[][]{{"RLS_USR_1", 14}, {"RLS_USR_2", 8}}), //
+                Arguments.of("Development", new Object[][]{{"RLS_USR_1", 13}, {"RLS_USR_2", 9}}), //
+                Arguments.of("Finance", new Object[][]{{"RLS_USR_1", 11}, {"RLS_USR_2", 9}}), //
+                Arguments.of("Support", new Object[][]{{"RLS_USR_1", 7}, {"RLS_USR_2", 1}}));
     }
 
     // [itest->dsn~delete-rls-role-removes-a-role-from-roles-secured-tables~1]
@@ -144,17 +143,17 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
 
     private static Stream<Arguments> provideValuesForTestDeleteRlsRoleFromPayloadTable() {
         return Stream.of(
-                Arguments.of("Sales", new Object[][] { { "Row1", 0 }, { "Row2", 6 }, { "Row3", 8 }, { "Row4", 14 } }), //
+                Arguments.of("Sales", new Object[][]{{"Row1", 0}, {"Row2", 6}, {"Row3", 8}, {"Row4", 14}}), //
                 Arguments.of("Development",
-                        new Object[][] { { "Row1", 1 }, { "Row2", 4 }, { "Row3", 9 }, { "Row4", 13 } }), //
-                Arguments.of("Finance", new Object[][] { { "Row1", 1 }, { "Row2", 2 }, { "Row3", 9 }, { "Row4", 11 } }), //
-                Arguments.of("Support", new Object[][] { { "Row1", 1 }, { "Row2", 6 }, { "Row3", 1 }, { "Row4", 7 } }));
+                        new Object[][]{{"Row1", 1}, {"Row2", 4}, {"Row3", 9}, {"Row4", 13}}), //
+                Arguments.of("Finance", new Object[][]{{"Row1", 1}, {"Row2", 2}, {"Row3", 9}, {"Row4", 11}}), //
+                Arguments.of("Support", new Object[][]{{"Row1", 1}, {"Row2", 6}, {"Row3", 1}, {"Row4", 7}}));
     }
 
     // Regression test for https://github.com/exasol/row-level-security/issues/95
     @Test
     void testNoBitMaskSideEffects() throws SQLException {
-        final int[] roleIds = { 1, 32, 33, 53 };
+        final int[] roleIds = {1, 32, 33, 53};
         final BitField64 expectedMask = BitField64.empty();
         for (final int roleId : roleIds) {
             rolesTable.insert("role_" + roleId, roleId);

@@ -1,13 +1,5 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.tools.TestsConstants.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -16,6 +8,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.rls.administration.TestsConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 // [itest->dsn~add-a-new-role~1]
 @Tag("integration")
@@ -64,7 +64,7 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
 
     // [itest->dsn~add-rls-roles-checks-parameters~1]
     @ParameterizedTest
-    @ValueSource(strings = { "SALES", "Sales", "sales" })
+    @ValueSource(strings = {"SALES", "Sales", "sales"})
     void testAddRlsRoleExistingNameException(final String roleName) throws SQLException {
         script.execute("Sales", 1);
         assertScriptThrows("Role name \"" + roleName + "\" already exists (role id 1).", roleName, 2);
@@ -72,7 +72,7 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
 
     // [itest->dsn~add-rls-roles-checks-parameters~1]
     @ParameterizedTest
-    @ValueSource(ints = { -5, 0, 64, 70 })
+    @ValueSource(ints = {-5, 0, 64, 70})
     void testAddRlsRoleInvalidRoleIdException(final int rlsRole) throws SQLException {
         assertScriptThrows("Invalid role id. Role id must be between 1 and 63.", "Sales", rlsRole);
     }

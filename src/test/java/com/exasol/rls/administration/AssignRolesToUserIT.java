@@ -1,16 +1,5 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
-import static com.exasol.tools.TestsConstants.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -20,6 +9,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
+import static com.exasol.rls.administration.TestsConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 // [itest->dsn~assign-roles-to-a-user~1]
 @Tag("integration")

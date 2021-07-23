@@ -1,21 +1,20 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.tools.TestsConstants.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
+import com.exasol.dbbuilder.dialects.Table;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.dialects.Table;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.rls.administration.TestsConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @Testcontainers
 @Tag("integration")
