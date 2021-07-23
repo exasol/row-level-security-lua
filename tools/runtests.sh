@@ -13,6 +13,7 @@ fi
 readonly exit_ok=0
 readonly exit_software=2
 readonly src_module_path="$base_dir/src/main/lua"
+readonly src_administration_path="$base_dir/src/administration"
 readonly test_module_path="$base_dir/src/test/lua"
 readonly target_dir="$base_dir/target"
 readonly reports_dir="$target_dir/luaunit-reports"
@@ -100,6 +101,7 @@ function run_static_code_analysis {
     echo "Running static code analysis"
     echo
     luacheck "$src_module_path" "$test_module_path" --codes --ignore 111 --ignore 112
+    luacheck "$src_administration_path" --codes --ignore 111 --ignore 112 --ignore 113
     return "$?"
 }
 

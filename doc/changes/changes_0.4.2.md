@@ -9,6 +9,7 @@ Switched build from Travis CI to GitHub Actions
 ## Refactoring
 
 * #63: Switched build from Travis CI to GitHub Actions
+* #66: Copied administration scripts to this repository.
   
 ## Documentation
 
