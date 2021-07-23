@@ -6,12 +6,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,9 +16,7 @@ import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.DatabaseObjectException;
-import com.exasol.dbbuilder.dialects.exasol.ExasolObjectFactory;
-import com.exasol.dbbuilder.dialects.exasol.ExasolSchema;
-import com.exasol.dbbuilder.dialects.exasol.Script;
+import com.exasol.dbbuilder.dialects.exasol.*;
 
 public abstract class AbstractAdminScriptIT {
     private static final String[] INVALID_IDENTIFIERS = { //

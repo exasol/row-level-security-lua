@@ -6,10 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.Duration;
 import java.util.Map;
 
@@ -19,9 +16,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundExceptio
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
-import com.exasol.dbbuilder.dialects.Schema;
-import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.dbbuilder.dialects.User;
+import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
@@ -32,7 +27,7 @@ abstract class AbstractLuaVirtualSchemaIT {
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     // FIXME: replace by officially released version once available
     // https://github.com/exasol/row-level-security-lua/issues/39
-    private static final String DOCKER_DB = "7.0.10";
+    private static final String DOCKER_DB = "exasol/docker-db:7.0.0";
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //

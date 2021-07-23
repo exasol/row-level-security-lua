@@ -64,8 +64,20 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.7.1</version>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -187,7 +199,7 @@
                             <executable>${basedir}/tools/assemble_sql_scripts.sh</executable>
                             <useMavenLogger>true</useMavenLogger>
                             <arguments>
-                                <argument>target/com.exasol.rls.administration-sql-scripts-${project.version}.sql</argument>
+                                <argument>target/administration-sql-scripts-${project.version}.sql</argument>
                                 <!-- Administration scripts: -->
                                 <argument>${source.admin.scripts}/exa_rls_base.lua</argument>
                                 <argument>${source.admin.scripts}/exa_identifier.lua</argument>

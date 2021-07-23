@@ -1,25 +1,22 @@
 package com.exasol.rls.administration;
 
-import com.exasol.dbbuilder.dialects.Table;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
+import static com.exasol.rls.administration.BitField64.bitsToLong;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.IOException;
+import java.sql.*;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.stream.Stream;
-
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
-import static com.exasol.rls.administration.BitField64.bitsToLong;
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.exasol.dbbuilder.dialects.Table;
 
 // [itest->dsn~get-a-role-mask~1]
 @Tag("integration")

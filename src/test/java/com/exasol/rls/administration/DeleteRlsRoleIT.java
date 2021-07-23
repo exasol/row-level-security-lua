@@ -1,29 +1,25 @@
 package com.exasol.rls.administration;
 
-import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.matcher.ResultSetStructureMatcher;
-import com.exasol.matcher.ResultSetStructureMatcher.Builder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
+import static com.exasol.rls.administration.TestsConstants.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.stream.Stream;
 
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
-import static com.exasol.rls.administration.TestsConstants.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
+import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.exasol.dbbuilder.dialects.Table;
+import com.exasol.matcher.ResultSetStructureMatcher;
+import com.exasol.matcher.ResultSetStructureMatcher.Builder;
 
 // [itest->dsn~delete-a-role~1]
 @Tag("integration")

@@ -6,17 +6,13 @@ import static com.exasol.basetypes.BitField64.bitsToLong;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.containers.ExasolDockerImageReference;
-import com.exasol.dbbuilder.dialects.Schema;
-import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.dbbuilder.dialects.User;
+import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers

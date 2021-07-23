@@ -72,7 +72,7 @@ In the second case you only see the number of trips that Luhak Corp made &mdash;
 
 ## Profiling
 
-If you are curious about how queries using RLS perform, you can use [Exasol's profiling feature](https://docs.exasol.com/com.exasol.rls.administration/on-premise/support/profiling_information.htm).
+If you are curious about how queries using RLS perform, you can use [Exasol's profiling feature](https://docs.exasol.com/administration/on-premise/support/profiling_information.htm).
 
 Run the following example as user `LUHAK_CORP`. It demonstrates how Exasol executes a query that joins the large fact table and a dimension table. There is a narrow filter on the fact table and we want to see that this filter is applied _before_ the join.
 
