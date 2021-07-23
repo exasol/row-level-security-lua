@@ -28,7 +28,7 @@ Requirement, design documents and coverage tags are written in [OpenFastTrace](h
 
 * [System Requirement Specification](doc/system_requirements.md)
 * [Design](doc/design.md)
-* [Developer Guide](doc/developer_guide.md)
+* [Developer Guide](doc/developer_guide/developer_guide.md)
 
 ### Run Time Dependencies
 
