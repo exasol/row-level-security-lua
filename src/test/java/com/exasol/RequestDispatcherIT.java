@@ -1,13 +1,15 @@
 package com.exasol;
 
 import static com.exasol.RlsTestConstants.*;
-import static com.exasol.dbbuilder.ObjectPrivilege.SELECT;
+import static com.exasol.dbbuilder.dialects.exasol.ExasolObjectPrivilege.SELECT;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.*;
+import com.exasol.dbbuilder.dialects.Schema;
+import com.exasol.dbbuilder.dialects.User;
+import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers
 class RequestDispatcherIT extends AbstractLuaVirtualSchemaIT {

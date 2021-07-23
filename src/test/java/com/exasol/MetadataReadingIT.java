@@ -8,7 +8,9 @@ import static org.hamcrest.Matchers.anything;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.*;
+import com.exasol.dbbuilder.dialects.Schema;
+import com.exasol.dbbuilder.dialects.User;
+import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers
 class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {

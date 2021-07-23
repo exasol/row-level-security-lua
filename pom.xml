@@ -19,7 +19,7 @@
         <lua.src>${basedir}/src/main/lua</lua.src>
         <lua.test>${basedir}/src/test/lua</lua.test>
         <lua.path>/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;./?.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua</lua.path>
-        <source.admin.scripts>${basedir}/src/administration</source.admin.scripts>
+        <source.admin.scripts>${basedir}/src/main/lua/administration</source.admin.scripts>
         <source.sql.scripts>src/main/sql</source.sql.scripts>
     </properties>
     <repositories>
@@ -64,20 +64,8 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-runner</artifactId>
-            <version>${junit.platform.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.7.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -89,7 +77,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>0.2.0</version>
+            <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -199,7 +187,7 @@
                             <executable>${basedir}/tools/assemble_sql_scripts.sh</executable>
                             <useMavenLogger>true</useMavenLogger>
                             <arguments>
-                                <argument>target/administration-sql-scripts-${project.version}.sql</argument>
+                                <argument>target/com.exasol.rls.administration-sql-scripts-${project.version}.sql</argument>
                                 <!-- Administration scripts: -->
                                 <argument>${source.admin.scripts}/exa_rls_base.lua</argument>
                                 <argument>${source.admin.scripts}/exa_identifier.lua</argument>

@@ -6,7 +6,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Duration;
 import java.util.Map;
 
@@ -16,8 +19,10 @@ import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundExceptio
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
-import com.exasol.dbbuilder.*;
-import com.exasol.dbbuilder.AdapterScript.Language;
+import com.exasol.dbbuilder.dialects.Schema;
+import com.exasol.dbbuilder.dialects.Table;
+import com.exasol.dbbuilder.dialects.User;
+import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
@@ -27,7 +32,7 @@ abstract class AbstractLuaVirtualSchemaIT {
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     // FIXME: replace by officially released version once available
     // https://github.com/exasol/row-level-security-lua/issues/39
-    private static final String DOCKER_DB = "exasol/docker-db:7.0.0";
+    private static final String DOCKER_DB = "7.0.10";
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //
@@ -50,7 +55,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             + ")\n\n";
     private static Connection connection;
     protected static ExasolObjectFactory factory;
-    private static Schema scriptSchema;
+    private static ExasolSchema scriptSchema;
 
     @BeforeAll
     static void beforeAll() throws NoDriverFoundException, SQLException {
@@ -66,7 +71,7 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
         final String name = sourceSchema.getName();
-        AdapterScript adapterScript;
+        final AdapterScript adapterScript;
         try {
             adapterScript = createAdapterScript(name);
         } catch (final IOException exception) {
@@ -81,7 +86,7 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected AdapterScript createAdapterScript(final String prefix) throws IOException {
         final String content = EXASOL_LUA_MODULE_LOADER_WORKAROUND + Files.readString(RLS_PACKAGE_PATH);
-        return scriptSchema.createAdapterScript(prefix + "_ADAPTER", Language.LUA, content);
+        return scriptSchema.createAdapterScript(prefix + "_ADAPTER", AdapterScript.Language.LUA, content);
     }
 
     protected String getVirtualSchemaName(final String sourceSchemaName) {
@@ -114,7 +119,7 @@ abstract class AbstractLuaVirtualSchemaIT {
     }
 
     protected User createUserWithVirtualSchemaAccess(final String name, final VirtualSchema virtualSchema) {
-        return factory.createLoginUser(name).grant(virtualSchema, ObjectPrivilege.SELECT);
+        return factory.createLoginUser(name).grant(virtualSchema, ExasolObjectPrivilege.SELECT);
     }
 
     protected Schema createSchema(final String sourceSchemaName) {
