@@ -16,8 +16,9 @@ import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundExceptio
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
-import com.exasol.dbbuilder.*;
-import com.exasol.dbbuilder.AdapterScript.Language;
+import com.exasol.dbbuilder.dialects.*;
+import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.dbbuilder.dialects.exasol.AdapterScript.Language;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
@@ -50,7 +51,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             + ")\n\n";
     private static Connection connection;
     protected static ExasolObjectFactory factory;
-    private static Schema scriptSchema;
+    private static ExasolSchema scriptSchema;
 
     @BeforeAll
     static void beforeAll() throws NoDriverFoundException, SQLException {
@@ -114,7 +115,7 @@ abstract class AbstractLuaVirtualSchemaIT {
     }
 
     protected User createUserWithVirtualSchemaAccess(final String name, final VirtualSchema virtualSchema) {
-        return factory.createLoginUser(name).grant(virtualSchema, ObjectPrivilege.SELECT);
+        return factory.createLoginUser(name).grant(virtualSchema, ExasolObjectPrivilege.SELECT);
     }
 
     protected Schema createSchema(final String sourceSchemaName) {

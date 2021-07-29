@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.containers.ExasolDockerImageReference;
-import com.exasol.dbbuilder.*;
+import com.exasol.dbbuilder.dialects.*;
+import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers
 class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {

@@ -11,8 +11,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <junit.version>5.6.2</junit.version>
-        <junit.platform.version>1.6.2</junit.platform.version>
+        <junit.version>5.7.2</junit.version>
+        <junit.platform.version>1.7.2</junit.platform.version>
         <surefire.and.failsafe.plugin.version>3.0.0-M4</surefire.and.failsafe.plugin.version>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
@@ -34,19 +34,19 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-jdbc</artifactId>
-            <version>6.2.5</version>
+            <version>7.0.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>3.5.1</version>
+            <version>4.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.13.0</version>
+            <version>1.16.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -82,13 +82,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.30</version>
+            <version>1.7.32</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>0.2.0</version>
+            <version>3.2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -99,6 +99,26 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.6.3</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Note that we do not need the Surefire-plug-in in this project since unit tests are run 
                 by luaunit. -->
             <plugin>
