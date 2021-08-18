@@ -6,6 +6,10 @@ Code name: 7.1 Compatibility
 
 This is the first release that uses the production version of Exasol 7.1 for the integration tests.
 Switched build from Travis CI to GitHub Actions.
+  
+## Documentation
+
+* #26: Added a user guide and a tutorial.
 
 ## Refactoring
 

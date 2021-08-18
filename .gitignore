@@ -5,3 +5,5 @@
 /.dbeaver
 Scripts
 *.out
+.idea
+*.iml
