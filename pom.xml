@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

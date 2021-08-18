@@ -4,14 +4,12 @@ import static com.exasol.RlsTestConstants.ROLE_MASK_TYPE;
 import static com.exasol.RlsTestConstants.ROW_ROLES_COLUMN;
 import static com.exasol.basetypes.BitField64.bitsToLong;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.sql.*;
 
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.containers.ExasolDockerImageReference;
 import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
@@ -26,23 +24,6 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
         final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_ROLE", virtualSchema);
         assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user, table("VARCHAR").matches());
-    }
-
-    @Test
-    void testAccessRoleProtectedTableWhenUserMappingIsMissing() {
-        assumeExasolSevenOneOrLater();
-        final Schema schema = createSchema("SCHEMA_FOR_ACCESS_WITHOUT_ROLE");
-        schema.createTable("T", "C1", "VARCHAR(20)", ROW_ROLES_COLUMN, ROLE_MASK_TYPE) //
-                .insert("NOT ACESSIBLE", bitsToLong(0));
-        final VirtualSchema virtualSchema = createVirtualSchema(schema);
-        final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_ROLE", virtualSchema);
-        assertRlsQueryWithUser("SELECT C1 FROM " + virtualSchema.getName() + ".T", user, table("VARCHAR").matches());
-    }
-
-    private void assumeExasolSevenOneOrLater() {
-        final ExasolDockerImageReference imageReference = EXASOL.getDockerImageReference();
-        assumeTrue((imageReference.getMajor() > 7)
-                || ((imageReference.getMajor() == 7) && (imageReference.getMinor() > 0)));
     }
 
     @Test
