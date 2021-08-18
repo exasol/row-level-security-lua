@@ -9,6 +9,8 @@ Switched build from Travis CI to GitHub Actions.
 
 ## Refactoring
 
+* #39: Replaced custom docker image with official version in integration tests.
+* #59: Activated full integration tests on CI.
 * #63: Switched build from Travis CI to GitHub Actions.
 * #65: Updated `dockerdb` in integration tests to `7.1.0-d1`.
 * #72: Update dependencies for `0.4.2`.
