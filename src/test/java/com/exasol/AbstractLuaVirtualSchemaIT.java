@@ -20,7 +20,6 @@ import org.testcontainers.junit.jupiter.Container;
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.*;
-import com.exasol.dbbuilder.dialects.exasol.AdapterScript.Language;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
@@ -28,7 +27,6 @@ abstract class AbstractLuaVirtualSchemaIT {
             "172.17.0.1:3000");
     private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
-    private static final String DOCKER_DB = "exasol/docker-db:7.1.0-d1";
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //
@@ -67,7 +65,7 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
         final String name = sourceSchema.getName();
-        AdapterScript adapterScript;
+        final AdapterScript adapterScript;
         try {
             adapterScript = createAdapterScript(name);
         } catch (final IOException exception) {
@@ -82,7 +80,7 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected AdapterScript createAdapterScript(final String prefix) throws IOException {
         final String content = EXASOL_LUA_MODULE_LOADER_WORKAROUND + Files.readString(RLS_PACKAGE_PATH);
-        return scriptSchema.createAdapterScript(prefix + "_ADAPTER", Language.LUA, content);
+        return scriptSchema.createAdapterScript(prefix + "_ADAPTER", AdapterScript.Language.LUA, content);
     }
 
     protected String getVirtualSchemaName(final String sourceSchemaName) {

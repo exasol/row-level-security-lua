@@ -19,7 +19,7 @@
         <lua.src>${basedir}/src/main/lua</lua.src>
         <lua.test>${basedir}/src/test/lua</lua.test>
         <lua.path>/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;./?.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua</lua.path>
-        <source.admin.scripts>${basedir}/src/administration</source.admin.scripts>
+        <source.admin.scripts>${basedir}/src/main/lua/administration</source.admin.scripts>
         <source.sql.scripts>src/main/sql</source.sql.scripts>
     </properties>
     <repositories>
