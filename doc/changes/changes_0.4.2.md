@@ -13,6 +13,12 @@ Switched build from Travis CI to GitHub Actions.
 
 ## Refactoring
 
+* #63: Switched build from Travis CI to GitHub Actions
+* #66: Copied administration scripts to this repository.
+* #70: Copied integration tests for administration scripts to this repository.
+  
+## Documentation
+
 * #39: Replaced custom docker image with official version in integration tests.
 * #59: Activated full integration tests on CI.
 * #63: Switched build from Travis CI to GitHub Actions.
