@@ -47,10 +47,10 @@
 
 [22]: https://github.com/exasol/project-keeper-maven-plugin
 [40]: https://www.eclemma.org/jacoco/index.html
-[3]: LICENSE-exasol-jdbc.txt
 [33]: http://www.apache.org/licenses/LICENSE-2.0.txt
 [26]: https://maven.apache.org/surefire/maven-surefire-plugin/
 [46]: http://maven.apache.org/plugins/maven-clean-plugin/
+[3]: https://docs.exasol.com/connect_exasol/drivers/jdbc.htm
 [1]: https://opensource.org/licenses/MIT
 [30]: https://maven.apache.org/surefire/maven-failsafe-plugin/
 [20]: https://github.com/exasol/test-db-builder-java
