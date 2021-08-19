@@ -9,8 +9,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.AdapterScript;
-import com.exasol.dbbuilder.VirtualSchema;
+import com.exasol.dbbuilder.dialects.exasol.AdapterScript;
+import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers
 class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {

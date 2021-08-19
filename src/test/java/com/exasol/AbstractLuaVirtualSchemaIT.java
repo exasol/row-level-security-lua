@@ -2,6 +2,8 @@ package com.exasol;
 
 import static com.exasol.RlsTestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,8 +18,9 @@ import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundExceptio
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
-import com.exasol.dbbuilder.*;
-import com.exasol.dbbuilder.AdapterScript.Language;
+import com.exasol.dbbuilder.dialects.*;
+import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.dbbuilder.dialects.exasol.AdapterScript.Language;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
@@ -25,9 +28,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             "172.17.0.1:3000");
     private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
-    // FIXME: replace by officially released version once available
-    // https://github.com/exasol/row-level-security-lua/issues/39
-    private static final String DOCKER_DB = "exasol/docker-db:7.0.0";
+    private static final String DOCKER_DB = "exasol/docker-db:7.1.0-d1";
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //
@@ -50,7 +51,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             + ")\n\n";
     private static Connection connection;
     protected static ExasolObjectFactory factory;
-    private static Schema scriptSchema;
+    private static ExasolSchema scriptSchema;
 
     @BeforeAll
     static void beforeAll() throws NoDriverFoundException, SQLException {
@@ -114,7 +115,7 @@ abstract class AbstractLuaVirtualSchemaIT {
     }
 
     protected User createUserWithVirtualSchemaAccess(final String name, final VirtualSchema virtualSchema) {
-        return factory.createLoginUser(name).grant(virtualSchema, ObjectPrivilege.SELECT);
+        return factory.createLoginUser(name).grant(virtualSchema, ExasolObjectPrivilege.SELECT);
     }
 
     protected Schema createSchema(final String sourceSchemaName) {
@@ -139,5 +140,11 @@ abstract class AbstractLuaVirtualSchemaIT {
         } catch (final SQLException exception) {
             throw new AssertionError("Unable to run assertion query.", exception);
         }
+    }
+
+    protected void assertRlsQueryThrowsExceptionWithMessageContaining(final String sql, final User user,
+            final String expectedMessageFragment) {
+        final SQLException exception = assertThrows(SQLException.class, () -> executeRlsQueryWithUser(sql, user));
+        assertThat(exception.getMessage(), containsString(expectedMessageFragment));
     }
 }

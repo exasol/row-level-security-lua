@@ -5,14 +5,14 @@ local reader = require("exasolrls.metadata_reader")
 test_metadata_reader = {}
 
 local function mock_describe_table(exa_mock, table_id, columns)
-    mockagne.when(exa_mock.pquery('/*snapshot execution*/ '
+    mockagne.when(exa_mock.pquery_no_preprocessing('/*snapshot execution*/ '
         .. 'SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
         .. ' WHERE "COLUMN_SCHEMA" = \'S\' AND "COLUMN_TABLE" = \'' .. table_id .. "'"))
         .thenAnswer(true, columns)
 end
 
 local function mock_read_table_catalog(exa_mock, tables)
-    mockagne.when(exa_mock.pquery('/*snapshot execution*/ '
+    mockagne.when(exa_mock.pquery_no_preprocessing('/*snapshot execution*/ '
         .. 'SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \'S\''))
         .thenAnswer(true, tables)
 end

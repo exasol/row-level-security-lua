@@ -6,7 +6,9 @@ import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.exasol.dbbuilder.*;
+import com.exasol.dbbuilder.dialects.Schema;
+import com.exasol.dbbuilder.dialects.User;
+import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers
 class ScalarFunctionsIT extends AbstractLuaVirtualSchemaIT {
