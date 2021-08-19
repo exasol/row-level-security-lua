@@ -19,9 +19,6 @@ Switched build from Travis CI to GitHub Actions.
 * #65: Updated `dockerdb` in integration tests to `7.1.0-d1`.
 * #72: Update dependencies for `0.4.2`.
 
-## Plugin Updates
-
-* Added `org.apache.maven.plugins:maven-enforcer-plugin:3.0.0-M3`
 ## Dependency Updates
 
 ### Test Dependency Updates
