@@ -59,7 +59,7 @@ RLS provides functions that make administration of RLS more user-friendly.
 
 **Important:** all the scripts must be created in the same schema as the tables that you plan to protect with row-level-security.
 
-To install the administration scripts, run the SQL batch file `com.exasol.rls.administration-sql-scripts-<last-version>.sql`.
+To install the administration scripts, run the SQL batch file `administration-sql-scripts-<last-version>.sql`.
 
 ### Role-based security
 

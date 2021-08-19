@@ -61,7 +61,7 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
 
     // [itest->dsn~add-rls-roles-checks-parameters~1]
     @ParameterizedTest
-    @ValueSource(strings = {"SALES", "Sales", "sales"})
+    @ValueSource(strings = { "SALES", "Sales", "sales" })
     void testAddRlsRoleExistingNameException(final String roleName) throws SQLException {
         script.execute("Sales", 1);
         assertScriptThrows("Role name \"" + roleName + "\" already exists (role id 1).", roleName, 2);
@@ -69,7 +69,7 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
 
     // [itest->dsn~add-rls-roles-checks-parameters~1]
     @ParameterizedTest
-    @ValueSource(ints = {-5, 0, 64, 70})
+    @ValueSource(ints = { -5, 0, 64, 70 })
     void testAddRlsRoleInvalidRoleIdException(final int rlsRole) throws SQLException {
         assertScriptThrows("Invalid role id. Role id must be between 1 and 63.", "Sales", rlsRole);
     }
