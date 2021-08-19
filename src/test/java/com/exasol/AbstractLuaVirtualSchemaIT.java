@@ -27,7 +27,6 @@ abstract class AbstractLuaVirtualSchemaIT {
             "172.17.0.1:3000");
     private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
-    private static final String DOCKER_DB = "exasol/docker-db:7.1.0-d1";
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //

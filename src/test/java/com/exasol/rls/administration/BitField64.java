@@ -14,7 +14,7 @@ public class BitField64 {
      * @param bitIndices numbers of the bits to set (starting at zero)
      * @return bit field with given bits set
      */
-    static final BitField64 ofIndices(final int... bitIndices) {
+    static BitField64 ofIndices(final int... bitIndices) {
         return new BitField64(bitIndices);
     }
 
@@ -23,7 +23,7 @@ public class BitField64 {
      *
      * @return empty bit field
      */
-    static final BitField64 empty() {
+    static BitField64 empty() {
         return new BitField64();
     }
 

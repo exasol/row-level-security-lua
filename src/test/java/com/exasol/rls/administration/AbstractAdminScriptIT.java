@@ -1,6 +1,6 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.rls.administration.TestsConstants.DOCKER_DB;
+import static com.exasol.RlsTestConstants.DOCKER_DB;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,7 +42,8 @@ public abstract class AbstractAdminScriptIT {
     protected static ExasolObjectFactory factory;
 
     @Container
-    static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = new ExasolContainer<>(DOCKER_DB).withReuse(true);
+    static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = new ExasolContainer<>(DOCKER_DB)
+            .withReuse(true);
 
     protected static void initialize(final ExasolContainer<? extends ExasolContainer<?>> container,
             final String scriptName, final Path... scriptFilePaths) throws SQLException {

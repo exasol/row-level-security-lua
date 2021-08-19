@@ -1,7 +1,7 @@
 package com.exasol.rls.administration;
 
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.rls.administration.TestsConstants.*;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;

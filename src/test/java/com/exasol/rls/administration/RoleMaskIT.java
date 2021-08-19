@@ -2,6 +2,7 @@ package com.exasol.rls.administration;
 
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.EXA_ROLES_MAPPING_TABLE_NAME;
 import static com.exasol.rls.administration.BitField64.bitsToLong;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -23,13 +24,13 @@ import com.exasol.dbbuilder.dialects.Table;
 @Tag("slow")
 @Testcontainers
 class RoleMaskIT extends AbstractAdminScriptIT {
-    private static final String EXA_ROLES_MAPPING = "EXA_ROLES_MAPPING";
     private static Table table;
 
     @BeforeAll
     static void beforeAll() throws SQLException, IOException {
-        initialize(EXASOL, "ROLES_MASK", TestsConstants.PATH_TO_ROLE_MASK);
-        table = schema.createTable(EXA_ROLES_MAPPING, "ROLE_NAME", "VARCHAR(128)", "ROLE_ID", "DECIMAL(2,0)");
+        initialize(EXASOL, "ROLES_MASK", AdministrationScriptsTestsConstants.PATH_TO_ROLE_MASK);
+        table = schema.createTable(EXA_ROLES_MAPPING_TABLE_NAME, "ROLE_NAME", "VARCHAR(128)", "ROLE_ID",
+                "DECIMAL(2,0)");
         for (int roleId = 1; roleId < 64; ++roleId) {
             table.insert("role_" + roleId, roleId);
         }

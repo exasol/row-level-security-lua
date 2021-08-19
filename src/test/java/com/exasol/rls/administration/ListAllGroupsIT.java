@@ -1,6 +1,6 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.rls.administration.TestsConstants.EXA_GROUP_MEMBERS_TABLE_NAME;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.EXA_GROUP_MEMBERS_TABLE_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
@@ -22,7 +22,7 @@ class ListAllGroupsIT extends AbstractAdminScriptIT {
 
     @BeforeAll
     static void beforeAll() throws SQLException, IOException {
-        initialize(EXASOL, "LIST_ALL_GROUPS", TestsConstants.PATH_TO_LIST_ALL_GROUPS);
+        initialize(EXASOL, "LIST_ALL_GROUPS", AdministrationScriptsTestsConstants.PATH_TO_LIST_ALL_GROUPS);
         memberTable = schema.createTable(EXA_GROUP_MEMBERS_TABLE_NAME, "EXA_USER_NAME", "VARCHAR(128)", "EXA_GROUP",
                 "VARCHAR(128)");
         memberTable.insert("KLAUS", "TENNIS_PLAYERS") //

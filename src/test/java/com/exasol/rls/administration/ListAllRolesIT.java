@@ -1,7 +1,7 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.rls.administration.TestsConstants.EXA_ROLES_MAPPING_TABLE_NAME;
-import static com.exasol.rls.administration.TestsConstants.PATH_TO_LIST_ALL_ROLES;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.EXA_ROLES_MAPPING_TABLE_NAME;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.PATH_TO_LIST_ALL_ROLES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 

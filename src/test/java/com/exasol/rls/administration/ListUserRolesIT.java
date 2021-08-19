@@ -1,6 +1,7 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.rls.administration.TestsConstants.*;
+import static com.exasol.RlsTestConstants.USERS_TABLE;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
@@ -36,7 +37,7 @@ class ListUserRolesIT extends AbstractAdminScriptIT {
     // [itest->dsn~listing-user-roles~1]
     @Test
     void testListRlsSingleUser() {
-        schema.createTable(EXA_RLS_USERS_TABLE_NAME, "EXA_USER_NAME", "VARCHAR(128)", "EXA_ROLE_MASK", "DECIMAL(20,0)") //
+        schema.createTable(USERS_TABLE, "EXA_USER_NAME", "VARCHAR(128)", "EXA_ROLE_MASK", "DECIMAL(20,0)") //
                 .insert("RLS_USR_1", BitField64.bitsToLong(0)) //
                 .insert("RLS_USR_2", BitField64.bitsToLong(0, 1)) //
                 .insert("RLS_USR_3", BitField64.bitsToLong(52, 62)) //

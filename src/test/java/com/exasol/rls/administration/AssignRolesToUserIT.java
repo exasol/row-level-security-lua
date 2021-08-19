@@ -1,8 +1,9 @@
 package com.exasol.rls.administration;
 
+import static com.exasol.RlsTestConstants.USERS_TABLE;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
-import static com.exasol.rls.administration.TestsConstants.*;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
@@ -23,14 +24,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("slow")
 @Testcontainers
 class AssignRolesToUserIT extends AbstractAdminScriptIT {
-    private static final String EXA_ROLES_MAPPING = "EXA_ROLES_MAPPING";
-    private static final String EXA_RLS_USERS = "EXA_RLS_USERS";
-
     @BeforeAll
     static void beforeAll() throws SQLException, IOException {
         initialize(EXASOL, "ASSIGN_ROLES_TO_USER", PATH_TO_EXA_RLS_BASE, PATH_TO_EXA_IDENTIFIER,
                 PATH_TO_ASSIGN_ROLES_TO_USER);
-        schema.createTable(EXA_ROLES_MAPPING, "ROLE_NAME", "VARCHAR(128)", "ROLE_ID", "DECIMAL(2,0)") //
+        schema.createTable(EXA_ROLES_MAPPING_TABLE_NAME, "ROLE_NAME", "VARCHAR(128)", "ROLE_ID", "DECIMAL(2,0)") //
                 .insert("role_1", 1) //
                 .insert("role_2", 2) //
                 .insert("role_3", 3) //
@@ -45,7 +43,7 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
     }
 
     private String getUserTableName() {
-        return schema.getFullyQualifiedName() + "." + EXA_RLS_USERS;
+        return schema.getFullyQualifiedName() + "." + USERS_TABLE;
     }
 
     @Override

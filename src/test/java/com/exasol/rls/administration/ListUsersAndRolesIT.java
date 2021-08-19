@@ -1,7 +1,8 @@
 package com.exasol.rls.administration;
 
+import static com.exasol.RlsTestConstants.USERS_TABLE;
+import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.*;
 import static com.exasol.rls.administration.BitField64.bitsToLong;
-import static com.exasol.rls.administration.TestsConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
@@ -35,7 +36,7 @@ class ListUsersAndRolesIT extends AbstractAdminScriptIT {
     // [itest->dsn~listing-users-and-roles~1]
     @Test
     void testListRlsUsersWithRoles() {
-        schema.createTable(EXA_RLS_USERS_TABLE_NAME, "EXA_USER_NAME", "VARCHAR(128)", "EXA_ROLE_MASK", "DECIMAL(20,0)") //
+        schema.createTable(USERS_TABLE, "EXA_USER_NAME", "VARCHAR(128)", "EXA_ROLE_MASK", "DECIMAL(20,0)") //
                 .insert("RLS_USR_1", bitsToLong(0)) //
                 .insert("RLS_USR_2", bitsToLong(0, 1)) //
                 .insert("RLS_USR_3", bitsToLong(52, 62)) //
