@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>row-level-security-lua</artifactId>
@@ -101,24 +99,44 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.exasol</groupId>
+                <artifactId>project-keeper-maven-plugin</artifactId>
+                <version>0.10.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <modules>
+                        <module>integration_tests</module>
+                    </modules>
+                    <excludedFiles>
+                        <excludedFile>README.md</excludedFile>
+                    </excludedFiles>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>3.0.0-M3</version>
                 <executions>
-                    <execution>
-                        <id>enforce-maven</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>3.6.3</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
+        <execution>
+            <id>enforce-maven</id>
+            <goals>
+                <goal>enforce</goal>
+            </goals>
+            <configuration>
+                <rules>
+                    <requireMavenVersion>
+                        <version>3.3.9</version>
+                    </requireMavenVersion>
+                </rules>
+            </configuration>
+        </execution>
+    </executions>
             </plugin>
             <!-- Note that we do not need the Surefire-plug-in in this project since unit tests are run 
                 by luaunit. -->
@@ -127,7 +145,7 @@
                 <version>${surefire.and.failsafe.plugin.version}</version>
                 <configuration>
                     <skip>true</skip>
-                </configuration>
+                <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties ${argLine}</argLine></configuration>
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -137,7 +155,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            <groupId>org.apache.maven.plugins</groupId></plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -159,7 +177,17 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            <configuration>
+        <!-- Set the highest log level for coverage testing, so that we have a chance to reach branches
+          <property>	                      in the logging lambdas too. -->
+        <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties ${argLine}</argLine>
+        <includes>
+            <include>**IT.java</include>
+        </includes>
+        <systemPropertyVariables>
+            
+        </systemPropertyVariables>
+    </configuration></plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -246,14 +274,13 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
-                    <execution>
-                        <id>audit-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>audit</goal>
-                        </goals>
-                    </execution>
-                </executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>audit</goal>
+            </goals>
+        </execution>
+    </executions>
             </plugin>
             <!-- plugin> <groupId>org.itsallcode</groupId> <artifactId>openfasttrace-maven-plugin</artifactId> 
                 <version>1.0.0</version> <executions> <execution> <id>trace-requirements</id> <goals> <goal>trace</goal> 
@@ -279,7 +306,93 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+        <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>versions-maven-plugin</artifactId>
+    <version>2.7</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>display-plugin-updates</goal>
+                <goal>display-dependency-updates</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <rulesUri>file:///${project.basedir}/versionsMavenPluginRules.xml</rulesUri>
+    </configuration>
+</plugin><plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.5</version>
+    <executions>
+        <execution>
+            <id>prepare-agent</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>prepare-agent-integration</id>
+            <goals>
+                <goal>prepare-agent-integration</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>merge-results</id>
+            <phase>verify</phase>
+            <goals>
+                <goal>merge</goal>
+            </goals>
+            <configuration>
+                <fileSets>
+                    <fileSet>
+                        <directory>${project.build.directory}/</directory>
+                        <includes>
+                            <include>jacoco*.exec</include>
+                        </includes>
+                    </fileSet>
+                </fileSets>
+                <destFile>${project.build.directory}/aggregate.exec</destFile>
+            </configuration>
+        </execution>
+        <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+            <configuration>
+                <dataFile>${project.build.directory}/aggregate.exec</dataFile>
+            </configuration>
+        </execution>
+    </executions>
+</plugin><plugin>
+    <groupId>com.exasol</groupId>
+    <artifactId>error-code-crawler-maven-plugin</artifactId>
+    <version>0.1.1</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin><plugin>
+    <groupId>io.github.zlika</groupId>
+    <artifactId>reproducible-build-maven-plugin</artifactId>
+    <version>0.13</version>
+    <executions>
+        <execution>
+            <id>strip-jar</id>
+            <phase>package</phase>
+            <goals>
+                <goal>strip-jar</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin></plugins>
         <pluginManagement>
             <plugins>
                 <!-- This pseudo-plug-in configuration exists to help Eclipse's M2E to map plug-in executions. 
