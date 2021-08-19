@@ -2,6 +2,8 @@ package com.exasol;
 
 import static com.exasol.RlsTestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -138,5 +140,11 @@ abstract class AbstractLuaVirtualSchemaIT {
         } catch (final SQLException exception) {
             throw new AssertionError("Unable to run assertion query.", exception);
         }
+    }
+
+    protected void assertRlsQueryThrowsExceptionWithMessageContaining(final String sql, final User user,
+            final String expectedMessageFragment) {
+        final SQLException exception = assertThrows(SQLException.class, () -> executeRlsQueryWithUser(sql, user));
+        assertThat(exception.getMessage(), containsString(expectedMessageFragment));
     }
 }

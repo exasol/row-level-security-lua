@@ -27,6 +27,17 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
     }
 
     @Test
+    void testAccessRoleProtectedTableWhenUserMappingIsMissingThrowsSqlCompilationError() {
+        final Schema schema = createSchema("SCHEMA_FOR_ACCESS_WITHOUT_MAPPING");
+        schema.createTable("T", "C1", "VARCHAR(20)", ROW_ROLES_COLUMN, ROLE_MASK_TYPE) //
+                .insert("NOT ACESSIBLE", bitsToLong(0));
+        final VirtualSchema virtualSchema = createVirtualSchema(schema);
+        final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_MAPPING", virtualSchema);
+        assertRlsQueryThrowsExceptionWithMessageContaining("SELECT C1 FROM " + virtualSchema.getName() + ".T", user,
+                "Error during compilation: object \"SCHEMA_FOR_ACCESS_WITHOUT_MAPPING\".\"EXA_RLS_USERS\" not found");
+    }
+
+    @Test
     void testPublicAccessRoleWithNoRoles() {
         final Schema schema = createSchema("SCHEMA_PUBLIC_ACCESS_NO_ROLE");
         final Table table = schema.createTable("T", "C1", "VARCHAR(20)", ROW_ROLES_COLUMN, ROLE_MASK_TYPE) //
