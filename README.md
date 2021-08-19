@@ -11,8 +11,8 @@ Restrict access to rows (datasets) in tables to &hellip;
 * set of roles
 * tenants (owners)
 * group of users
-* combination of group and tenant
-* combination of group and role
+* combination of tenant and role
+* combination of tenant and group
 
 ## Table of Contents
 
@@ -28,7 +28,7 @@ Requirement, design documents and coverage tags are written in [OpenFastTrace](h
 
 * [System Requirement Specification](doc/system_requirements.md)
 * [Design](doc/design.md)
-* [Developer Guide](doc/developer_guide.md)
+* [Developer Guide](doc/developer_guide/developer_guide.md)
 
 ### Run Time Dependencies
 
