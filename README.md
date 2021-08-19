@@ -42,8 +42,6 @@ Restrict access to rows (datasets) in tables to &hellip;
 
 Requirement, design documents and coverage tags are written in [OpenFastTrace](https://github.com/itsallcode/openfasttrace) format.
 
-* [System Requirement Specification](doc/system_requirements.md)
-* [Design](doc/design.md)
 * [Developer Guide](doc/developer_guide/developer_guide.md)
 
 ### Runtime Dependencies

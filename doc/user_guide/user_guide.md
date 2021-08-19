@@ -369,7 +369,7 @@ Here is an example for allowing `SELECT` statements to a user.
 GRANT SELECT ON SCHEMA <virtual schema name> TO <user>;
 ```
 
-Please refer to the documentation of the [`GRANT`](https://docs.exasol.com/sql/grant.htmhttps://docs.exasol.com/sql/grant.htm) statement for further details.
+Please refer to the documentation of the [`GRANT`](https://docs.exasol.com/sql/grant.htm) statement for further details.
 
 The minimum requirements for a regular user in order to be able to access the RLS are:
 
