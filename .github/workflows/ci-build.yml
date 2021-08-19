@@ -29,6 +29,9 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: "Prepare container reuse"
+        run: |
+          echo 'testcontainers.reuse.enable=true' > "/home/runner/.testcontainers.properties"
       - name: "Build with Maven"
         run: |
           mvn verify
