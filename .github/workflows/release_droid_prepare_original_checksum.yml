@@ -40,7 +40,7 @@ jobs:
       - name: Run tests and build with Maven
         run: mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify --file pom.xml
       - name: Prepare checksum
-        run: find target -maxdepth 1 -name *.jar -exec sha256sum "{}" + > original_checksum
+        run: find target -maxdepth 1 '(' -name "*.lua" -o -name "*.sql" ')' -exec sha256sum "{}" + > original_checksum
       - name: Upload checksum to the artifactory
         uses: actions/upload-artifact@v2
         with:
