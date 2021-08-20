@@ -7,7 +7,6 @@ import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 // [itest->dsn~assign-roles-to-a-user~1]
@@ -44,11 +42,6 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
 
     private String getUserTableName() {
         return schema.getFullyQualifiedName() + "." + USERS_TABLE;
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~assign-roles-to-user-creates-a-table~1]

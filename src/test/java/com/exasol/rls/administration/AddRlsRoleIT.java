@@ -5,13 +5,11 @@ import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 // [itest->dsn~add-a-new-role~1]
@@ -31,11 +29,6 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
 
     private String getRolesMappingTableName() {
         return schema.getFullyQualifiedName() + "." + EXA_ROLES_MAPPING_TABLE_NAME;
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~add-rls-role-creates-a-table~1]

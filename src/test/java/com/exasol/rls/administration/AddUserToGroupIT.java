@@ -5,7 +5,6 @@ import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Stream;
@@ -13,7 +12,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -32,11 +30,6 @@ class AddUserToGroupIT extends AbstractAdminScriptIT {
 
     private String getGroupMembersTableName() {
         return schema.getFullyQualifiedName() + "." + EXA_GROUP_MEMBERS_TABLE_NAME;
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~add-user-to-group~1]

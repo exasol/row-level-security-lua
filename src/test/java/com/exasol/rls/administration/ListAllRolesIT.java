@@ -5,11 +5,9 @@ import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.*;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Tag("integration")
@@ -21,17 +19,11 @@ class ListAllRolesIT extends AbstractAdminScriptIT {
         initialize(EXASOL, "LIST_ALL_ROLES", PATH_TO_LIST_ALL_ROLES);
     }
 
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
-    }
-
     // [itest->dsn~listing-all-roles~1]
     @Test
     void testListAllRoles() {
         try {
-            schema.createTable(
-                    EXA_ROLES_MAPPING_TABLE_NAME, "ROLE_NAME", "VARCHAR(128)", "ROLE_ID", "DECIMAL(2,0)") //
+            schema.createTable(EXA_ROLES_MAPPING_TABLE_NAME, "ROLE_NAME", "VARCHAR(128)", "ROLE_ID", "DECIMAL(2,0)") //
                     .insert("Sales", 1) //
                     .insert("Development", 2) //
                     .insert("Finance", 3);

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.dbbuilder.dialects.Table;
@@ -41,11 +40,6 @@ class RoleMaskIT extends AbstractAdminScriptIT {
         final Connection connection = EXASOL.createConnection();
         final Statement statement = connection.createStatement();
         statement.execute("DROP FUNCTION IF EXISTS " + schema.getName() + ".ROLE_NAME");
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~get-a-role-mask~1]

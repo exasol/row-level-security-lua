@@ -40,6 +40,7 @@ public abstract class AbstractAdminScriptIT {
     protected static ExasolSchema schema;
     protected static Script script;
     protected static ExasolObjectFactory factory;
+    private final Connection connection;
 
     @Container
     static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = new ExasolContainer<>(DOCKER_DB)
@@ -54,14 +55,31 @@ public abstract class AbstractAdminScriptIT {
         script = schema.getScript(scriptName);
     }
 
-    protected abstract Connection getConnection() throws NoDriverFoundException, SQLException;
+    public AbstractAdminScriptIT() {
+        try {
+            this.connection = EXASOL.createConnection("");
+        } catch (NoDriverFoundException | SQLException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
+    protected void finalize() {
+        try {
+            if ((this.connection != null) && !this.connection.isClosed()) {
+                this.connection.close();
+            }
+        } catch (final SQLException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     protected void execute(final String sql) throws SQLException {
-        getConnection().createStatement().execute(sql);
+        this.connection.createStatement().execute(sql);
     }
 
     protected ResultSet query(final String sql) throws SQLException {
-        return getConnection().createStatement().executeQuery(sql);
+        return this.connection.createStatement().executeQuery(sql);
     }
 
     protected static void assertScriptThrows(final String expectedMessageFragment, final Object... parameters) {
