@@ -7,6 +7,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: "Install dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt install luarocks
+          sudo luarocks install luacheck
+          sudo luarocks install luacov
+          sudo luarocks install luacov-coveralls
+          sudo luarocks install LuaUnit
+          sudo luarocks install Mockagne
+          sudo luarocks install lua-cjson
+          sudo luarocks install remotelog
+      - uses: actions/checkout@v2
       - name: Checkout the repository
         uses: actions/checkout@v2
         with:
@@ -23,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Run tests and build with Maven
-        run: mvn -B clean verify --file pom.xml
+        run: mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify --file pom.xml
       - name: Prepare checksum
         run: find target -maxdepth 1 -name *.jar -exec sha256sum "{}" + > original_checksum
       - name: Upload checksum to the artifactory

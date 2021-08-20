@@ -118,6 +118,7 @@
                     </modules>
                     <excludedFiles>
                         <excludedFile>README.md</excludedFile>
+                        <excludedFile>.github/workflows/release_droid_prepare_original_checksum.yml</excludedFile>
                     </excludedFiles>
                     <linkReplacements>
                         <linkReplacement>
