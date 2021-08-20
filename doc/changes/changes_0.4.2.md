@@ -1,4 +1,4 @@
-# row-level-security-lua 0.4.2, released 2021-08-xx
+# row-level-security-lua 0.4.2, released 2021-08-20
 
 Code name: 7.1 Compatibility
 
