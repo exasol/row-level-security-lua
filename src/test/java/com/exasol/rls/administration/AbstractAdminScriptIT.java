@@ -10,8 +10,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.provider.Arguments;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
@@ -40,6 +40,7 @@ public abstract class AbstractAdminScriptIT {
     protected static ExasolSchema schema;
     protected static Script script;
     protected static ExasolObjectFactory factory;
+    private static Connection connection = null;
 
     @Container
     static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = new ExasolContainer<>(DOCKER_DB)
@@ -47,21 +48,26 @@ public abstract class AbstractAdminScriptIT {
 
     protected static void initialize(final ExasolContainer<? extends ExasolContainer<?>> container,
             final String scriptName, final Path... scriptFilePaths) throws SQLException {
-        final Connection connection = container.createConnection("");
+        connection = container.createConnection("");
         factory = new ExasolObjectFactory(connection);
         schema = factory.createSchema(scriptName + "_SCHEMA");
         factory.executeSqlFile(scriptFilePaths);
         script = schema.getScript(scriptName);
     }
 
-    protected abstract Connection getConnection() throws NoDriverFoundException, SQLException;
+    @AfterAll
+    static void afterAll() throws SQLException {
+        if ((connection != null) && !connection.isClosed()) {
+            connection.close();
+        }
+    }
 
     protected void execute(final String sql) throws SQLException {
-        getConnection().createStatement().execute(sql);
+        AbstractAdminScriptIT.connection.createStatement().execute(sql);
     }
 
     protected ResultSet query(final String sql) throws SQLException {
-        return getConnection().createStatement().executeQuery(sql);
+        return AbstractAdminScriptIT.connection.createStatement().executeQuery(sql);
     }
 
     protected static void assertScriptThrows(final String expectedMessageFragment, final Object... parameters) {

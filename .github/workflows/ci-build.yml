@@ -1,4 +1,5 @@
-name: "Build and test Lua project"
+name: CI Build
+
 on: [push]
 jobs:
   build:
@@ -16,14 +17,26 @@ jobs:
           sudo luarocks install lua-cjson
           sudo luarocks install remotelog
       - uses: actions/checkout@v2
+        with:
+           fetch-depth: 0
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: "Prepare container reuse"
+        run: |
+          echo 'testcontainers.reuse.enable=true' > "/home/runner/.testcontainers.properties"
       - name: "Build with Maven"
         run: |
-          mvn verify
+          mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:

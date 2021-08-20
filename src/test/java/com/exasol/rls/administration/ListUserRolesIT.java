@@ -8,11 +8,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.*;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Tag("integration")
@@ -27,11 +25,6 @@ class ListUserRolesIT extends AbstractAdminScriptIT {
                 .insert("ROLE_2", 2) //
                 .insert("ROLE_53", 53) //
                 .insert("ROLE_63", 63);
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~listing-user-roles~1]

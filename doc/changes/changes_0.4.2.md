@@ -27,13 +27,23 @@ Switched build from Travis CI to GitHub Actions.
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
 * Updated `com.exasol:exasol-jdbc:6.2.5` to `7.1.0`
 * Updated `com.exasol:exasol-testcontainers:3.5.1` to `4.0.1`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.4.0` to `1.4.1`
 * Updated `com.exasol:test-db-builder-java:0.2.0` to `3.2.1`
+* Updated `org.junit.jupiter:junit-jupiter-engine:5.6.2` to `5.7.2`
+* Updated `org.junit.jupiter:junit-jupiter-params:5.6.2` to `5.7.2`
+* Updated `org.junit.platform:junit-platform-runner:1.6.2` to `1.7.2`
+* Updated `org.slf4j:slf4j-jdk14:1.7.30` to `1.7.32`
 * Updated `org.testcontainers:junit-jupiter:1.13.0` to `1.16.0`
-* Updated `org.slf4j:slf4j-jdk14:17.30` to `1.7.32`
 
-## Plugin Updates
+### Plugin Dependency Updates
 
+* Added `com.exasol:error-code-crawler-maven-plugin:0.1.1`
+* Added `com.exasol:project-keeper-maven-plugin:0.10.0`
+* Added `io.github.zlika:reproducible-build-maven-plugin:0.13`
 * Added `org.apache.maven.plugins:maven-enforcer-plugin:3.0.0-M3`
+* Added `org.codehaus.mojo:versions-maven-plugin:2.7`
+* Added `org.jacoco:jacoco-maven-plugin:0.8.5`

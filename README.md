@@ -1,6 +1,22 @@
 # Row Level Security (Lua)
 
-Note: badges will be added once the project is published.
+[![Build Status](https://github.com/exasol/row-level-security-lua/actions/workflows/ci-build.yml/badge.svg)](https://github.com/exasol/row-level-security-lua/actions/workflows/ci-build.yml)
+
+<!-- Remove this block after https://github.com/exasol/project-keeper-maven-plugin/issues/167 is complete
+[![Build Status](https://github.com/exasol/row-level-security-lua/actions/workflows/ci-build.yml/badge.svg)](https://github.com/exasol/row-level-security-lua/actions/workflows/ci-build.yml)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=security_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=sqale_index)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=code_smells)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=coverage)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Arow-level-security-lua&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.exasol%3Arow-level-security-lua)
+-->
 
 Protect access to database tables on a per-row level based on roles and / or tenants. 
 
@@ -26,11 +42,11 @@ Restrict access to rows (datasets) in tables to &hellip;
 
 Requirement, design documents and coverage tags are written in [OpenFastTrace](https://github.com/itsallcode/openfasttrace) format.
 
-* [System Requirement Specification](doc/system_requirements.md)
-* [Design](doc/design.md)
 * [Developer Guide](doc/developer_guide/developer_guide.md)
 
-### Run Time Dependencies
+### Runtime Dependencies
+
+#### Lua Dependencies
 
 Running the RLS Lua Virtual Schema requires a Exasol with built-in Lua 5.1 or later.
 
@@ -63,60 +79,22 @@ Unit tests are written in Lua.
 
 #### Integration Test Dependencies
 
-The integration tests require `exasol-testcontainers` to provide an Exasol instance. The are written in Java and require version 11 or later.
+The integration tests require `exasol-testcontainers` to provide an Exasol instance. They are written in Java and require version 11 or later.
 
-| Dependency                                         | Purpose                                                | License                       |
-|----------------------------------------------------|--------------------------------------------------------|-------------------------------|
-| [Exasol Testcontainers][exasol-testcontainers]     | Integration test Exasol instance on Docker             | MIT License                   |
-| [Hamcrest Resultset Matcher][hamcrest-rs-matcher]  | Validating JDBC resultsets                             | MIT License                   |
-| [Java Hamcrest][java-hamcrest]                     | Checking for conditions in code via matchers           | BSD License                   |
-| [JUnit][junit5]                                    | Unit testing framework                                 | Eclipse Public License 1.0    |
-| [Mockito][mockito]                                 | Mocking framework                                      | MIT License                   |
-| [Test Database Builder][tddb-java]                 | Framework for writing database integration tests       | MIT License                   |
-| [Testcontainers][testcontainers]                   | Container-based integration tests                      | MIT License                   |
-| [SLF4J][slf4j]                                     | Logging facade                                         | MIT License                   |
-
-[exasol-testcontainers]: https://github.com/exasol/exasol-testcontainers
-[hamcrest-rs-matcher]: https://github.com/exasol/hamcrest-resultset-matcher
-[java-hamcrest]: http://hamcrest.org/JavaHamcrest/
-[junit5]: https://junit.org/junit5
-[mockito]: http://site.mockito.org/
-[tddb-java]: https://github.com/exasol/test-db-builder-java
-[testcontainers]: https://www.testcontainers.org/
-[slf4j]: http://www.slf4j.org/
+See also: Java [Dependencies](dependencies.md).
 
 ### Build Dependencies
 
-This project has a complex build setup due to the mixture of Lua and Java. [Apache Maven][maven] serves as the main build tool.
+This project has a complex build setup due to the mixture of Lua and Java. [Apache Maven](https://maven.apache.org/) serves as the main build tool.
 
 Lua build steps are also encapsulated by Maven.
 
 | Dependency                                | Purpose                                                | License                       |
 |-------------------------------------------|--------------------------------------------------------|-------------------------------|
 | [Amalg][amalg]                            | Bundling Lua modules (and scripts)                     | MIT License                   |
-| [Apache Maven][maven]                     | Build tool                                             | Apache License 2.0            |
-| [Build Helper Maven Plugin][build-helper] | Register non-standard source directories (here Lua)    | MIT License                   |
-| [Exec Maven Plugin][exec]                 | Execute external processes                             | Apache License 2.0            |
 | [LuaRocks][luarocks]                      | Package management                                     | MIT License                   |
-| [Maven Assembly Plugin][assembly]         | Building JAR archives                                  | Apache License 2.0            |
-| [Maven Compiler Plugin][compiler]         | Setting required Java version                          | Apache License 2.0            |
-| [Maven Failsafe Plugin][failsafe]         | Integration testing                                    | Apache License 2.0            |
-| [Maven Jacoco Plugin][jacoco]             | Code coverage metering                                 | Eclipse Public License 2.0    |
-| [Maven Source Plugin][source]             | Creating a source code JAR                             | Apache License 2.0            |
-| [Maven Surefire Plugin][surefire]         | Unit testing                                           | Apache License 2.0            |
-| [OpenFastTrace Maven Plugin][oft]         |Requirement Tracing                                     | GPL V3                        |
-| [OSS Index Maven Plugin][oss-index]       | Dependency security monitoring                         | Apache License 2.0            |
 
 [amalg]: https://github.com/siffiejoe/lua-amalg
-[assembly]: https://maven.apache.org/plugins/maven-assembly-plugin/
-[build-helper]: http://www.mojohaus.org/build-helper-maven-plugin/
-[compiler]: https://maven.apache.org/plugins/maven-compiler-plugin/
-[exec]: https://www.mojohaus.org/exec-maven-plugin/
-[failsafe]: https://maven.apache.org/surefire/maven-surefire-plugin/
-[jacoco]: https://www.eclemma.org/jacoco/trunk/doc/maven.html
 [luarocks]: https://luarocks.org/
-[maven]: https://maven.apache.org/
-[oft]: https://github.com/itsallcode/openfasttrace-maven-plugin
-[oss-index]: https://sonatype.github.io/ossindex-maven/maven-plugin/
-[source]: https://maven.apache.org/plugins/maven-source-plugin/
-[surefire]: https://maven.apache.org/surefire/maven-surefire-plugin/
+
+See also: Java [Dependencies](dependencies.md).

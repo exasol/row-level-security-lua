@@ -5,14 +5,12 @@ import static com.exasol.rls.administration.AdministrationScriptsTestsConstants.
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.dbbuilder.dialects.Table;
@@ -37,11 +35,6 @@ class RemoveUserFromGroupIT extends AbstractAdminScriptIT {
     @AfterEach
     void afterEach() throws SQLException {
         execute("DROP TABLE " + this.memberTable.getFullyQualifiedName());
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~remove-user-from-group~1]

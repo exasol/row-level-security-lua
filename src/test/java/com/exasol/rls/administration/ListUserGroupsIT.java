@@ -5,11 +5,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.*;
-import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.dbbuilder.dialects.Table;
@@ -29,11 +27,6 @@ class ListUserGroupsIT extends AbstractAdminScriptIT {
                 .insert("KLAUS", "SOCCER_PLAYERS") //
                 .insert("VIVIANNE", "SOCCER_PLAYERS") //
                 .insert("TAKESHI", "MARTIAL_ARTISTS");
-    }
-
-    @Override
-    protected Connection getConnection() throws NoDriverFoundException, SQLException {
-        return EXASOL.createConnection("");
     }
 
     // [itest->dsn~listing-a-users-groups~1]
