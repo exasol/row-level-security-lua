@@ -1,0 +1,38 @@
+@startuml
+!include ../clean.skin
+
+start
+
+group rewrite select list
+    if (protected) then (yes)
+        if(select in request) then (present)
+            :expand * to all\npayload columns;
+        else (absent)
+            :replace select list with\nconstant expression;
+        endif
+    else (no)
+        if(select in request) then (present)
+            :treat as\nSELECT *;
+        else (absent)
+            :replace select list with\nconstant expression;
+        endif
+    endif
+endgroup
+
+group rewrite filter
+    switch(protection type)
+    case(tenant)
+        :create tenant\n filter;
+    case(role)
+        :create role-mas\nsub-select filter;
+    case(group)
+        :create group\nsub-select filter;
+    case(tenant + role)
+        :create tenant and role-\nmask sub-select filter;
+    case(tenant + group)
+        :crate tenant and\ngroup sub-select filter;
+    endswitch
+    :merge original filter with protection filter;
+end group
+end
+@enduml

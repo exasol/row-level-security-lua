@@ -3,7 +3,7 @@ local mockagne = require("mockagne")
 local metadata_reader_mock = mockagne.getMock()
 package.preload["exasolrls.metadata_reader"] = function () return metadata_reader_mock end
 
-local adapter = require("exasolrls.adapter")
+local adapter = require("exasolrls.rls_adapter")
 
 test_rls_adapter = {}
 

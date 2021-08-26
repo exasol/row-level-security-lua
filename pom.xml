@@ -234,10 +234,11 @@
                                 <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
                                 <!-- Include main script containing the adapter entry point -->
                                 <argument>-s</argument>
-                                <argument>exasolvs/request_dispatcher.lua</argument>
+                                <argument>init.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
+                                <argument>exasolvs.request_dispatcher</argument>
                                 <argument>exasolvs.query_renderer</argument>
-                                <argument>exasolrls.adapter</argument>
+                                <argument>exasolrls.rls_adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
                                 <argument>exasolrls.table_protection_reader</argument>
                                 <argument>exasolrls.query_rewriter</argument>

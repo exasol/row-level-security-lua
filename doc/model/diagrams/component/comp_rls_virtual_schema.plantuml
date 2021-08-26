@@ -1,0 +1,38 @@
+@startuml
+!include ../clean.skin
+
+component RlsVirtualSchema {
+    component init
+
+    package exasolrls {
+        component rls_adapter
+        component metadata_reader
+        component query_rewriter
+        component table_protection_reader
+        
+        rls_adapter -l-> metadata_reader
+        rls_adapter -d-> table_protection_reader
+        rls_adapter -d-> query_rewriter
+    }
+   
+    package exasolvs {
+        component query_renderer
+        component request_dispatcher
+        interface "adapter" <<interface>>
+        note as interface_note
+            Lua interface
+            implicitly defined
+        end note
+        
+        adapter .d. interface_note
+        
+        request_dispatcher -d-> query_renderer
+        request_dispatcher .l.> adapter : use
+    }
+    
+    init -d-> request_dispatcher : create
+    init -d-> rls_adapter : create
+    
+    rls_adapter -r- adapter
+}
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+!include ../clean.skin
+Participant request_dispatcher
+Participant rls_adapter
+
+activate request_dispatcher
+request_dispatcher -> rls_adapter : drop virtual schema (request)
+activate rls_adapter
+rls_adapter -->> request_dispatcher
+deactivate rls_adapter 
+@enduml
