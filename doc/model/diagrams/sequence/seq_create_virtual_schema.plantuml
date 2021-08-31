@@ -1,5 +1,8 @@
 @startuml
 !include ../clean.skin
+
+title: Create Virtual Schema
+
 Participant request_dispatcher
 Participant rls_adapter
 Participant metadata_reader

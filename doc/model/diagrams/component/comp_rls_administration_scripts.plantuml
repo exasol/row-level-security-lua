@@ -1,0 +1,36 @@
+@startuml
+!include ../clean.skin
+
+title: Collection of RLS administration scripts
+
+package "Administration Script Collection" as script {
+    ' [dsn->req~assigning-users-to-groups ~1]
+    component add_user_to_group
+
+    ' [dsn->req~removing-users-from-groups~1]
+    component remove_user_from_group
+
+    ' [dsn->req~listing-all-groups~1]
+    component list_all_groups
+    
+    ' [dsn->req~listing-a-users-groups~1]
+    component list_user_groups
+
+    component add_rls_role
+
+    ' [dsn->req~assigning-roles-to-users~1]
+    component assing_roles_to_user
+
+    ' [dsn->req~removing-roles-from-users~1]
+    component delete_rls_role
+
+    component bit_positions 
+
+    ' [dsn->req~listing-all-roles~1]
+    component list_all_roles
+
+    ' [dsn->req~listing-users-and-roles~1]
+    component list_users_and_roles
+}
+
+@enduml

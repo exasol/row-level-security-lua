@@ -66,16 +66,31 @@ Needs: req
 
 ## Functional Requirements
 
-### Row Level Security with Roles
+### Row Level Security With Roles
 
-#### User Roles
-`req~user-roles~1`
+#### Assigning Roles to Users
+`req~assigning-roles-to-users~1`
 
 Data Owners can assign between zero and 63 roles to users.
 
 Rationale:
 
 Roles are used to determine whether a user may or may not access data in RLS.
+
+Covers:
+
+* [feat~row-level-security~1](#row-level-security)
+
+Needs: dsn
+
+#### Removing Roles From Users
+`req~removing-roles-from-users~1`
+
+Data Owners can remove roles from users.
+
+Rationale:
+
+Users can change their roles depending on organizational needs.
 
 Covers:
 
@@ -292,7 +307,7 @@ Needs: dsn
 #### Unprotected tables
 `req~unprotected-tables~1`
 
-Data Owners can leave a table unprotected. In this case all users can access all data in the table.
+Data Owners can leave a table unprotected. In this case all users can access all data in the table. "Unprotected" means the table has neither a tenant, nor a role, nor a group column.
 
 Covers:
 
@@ -319,7 +334,7 @@ Needs: dsn
 
 The Performance degradation caused by an RLS-protected query compared to the same query without RLS is below the greater of
 
-* two seconds or
+* half a second
 * 10%
 
 on top of the original execution time.

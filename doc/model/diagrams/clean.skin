@@ -8,7 +8,5 @@ skinparam classAttributeIconSize 0
 
 skinparam defaultFontName Calibri
 
-skinparam monochrome true
-
 skinparam padding 2
 @enduml

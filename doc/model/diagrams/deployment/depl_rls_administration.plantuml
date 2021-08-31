@@ -1,0 +1,28 @@
+@startuml
+!include ../clean.skin
+
+title: Deployment of RLS administration scripts
+
+node ExasolDataNode {
+    component exasql {
+        component Engine
+        component "Lua Interpreter" as interpreter
+        Engine -l-> interpreter : invoke
+    }
+
+    artifact "administration-sql-scripts-<version>.sql" as dist
+    package "Administration Scripts" as scripts {
+        collections admin_script
+    }
+    
+    interpreter -d-> dist : load
+    interpreter -d-> admin_script : execute
+    dist -> scripts: define
+}
+
+database "Source Schema" as source
+
+Engine - source
+
+url of scripts is [[../component/comp_rls_virtual_schema.svg]]
+@enduml

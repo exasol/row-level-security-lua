@@ -1,38 +1,54 @@
 @startuml
 !include ../clean.skin
 
+title: Query rewriting
+
 start
 
-group rewrite select list
-    if (protected) then (yes)
+if (protected) then (yes)
+    group rewrite protected\nselect list
         if(select in request) then (present)
             :expand * to all\npayload columns;
         else (absent)
             :replace select list with\nconstant expression;
         endif
-    else (no)
+    endgroup
+    group rewrite filter
+        switch(protection type)
+    
+        ' [dsn->req~tables-with-tenant-restrictions~1]
+        case(tenant)
+            :create\ntenant\n filter;
+    
+        case(role)
+            :create role-mask\nsub-select filter;
+    
+        case(group)
+            :create group\nsub-select filter;
+    
+        case(tenant + role)
+            :create tenant and\nrole-mask\nsub-select filter;
+    
+        case(tenant\n+ group)
+            :crate tenant\nand ngroup\nsub-select filter;
+    
+        endswitch
+        :merge original filter with protection filter;
+        
+        floating note
+            See also:
+            [[act_protection_evaluation.svg evaluating the\nprotection scheme]]
+        end note
+    end group
+else (no)
+    group rewrite regular\nselect list
         if(select in request) then (present)
             :treat as\nSELECT *;
         else (absent)
             :replace select list with\nconstant expression;
         endif
-    endif
-endgroup
+    endgroup
 
-group rewrite filter
-    switch(protection type)
-    case(tenant)
-        :create tenant\n filter;
-    case(role)
-        :create role-mas\nsub-select filter;
-    case(group)
-        :create group\nsub-select filter;
-    case(tenant + role)
-        :create tenant and role-\nmask sub-select filter;
-    case(tenant + group)
-        :crate tenant and\ngroup sub-select filter;
-    endswitch
-    :merge original filter with protection filter;
-end group
+endif
 end
 @enduml

@@ -1,8 +1,10 @@
 @startuml
 !include ../clean.skin
 
-component RlsVirtualSchema {
-    component init
+title: RLS Lua Components
+
+component row-level-security-lua {
+    component entry
 
     package exasolrls {
         component rls_adapter
@@ -30,9 +32,12 @@ component RlsVirtualSchema {
         request_dispatcher .l.> adapter : use
     }
     
-    init -d-> request_dispatcher : create
-    init -d-> rls_adapter : create
+    entry -d-> request_dispatcher : create
+    entry -d-> rls_adapter : create
     
     rls_adapter -r- adapter
 }
+
+url of entry is [[../sequence/seq_entry.svg]]
+url of request_dispatcher is [[../sequence/seq_handle_request.svg]]
 @enduml

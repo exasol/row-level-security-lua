@@ -1,0 +1,34 @@
+@startuml
+!include ../clean.skin
+
+title Dispatch Request
+
+participant entry
+participant request_dispatcher
+participant rls_adapter
+
+activate entry
+entry --> request_dispatcher : adapter_call(request : JSON stiring)
+activate request_dispatcher
+alt
+    request_dispatcher -> rls_adapter : [[seq_create_virtual_schema.svg create virtual schema (request)]]
+    activate rls_adapter
+else
+    request_dispatcher -> rls_adapter : [[seq_get_capabilities.svg get capabilities (request)]]
+else
+    request_dispatcher -> rls_adapter : [[seq_set_properties.svg set properties (request)]]
+else
+    request_dispatcher -> rls_adapter : [[seq_pushdown.svg pushdown (request)]]
+else
+    request_dispatcher -> rls_adapter : [[seq_refresh.svg refresh (request)]]
+else
+    request_dispatcher -> rls_adapter : [[seq_drop_virtual_schema.svg drop virtual schema(request)]]
+end
+activate rls_adapter
+...
+rls_adapter -->> request_dispatcher : response
+deactivate rls_adapter
+request_dispatcher -->> entry : response : JSON string
+deactivate request_dispatcher
+
+@enduml

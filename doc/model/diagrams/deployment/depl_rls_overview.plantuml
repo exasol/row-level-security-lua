@@ -1,31 +1,33 @@
 @startuml
 !include ../clean.skin
 
+title: RLS Deployment Overview
+
 node ExasolDataNode {
     component exasql {
-       component Engine
-       component Compiler
-       component LuaInterpreter
-       Engine -l-> Compiler : invoke
-       Compiler -d-> LuaInterpreter : call for Lua\nVirtual Schema\nfragments
+        component Engine
+        component Compiler
+        component "Lua Interpreter" as interpreter
+        Engine -l-> Compiler : invoke
+        Compiler -d-> interpreter : call for Lua\nVirtual Schema\nfragments
     }
 
     artifact "row-level-security-dist.lua" as dist
-    component RlsVirtualSchemaAdapter
+    component "RLS Virtual Schema Adapter" as rls_vs_adapter
     
-    LuaInterpreter -> dist : load
-    LuaInterpreter -d-> RlsVirtualSchemaAdapter : execute
-    dist -> RlsVirtualSchemaAdapter : define
+    interpreter -> dist : load
+    interpreter -d-> rls_vs_adapter : execute
+    dist -> rls_vs_adapter : define
     
 }
 
-database SourceSchema
-database RlsProtectedSchema
+database "Source Schema" as source
+database "RLS Protected Schema" as protected
 
-Engine - SourceSchema
-Engine - RlsProtectedSchema
+Engine - source
+Engine - protected
 
-SourceSchema -[hidden]d- RlsProtectedSchema
+source -[hidden]d- protected
 
-url of RlsVirtualSchemaAdapter is [[../component/comp_rls_virtual_schema.plantuml]]
+url of rls_vs_adapter is [[../component/comp_rls_virtual_schema.svg]]
 @enduml

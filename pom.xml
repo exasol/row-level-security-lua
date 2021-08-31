@@ -234,7 +234,7 @@
                                 <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
                                 <!-- Include main script containing the adapter entry point -->
                                 <argument>-s</argument>
-                                <argument>init.lua</argument>
+                                <argument>entry.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
                                 <argument>exasolvs.request_dispatcher</argument>
                                 <argument>exasolvs.query_renderer</argument>
@@ -434,6 +434,27 @@
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.jeluard</groupId>
+                    <artifactId>plantuml-maven-plugin</artifactId>
+                    <version>1.2</version>
+                    <configuration>
+                        <format>svg</format>
+                        <sourceFiles>
+                            <directory>${basedir}/doc/model/diagrams</directory>
+                            <includes>
+                                <include>**/*.plantuml</include>
+                            </includes>
+                        </sourceFiles>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sourceforge.plantuml</groupId>
+                            <artifactId>plantuml</artifactId>
+                            <version>8059</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>

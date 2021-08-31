@@ -1,5 +1,8 @@
 @startuml
 !include ../clean.skin
+
+title: Get Capabilities
+
 Participant request_dispatcher
 Participant rls_adapter
 

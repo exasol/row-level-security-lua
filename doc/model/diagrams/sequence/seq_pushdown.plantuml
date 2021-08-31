@@ -1,5 +1,8 @@
 @startuml
 !include ../clean.skin
+
+title: Query Push-down
+
 Participant request_dispatcher
 Participant rls_adapter
 Participant query_rewriter
@@ -19,15 +22,7 @@ activate table_protection_reader
 table_protection_reader -->> query_rewriter : table protection scheme[] 
 deactivate table_protection_reader
 
-alt table protected
-    query_rewriter -> query_rewriter : rewrite with protection (query,\nschema, table, protection scheme)
-    activate query_rewriter
-    deactivate query_rewriter
-else
-    query_rewriter -> query_rewriter : rewrite without protection (query)
-    activate query_rewriter
-    deactivate query_rewriter
-end
+ref over query_rewriter : **[[../acticity/act_rewrite_with_protection.svg rewrite query]]** 
 
 create query_renderer
 query_rewriter -> query_renderer : create (query)
