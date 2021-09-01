@@ -14,7 +14,7 @@ title: Row Protection Evaluation
 
 start
 
-if (row has group\nand row has tenant) then (yes)
+if (row has group\nand row has roles) then (yes)
     #pink:error: unsupported protection scheme;
     end
 elseif (row has tenant) then (yes)

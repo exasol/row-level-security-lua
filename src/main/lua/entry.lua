@@ -1,7 +1,7 @@
 ---
 -- This is the main entry point of the concrete Lua Virtual Schema adapter.
 -- <p>
--- It is responsible creating for wiring up the adapter objects.
+-- It is responsible for creating and wiring up the main adapter objects.
 -- </p>
 
 local adapter = require("exasolrls.rls_adapter")

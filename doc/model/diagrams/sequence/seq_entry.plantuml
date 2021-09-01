@@ -17,7 +17,7 @@ create request_dispatcher
 entry -> request_dispatcher : create
 entry -> request_dispatcher : init(rls_adapter)
 activate request_dispatcher
-request_dispatcher -->> entry :this
+request_dispatcher -->> entry : self-pointer
 deactivate request_dispatcher
 entry --> request_dispatcher : adapter_call(request : JSON stiring)
 activate request_dispatcher

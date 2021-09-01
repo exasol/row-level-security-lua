@@ -31,6 +31,9 @@ package "Administration Script Collection" as script {
 
     ' [dsn->req~listing-users-and-roles~1]
     component list_users_and_roles
+    
+    ' [dsn->req~listing-user-roles~1]
+    component list_user_roles
 }
 
 @enduml

@@ -1,6 +1,5 @@
 local log = require("remotelog")
 local cjson = require("cjson")
---local adapter = require("exasolrls.adapter", "adapter")
 
 ---
 -- @module exasolvs.request_dispatcher
@@ -14,7 +13,7 @@ local cjson = require("cjson")
 -- To use the dispatcher, you need to inject the concrete adapter the dispatcher should send the prepared requests to.
 -- </p>
 --
-M = { adapter = nil }
+local M = { adapter = nil }
 
 ---
 -- Inject the adapter that the dispatcher should dispatch requests to.

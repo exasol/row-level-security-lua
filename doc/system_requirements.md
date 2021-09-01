@@ -150,6 +150,21 @@ Covers:
 
 Needs: dsn
 
+#### Listing a User's  Roles
+`req~listing-user-roles~1`
+
+Data owners can the roles assigned to a single user.
+
+Rationale:
+
+This allows data owners to check whether a user has the correct set of roles.
+
+Covers:
+
+* [feat~row-level-security~1](#row-level-security)
+
+Needs: dsn
+
 ### Row Level Security with Tenants 
 
 #### Tables With Tenant Restrictions
