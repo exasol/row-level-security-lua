@@ -150,10 +150,10 @@ Covers:
 
 Needs: dsn
 
-#### Listing a User's  Roles
+#### Listing a User's Roles
 `req~listing-user-roles~1`
 
-Data owners can the roles assigned to a single user.
+Data owners can list the roles assigned to a single user.
 
 Rationale:
 
