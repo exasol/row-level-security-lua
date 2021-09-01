@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Exasol Row Level Security (short "RLS") is a plug-in for Exasol that provides the ability to grant access on individual rows based on contents of the database.
+Exasol Row Level Security (short "RLS") is a plug-in for Exasol that provides the ability to grant access to individual rows based on the contents of the database.
 
 ## About This Document
 

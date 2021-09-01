@@ -1,5 +1,5 @@
 ---
--- This is the main entry point of the concrete Lua Virtual Schema adapter.
+-- This is the main entry point of the Lua Virtual Schema adapter.
 -- <p>
 -- It is responsible creating for wiring up the adapter objects.
 -- </p>
