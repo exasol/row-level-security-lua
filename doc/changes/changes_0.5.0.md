@@ -14,6 +14,7 @@ Also, we migrated the system requirement specification over from RLS Java and ad
 
 ## Documentation
 
+* #50: Clarified what to do with the Lua adapter after download from GitHub in the user guide.
 * #79: Migrated requirements from RLS Java, added UML model as design.
 
 ## Dependency Updates

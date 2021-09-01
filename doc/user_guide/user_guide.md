@@ -318,7 +318,7 @@ We prepared the schema and tables we want to protect with RLS in section ["Admin
 
 ### Installing RLS Virtual Schema Package
 
-Download the latest available release of [Row Level Security](https://github.com/exasol/row-level-security-lua/releases) to BucketFS.
+Download the latest available release from [Row Level Security (Lua)](https://github.com/exasol/row-level-security-lua/releases). In the next step you will copy the contents into the `CREATE LUA ADAPTER SCRIPT` command.
 
 ### Creating Virtual Schema Adapter Script
 
