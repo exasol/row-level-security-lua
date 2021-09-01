@@ -1,0 +1,31 @@
+@startuml
+!include ../clean.skin
+
+title: Create Virtual Schema
+
+Participant request_dispatcher
+Participant rls_adapter
+Participant metadata_reader
+
+activate request_dispatcher
+request_dispatcher -> rls_adapter : create virtual schema (request)
+activate rls_adapter
+rls_adapter -> metadata_reader : read (schema)
+activate metadata_reader
+loop for each table
+    metadata_reader -> metadata_reader : translate table\nmetadata (schema, table)
+    activate metadata_reader
+    deactivate metadata_reader
+end
+metadata_reader -->> rls_adapter : schema metadata,\ntable protection type
+deactivate metadata_reader
+rls_adapter -->> request_dispatcher : schema metadata, adapter notes
+note right
+    Response contains information
+    about protection scheme for each
+    table as adapter notes.
+    Adapter notes serve as cache
+    across requests.
+end note
+deactivate rls_adapter 
+@enduml

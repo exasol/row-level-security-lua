@@ -1,0 +1,37 @@
+@startuml
+!include ../clean.skin
+
+title: Query Push-down
+
+Participant request_dispatcher
+Participant rls_adapter
+Participant query_rewriter
+Participant table_protection_reader
+Participant query_renderer
+
+activate request_dispatcher
+request_dispatcher -> rls_adapter : push down (request)
+activate rls_adapter
+rls_adapter -> rls_adapter : extract adapter notes (request)
+activate rls_adapter
+deactivate rls_adapter
+rls_adapter -> query_rewriter : rewrite (query, schema\nadapter notes, involved table[])
+activate query_rewriter
+query_rewriter -> table_protection_reader : read (adapter notes)
+activate table_protection_reader 
+table_protection_reader -->> query_rewriter : table protection scheme[] 
+deactivate table_protection_reader
+
+ref over query_rewriter : **[[../activity/act_rewrite_with_protection.svg rewrite query]]** 
+
+create query_renderer
+query_rewriter -> query_renderer : create (query)
+query_rewriter -> query_renderer : render ()
+activate query_renderer
+query_renderer -->> query_rewriter : query : SQL string
+deactivate query_renderer
+query_rewriter --> rls_adapter : query : SQL string
+deactivate query_rewriter
+rls_adapter -->> request_dispatcher : wrapped response
+deactivate rls_adapter 
+@enduml

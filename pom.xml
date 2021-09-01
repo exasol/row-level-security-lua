@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>row-level-security-lua</artifactId>
-    <version>0.4.2</version>
+    <version>0.5.0</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <properties>
@@ -236,10 +236,11 @@
                                 <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
                                 <!-- Include main script containing the adapter entry point -->
                                 <argument>-s</argument>
-                                <argument>exasolvs/request_dispatcher.lua</argument>
+                                <argument>entry.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
+                                <argument>exasolvs.request_dispatcher</argument>
                                 <argument>exasolvs.query_renderer</argument>
-                                <argument>exasolrls.adapter</argument>
+                                <argument>exasolrls.rls_adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
                                 <argument>exasolrls.table_protection_reader</argument>
                                 <argument>exasolrls.query_rewriter</argument>
@@ -435,6 +436,27 @@
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.jeluard</groupId>
+                    <artifactId>plantuml-maven-plugin</artifactId>
+                    <version>1.2</version>
+                    <configuration>
+                        <format>svg</format>
+                        <sourceFiles>
+                            <directory>${basedir}/doc/model/diagrams</directory>
+                            <includes>
+                                <include>**/*.plantuml</include>
+                            </includes>
+                        </sourceFiles>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sourceforge.plantuml</groupId>
+                            <artifactId>plantuml</artifactId>
+                            <version>1.2021.10</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>

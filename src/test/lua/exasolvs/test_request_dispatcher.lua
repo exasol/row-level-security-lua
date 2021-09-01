@@ -3,7 +3,8 @@ local mockagne = require("mockagne")
 local log_mock = mockagne.getMock()
 package.preload["remotelog"] = function () return log_mock end
 local cjson = require("cjson")
-require("exasolvs.request_dispatcher")
+local adapter = require("exasolrls.rls_adapter")
+local dispatcher = require("exasolvs.request_dispatcher").init(adapter)
 
 local verify = mockagne.verify
 
@@ -14,7 +15,7 @@ local function json_assert(actual, expected)
 end
 
 function test_request_dispatcher.test_get_capabilities()
-    local response = _G.adapter_call('{"type" : "getCapabilities"}')
+    local response = dispatcher.adapter_call('{"type" : "getCapabilities"}')
     local expected = {type = "getCapabilities", capabilities = {
         "SELECTLIST_PROJECTION",
         "AGGREGATE_SINGLE_GROUP",
@@ -29,7 +30,7 @@ function test_request_dispatcher.test_get_capabilities()
 end
 
 function test_request_dispatcher.test_setup_remote_logging()
-    _G.adapter_call('{"type" : "getCapabilities", "schemaMetadataInfo" : '
+    dispatcher.adapter_call('{"type" : "getCapabilities", "schemaMetadataInfo" : '
         .. '{"properties" : {"DEBUG_ADDRESS" : "10.0.0.1:4000", "LOG_LEVEL" : "TRACE"}}}')
     verify(log_mock.set_level("TRACE"))
     verify(log_mock.connect("10.0.0.1", "4000"))

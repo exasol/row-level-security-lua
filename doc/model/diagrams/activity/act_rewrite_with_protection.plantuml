@@ -1,0 +1,65 @@
+@startuml
+!include ../clean.skin
+
+title: Query rewriting
+
+start
+
+if (protected) then (yes)
+    group rewrite protected\nselect list
+        if(select in request) then (present)
+            :expand the "*" in the SELECT list
+            to a list of all payload columns
+            (i.e. without RLS columns);
+        else (absent)
+            :replace select list with
+            constant expression;
+        endif
+    endgroup
+    group rewrite filter
+        switch(protection type)
+
+        ' [dsn->req~tables-with-tenant-restrictions~1]
+        case(tenant)
+            :create
+            tenant
+            filter;
+    
+        case(role)
+            :create role-mask
+            sub-select filter;
+    
+        case(group)
+            :create group
+            sub-select filter;
+    
+        case(tenant + role)
+            :create tenant and
+            role-mask
+            sub-select filter;
+    
+        case(tenant\n+ group)
+            :crate tenant
+            and group
+            sub-select filter;
+    
+        endswitch
+        :merge original FROM clause with protection filter;
+        
+        floating note
+            See also:
+            [[act_protection_evaluation.svg evaluating the\nprotection scheme]]
+        end note
+    end group
+else (no)
+    group rewrite regular\nselect list
+        if(select in request) then (present)
+            :treat as\nSELECT *;
+        else (absent)
+            :replace select list with\nconstant expression;
+        endif
+    endgroup
+
+endif
+end
+@enduml

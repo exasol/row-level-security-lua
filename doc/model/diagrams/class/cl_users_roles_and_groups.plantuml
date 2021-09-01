@@ -1,0 +1,67 @@
+' [dsn->req~user-groups~1]
+
+@startuml
+!include ../clean.skin
+skinparam linetype ortho
+
+title: RLS Protection Data Model
+
+class User {
+    + name : Identifier
+    + roles : Role List
+}
+
+class Row  {
+    + payload column : any database type [1..*]
+    ..
+    + roles : Role List [0..1]
+    + tenant : Identifier [0..1]
+    + group : Identifier [0..1]
+}
+
+class Role {
+    + name : Identifier
+    + id : integer
+}
+
+class Group {
+    + name : Identifier
+}
+
+class "Group Member" as Membership {
+    + user : Identifier
+    + group : Identifier
+}
+
+Group "*" o-l- "*" User : membership
+User "*" -d-> "0..64" Role : assigned to
+Row "*" -d-> "0..1" Group : row group
+Row "*" -d-> "0..64" Role : row roles
+Row "*" -d-> "0..1" User : row\ntenant
+(User, Group) .. Membership
+
+note as N1
+    **invariant:**
+    not(
+        exists(self.roles)
+        and
+        exists(self.group)
+    )
+end note
+
+Row .l. N1
+
+class Identifier {
+    - id : string(128)
+}
+
+class "Role List" as Roles {
+    - roles : bit field(64)
+}
+
+(User, Role) .. Roles
+(Row, Role) .. Roles
+
+'N1 -[hidden]d- Identifier
+
+@enduml

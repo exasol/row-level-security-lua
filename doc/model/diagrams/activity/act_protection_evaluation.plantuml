@@ -1,0 +1,74 @@
+' [dsn->req~tables-with-role-restrictions~1]
+' [dsn->req~rows-users-are-allowed-to-read~1]
+' [dsn->req~tables-with-group-restrictions~1]
+' [dsn->req~tables-with-role-and-tenant-restrictions~2]
+' [dsn->req~tables-with-group-and-tenant-restrictions~1]
+' [dsn->req~public-rows~1]
+' [dsn->req~unprotected-tables~1]
+
+@startuml
+!include ../clean.skin
+!pragma useVerticalIf on
+
+title: Row Protection Evaluation
+
+start
+
+if (row has group\nand row has roles) then (yes)
+    #pink:error: unsupported protection scheme;
+    end
+elseif (row has tenant) then (yes)
+    if (row has group) then (yes)
+        if (match tenant\nor match group) then (yes)
+            #palegreen:allow;
+            detach
+        else (no)
+            #pink:deny;
+            detach
+        endif
+    elseif (row has public role) then (yes)
+        #palegreen:allow;
+        note right: row is public
+        detach
+    elseif (row has regular roles) then (yes)
+        if (match tenant\nor match roles) then (yes)
+            #palegreen:allow;
+            detach
+        else (no)
+            #pink:deny;
+            detach
+        endif
+    elseif (match tenant) then (yes)
+        #palegreen:allow;
+        detach
+    else
+        #pink:deny;
+        detach
+    endif
+elseif (row has group) then (yes)
+    if (match group) then (yes)
+        #palegreen:allow;
+        detach
+    else (no)
+        #pink:deny;
+        detach
+    endif
+elseif (row has public role) then (yes)
+    #palegreen:allow;
+    note right: row is public
+    detach
+elseif (row has roles) then (yes)
+    if (match tenant\nor match roles) then (yes)
+        #palegreen:allow;
+        detach
+    else (no)
+        #pink:deny;
+        detach
+    endif
+else
+    #palegreen:allow;
+    note right: row is public
+    detach
+endif
+
+@enduml

@@ -36,7 +36,12 @@ end
 
 local function translate_geometry_type(column_id, column_type)
     local srid = string.match(column_type, "GEOMETRY%((%d+)%)")
-    return {name = column_id, dataType = {type = "GEOMETRY", srid = (srid and tonumber(srid) or _G.M.DEFAULT_SRID)}}
+    if(srid == nil) then
+        srid = _G.M.DEFAULT_SRID
+    else
+        srid = tonumber(srid)
+    end
+    return {name = column_id, dataType = {type = "GEOMETRY", srid = srid}}
 end
 
 local function translate_interval_year_to_month_type(column_id, column_type)

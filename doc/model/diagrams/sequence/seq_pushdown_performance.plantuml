@@ -1,0 +1,36 @@
+' [qs->qr~rls-protected-query-execution-time~1]
+
+@startuml
+!include ../clean.skin
+!pragma teoz true
+
+title: Query Push-down Performance
+
+Participant Engine
+Participant entry
+Participant ExaLoader
+
+activate Engine
+
+{start_adapter} Engine -> entry : adapter_call (push-down request)
+activate entry
+ref over entry: **[[seq_pushdown.png handle push-down request]]**
+
+note right
+    **invariant:**
+    t<sub>1</sub> <= t<sub>0</sub> / 10
+    and
+    t<sub>1</sub> <= 0.5 sec
+end note 
+
+{end_adapter} entry -->> Engine : re-written query
+deactivate entry
+
+{start_import} Engine -> ExaLoader : import (re-written query)
+activate ExaLoader
+{end_import} ExaLoader -->> Engine : imported rows
+deactivate ExaLoader
+
+{start_import} <-> {end_import} : t<sub>0</sub>
+{start_adapter} <-> {end_adapter} : t<sub>1</sub>
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+!include ../clean.skin
+
+title: Set Properties
+
+Participant request_dispatcher
+Participant rls_adapter
+
+activate request_dispatcher
+request_dispatcher -> rls_adapter : set properties (request)
+activate rls_adapter
+rls_adapter -->> request_dispatcher
+deactivate rls_adapter 
+@enduml

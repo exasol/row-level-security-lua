@@ -1,0 +1,30 @@
+@startuml
+!include ../clean.skin
+
+title: Virtual Schema Adapter Entrypoint for Request Handling
+
+participant "Exasol Compiler" as compiler
+participant entry
+participant request_dispatcher
+participant rls_adapter
+
+activate compiler
+compiler -> entry : adapter_call(request : JSON string)
+activate entry
+create rls_adapter
+entry -> rls_adapter : create
+create request_dispatcher
+entry -> request_dispatcher : create
+entry -> request_dispatcher : init(rls_adapter)
+activate request_dispatcher
+request_dispatcher -->> entry : self-pointer
+deactivate request_dispatcher
+entry --> request_dispatcher : adapter_call(request : JSON stiring)
+activate request_dispatcher
+ref over request_dispatcher, rls_adapter : **[[seq_handle_request.svg handle request]]**
+request_dispatcher -->> entry : response : JSON string
+deactivate request_dispatcher
+entry --> compiler : response : JSON string
+deactivate entry
+
+@enduml
