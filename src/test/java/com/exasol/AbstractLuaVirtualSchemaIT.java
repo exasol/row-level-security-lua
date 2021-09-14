@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
-import java.util.Map;
+import java.util.*;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,9 +63,12 @@ abstract class AbstractLuaVirtualSchemaIT {
         return !DOCKER_DB.contains(":7.0");
     }
 
-    protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
+    protected VirtualSchema createVirtualSchema(final Schema sourceSchema, final Map<String, String> properties) {
         final String name = sourceSchema.getName();
         final AdapterScript adapterScript;
+        final Map<String, String> mergedProperties = new HashMap<>();
+        mergedProperties.putAll(DEBUG_PROPERTIES);
+        mergedProperties.putAll(properties);
         try {
             adapterScript = createAdapterScript(name);
         } catch (final IOException exception) {
@@ -74,8 +77,12 @@ abstract class AbstractLuaVirtualSchemaIT {
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(DEBUG_PROPERTIES) //
+                .properties(properties) //
                 .build();
+    }
+
+    protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
+        return createVirtualSchema(sourceSchema, Collections.emptyMap());
     }
 
     protected AdapterScript createAdapterScript(final String prefix) throws IOException {
