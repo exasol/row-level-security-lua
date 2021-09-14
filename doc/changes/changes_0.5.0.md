@@ -11,6 +11,7 @@ Also, we migrated the system requirement specification over from RLS Java and ad
 ## Feature
 
 * #47: Support `GEOMETRY` columns without explicit SRID.
+* #58: Added option to exclude capabilities.
 
 ## Documentation
 
