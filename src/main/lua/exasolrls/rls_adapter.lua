@@ -49,7 +49,23 @@ function M.drop_virtual_schema()
     return {type = "dropVirtualSchema"}
 end
 
-function M.refresh()
+---
+-- Refresh the metadata of the Virtual Schema.
+-- <p>
+-- Re-reads the structure and data types of the schema protected by RLS.
+-- </p>
+--
+-- @param exa_metadata Exasol metadata (not used)
+--
+-- @param request      virtual schema request
+--
+-- @return response containing the metadata for the virtual schema like table and column structure
+--
+function M.refresh(_, request)
+    local properties = request.schemaMetadataInfo.properties or {}
+    validate(properties)
+    local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
+    return {type = "refresh", schemaMetadata = schema_metadata}
 end
 
 function M.set_properties()
@@ -74,6 +90,9 @@ end
 ---
 -- Report the capabilities of the Virtual Schema adapter
 --
+--
+-- @param exa_metadata Exasol metadata (not used)
+--
 -- @param request      virtual schema request
 --
 -- @return response containing the list of reported capabilities
@@ -91,6 +110,8 @@ end
 
 ---
 -- Rewrite a pushed down query.
+--
+-- @param exa_metadata Exasol metadata (not used)
 --
 -- @param request      virtual schema request
 --

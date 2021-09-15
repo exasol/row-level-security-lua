@@ -35,6 +35,9 @@ end
 -- @param delimiter to split at (default: ',')
 --
 function M.split(text, delimiter)
+    if(text == nil) then
+        return nil
+    end
     delimiter = delimiter or ','
     local tokens = {}
     for token in (text .. delimiter):gmatch("(.-)" .. delimiter) do
