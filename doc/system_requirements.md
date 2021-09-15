@@ -330,6 +330,25 @@ Covers:
 
 Needs: dsn
 
+#### Refreshing an RLS Virtual Schema
+`req~refreshing-an-rls-virtual-schema~1`
+
+Data Owners can refresh a Virtual Schema, causing the metadata of the underlying schema to be re-read.
+
+Comment:
+
+Note that since the protection of a table in RLS is also determined by the metadata in that Schema, a refresh also updates the protection settings.
+
+Rationale:
+
+This allows updating the structure of the underlying schema.
+
+Covers:
+
+* [feat~row-level-security~1](#row-level-security)
+
+Needs: dsn
+
 ### General Virtual Schema Support
 
 RLSL is a Virtual Schema. As such it inherits some of the general functions common to most Virtual Schemas.
