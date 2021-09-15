@@ -30,7 +30,7 @@ end
 -- @return response containing the metadata for the virtual schema like table and column structure
 --
 function M.create_virtual_schema(_, request)
-    local properties = request.schemaMetadataInfo.properties
+    local properties = request.schemaMetadataInfo.properties or {}
     validate(properties)
     local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
     return {type = "createVirtualSchema", schemaMetadata = schema_metadata}

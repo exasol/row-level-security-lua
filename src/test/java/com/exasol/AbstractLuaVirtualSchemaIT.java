@@ -10,7 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,8 +24,6 @@ import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
-    protected static final Map<String, String> DEBUG_PROPERTIES = Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS",
-            "172.17.0.1:3000");
     private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     @Container
@@ -66,9 +65,6 @@ abstract class AbstractLuaVirtualSchemaIT {
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema, final Map<String, String> properties) {
         final String name = sourceSchema.getName();
         final AdapterScript adapterScript;
-        final Map<String, String> mergedProperties = new HashMap<>();
-        mergedProperties.putAll(DEBUG_PROPERTIES);
-        mergedProperties.putAll(properties);
         try {
             adapterScript = createAdapterScript(name);
         } catch (final IOException exception) {

@@ -58,18 +58,25 @@ function test_rls_adapter.test_get_capabilites()
 end
 
 function test_rls_adapter.test_get_capabilites_while_excluding_capabilities()
-    local request = {
-        schemaMetadataInfo = {
-            properties = {
-                EXCLUDED_CAPABILITIES = "AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING"
+    local input_variants = {
+        "AGGREGATE_GROUP_BY_COLUMN,AGGREGATE_GROUP_BY_TUPLE,AGGREGATE_HAVING",
+        "AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING",
+        " AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING ",
+        "AGGREGATE_GROUP_BY_COLUMN,  AGGREGATE_GROUP_BY_TUPLE  , AGGREGATE_HAVING",
+        ",AGGREGATE_GROUP_BY_COLUMN, , AGGREGATE_GROUP_BY_TUPLE,, AGGREGATE_HAVING",
+    }
+    for _, input_variant in pairs(input_variants) do
+        local request = {
+            schemaMetadataInfo = {
+                properties = {EXCLUDED_CAPABILITIES = input_variant}
             }
         }
-    }
-    local expected = {type = "getCapabilities",
-        capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "ORDER_BY_COLUMN", "LIMIT",
-            "LIMIT_WITH_OFFSET"}}
-    local actual = adapter.get_capabilities(nil, request)
-    luaunit.assertEquals(actual, expected)
+        local expected = {type = "getCapabilities",
+            capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "ORDER_BY_COLUMN", "LIMIT",
+                "LIMIT_WITH_OFFSET"}}
+        local actual = adapter.get_capabilities(nil, request)
+        luaunit.assertEquals(actual, expected)
+    end
 end
 
 function test_rls_adapter.test_validate_properties_reports_missing_schema_name()
