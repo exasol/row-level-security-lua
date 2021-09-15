@@ -9,7 +9,7 @@ test_rls_adapter = {}
 
 local function get_project_base_path()
     local fullpath = debug.getinfo(1,"S").source:sub(2)
-    return fullpath:gsub("/src.*$", "")
+    return fullpath:gsub("/[^/]*$", "") .. "/../../../.."
 end
 
 local function get_pom_path()

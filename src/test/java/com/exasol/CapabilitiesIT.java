@@ -16,8 +16,8 @@ import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 @Testcontainers
 class CapabilitiesIT extends AbstractLuaVirtualSchemaIT {
     @Test
-    void testIncludeLimitCapability() {
-        final String sourceSchemaName = "HAS_LIMIT_CAPABILITY_SCHEMA";
+    void testIncludeProjectionCapability() {
+        final String sourceSchemaName = "HAS_PROJECTION_CAPABILITY_SCHEMA";
         final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN", "C2", "DATE");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
@@ -27,8 +27,8 @@ class CapabilitiesIT extends AbstractLuaVirtualSchemaIT {
     }
 
     @Test
-    void testExcludeLimitCapability() {
-        final String sourceSchemaName = "NO_LIMIT_CAPABILITY_SCHEMA";
+    void testExcludeProjectionCapability() {
+        final String sourceSchemaName = "NO_PROJECTION_CAPABILITY_SCHEMA";
         final Schema sourceSchema = createSchema(sourceSchemaName);
         sourceSchema.createTable("T", "C1", "BOOLEAN", "C2", "DATE");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema,

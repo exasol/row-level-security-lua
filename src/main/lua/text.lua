@@ -1,4 +1,7 @@
-_G.M = {}
+---
+-- This module contains basic string manipulation methods not included in the Lua standard library.
+--
+local M = {}
 
 ---
 -- Check if string starts with a substring.
@@ -15,22 +18,22 @@ end
 
 ---
 -- Remove leading and trailing spaces from a string
--- 
--- @param text string to be trimmted
--- 
+--
+-- @param text string to be trimmed
+--
 -- @return trimmed string
--- 
+--
 function M.trim(text)
     return text:match "^%s*(.-)%s*$"
 end
 
 ---
 -- Split a delimited string into its components.
--- 
+--
 -- @param text string to split
--- 
+--
 -- @param delimiter to split at (default: ',')
--- 
+--
 function M.split(text, delimiter)
     delimiter = delimiter or ','
     local tokens = {}
@@ -42,4 +45,4 @@ function M.split(text, delimiter)
     return tokens
 end
 
-return _G.M
+return M
