@@ -341,7 +341,7 @@ Users can exclude zero or more Virtual Schema capabilities.
 
 Rationale:
 
-When a Virtual Schema excludes a capability from the list of supported capabilities, then the core database constructs push-down queries that only take the remaining capabilities into account. If users for example switch of a scalar function, that function won't be pushed down to the Virtual Schema. Instead the core database applies it on the results of the push-down.
+When a Virtual Schema excludes a capability from the list of supported capabilities, then the core database constructs push-down queries that only take the remaining capabilities into account. If users for example switch off a scalar function, that function won't be pushed down to the Virtual Schema. Instead the core database applies it on the results of the push-down.
 
 Users can do this in case the resulting query turns out to be more efficient for example.
 
