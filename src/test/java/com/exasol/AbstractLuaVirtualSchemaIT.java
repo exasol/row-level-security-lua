@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
@@ -23,8 +24,6 @@ import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
-    protected static final Map<String, String> DEBUG_PROPERTIES = Map.of("LOG_LEVEL", "TRACE", "DEBUG_ADDRESS",
-            "172.17.0.1:3000");
     private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     @Container
@@ -63,7 +62,7 @@ abstract class AbstractLuaVirtualSchemaIT {
         return !DOCKER_DB.contains(":7.0");
     }
 
-    protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
+    protected VirtualSchema createVirtualSchema(final Schema sourceSchema, final Map<String, String> properties) {
         final String name = sourceSchema.getName();
         final AdapterScript adapterScript;
         try {
@@ -74,8 +73,12 @@ abstract class AbstractLuaVirtualSchemaIT {
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(DEBUG_PROPERTIES) //
+                .properties(properties) //
                 .build();
+    }
+
+    protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
+        return createVirtualSchema(sourceSchema, Collections.emptyMap());
     }
 
     protected AdapterScript createAdapterScript(final String prefix) throws IOException {

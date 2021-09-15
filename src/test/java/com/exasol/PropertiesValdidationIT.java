@@ -19,8 +19,7 @@ class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {
         final String virtualSchemaName = "VIRTUAL_SCHEMA_FOR_MISSING_SCHEMA_PROPERTY";
         final AdapterScript adapter = createAdapterScript("SCHEMA_FOR_MISSING_SCHEMA_PROPERTY");
         final VirtualSchema.Builder virtualSchemaBuilder = factory.createVirtualSchemaBuilder(virtualSchemaName) //
-                .adapterScript(adapter) //
-                .properties(DEBUG_PROPERTIES);
+                .adapterScript(adapter);
         final Exception exception = assertThrows(Exception.class, () -> virtualSchemaBuilder.build());
         assertThat(exception.getCause().getMessage(), containsString("Missing mandatory property \"SCHEMA_NAME\"."));
     }

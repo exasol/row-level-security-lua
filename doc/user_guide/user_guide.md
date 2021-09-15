@@ -377,6 +377,40 @@ The minimum requirements for a regular user in order to be able to access the RL
 * User is allowed to create sessions (`GRANT CREATE SESSION`)
 * User can execute `SELECT` statements on the Virtual Schema (`GRANT SELECT`)
 
+### Adapter Capabilities
+
+RLS is based on Exasol's Virtual Schema. Which constructs are pushed-down is decided by the optimizer based on the original query and on the capabilities reported by the Virtual Schema adapter (i.e. the software driving RLS).
+
+RLS defines the following capabilities:
+
+* `SELECTLIST_PROJECTION`
+* `AGGREGATE_SINGLE_GROUP`
+* `AGGREGATE_GROUP_BY_COLUMN`
+* `AGGREGATE_GROUP_BY_TUPLE`
+* `AGGREGATE_HAVING`
+* `ORDER_BY_COLUMN`
+* `LIMIT`
+* `LIMIT_WITH_OFFSET`
+
+Please note that excluded capabilities are not the only reason why a construct might not be pushed down. Given the nature of the queries pushed to RLS, the `LIMIT`-clause for example will rarely &mdash; if ever &mdash; be pushed down even though the adapter can handle that. RLS creates `SELECT` statements and not `IMPORT` statements.
+The simple reason `LIMIT` not pushed is, that the optimizer decides it is more efficient in this particular case.
+
+#### Excluding Capabilities
+
+Sometimes you want to prevent constructs from being pushed down. In this case, you can tell the RLS adapter to exclude one or more capabilities from being reported to the core database.
+
+The core database will then refrain from pushing down the related SQL constructs.
+
+Just add the property `EXCLUDED_CAPABILITIES` to the Virtual Schema creation statement and provide a comma-separated list of capabilities you want to exclude.
+
+```sql
+CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
+    USING RLS_SCHEMA.RLS_ADAPTER
+    WITH
+    SCHEMA_NAME           = '<schema name>'
+    EXCLUDED_CAPABILITIES = 'SELECTLIST_PROJECTION, ORDER_BY_COLUMN'
+```
+
 ## Public Data
 
 To recap: data in an RLS-protected schema is publicly readable if

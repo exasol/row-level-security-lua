@@ -1,3 +1,5 @@
+' [dsn->req~excluding-capabilities~1]
+
 @startuml
 !include ../clean.skin
 
@@ -9,6 +11,9 @@ Participant rls_adapter
 activate request_dispatcher
 request_dispatcher -> rls_adapter : get capabilities (request)
 activate rls_adapter
+rls_adapter -> rls_adapter : subtract excluded capabilities()
+activate rls_adapter
+deactivate rls_adapter
 rls_adapter -->> request_dispatcher : capability[]
 deactivate rls_adapter 
 @enduml
