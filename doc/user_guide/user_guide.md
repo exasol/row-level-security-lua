@@ -312,7 +312,7 @@ If a table is protected with tenant- and role-security, a user must be the tenan
 
 In case you combine tenant- and group-security, a user must either be the tenant or be in the group stated in a row to access it.
 
-## Creating Virtual Schema
+## Creating a Virtual Schema
 
 We prepared the schema and tables we want to protect with RLS in section ["Administering Row Protection"](#administering-row-protection). The next step is to create the RLS Virtual Schema. That Virtual Schema is the "portal" through which regular users access an RLS-protected schema.
 
@@ -410,6 +410,18 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
     SCHEMA_NAME           = '<schema name>'
     EXCLUDED_CAPABILITIES = 'SELECTLIST_PROJECTION, ORDER_BY_COLUMN'
 ```
+
+## Updating a Virtual Schema
+
+All Virtual Schemas cache their metadata. That metadata for example contains all information about structure and data types of the underlying data source. RLS is a Virtual Schema and uses the same caching mechanism.
+
+To let RLS know that something changed in the metadata, please use the [`ALTER VIRTUAL SCHEMA ... REFRESH`](https://docs.exasol.com/sql/alter_schema.htm) statement.
+
+```
+ALTER VIRTUAL SCHEMA <virtul schema name> REFRESH
+```
+
+Please note that this is also required if you change the special columns that control the RLS protection.
 
 ## Public Data
 

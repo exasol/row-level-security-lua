@@ -46,7 +46,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             + "        end\n" //
             + "    end\n" //
             + ")\n\n";
-    private static Connection connection;
+    protected static Connection connection;
     protected static ExasolObjectFactory factory;
     private static ExasolSchema scriptSchema;
 
@@ -91,15 +91,15 @@ abstract class AbstractLuaVirtualSchemaIT {
     }
 
     protected ResultSet executeRlsQueryWithUser(final String query, final User user) throws SQLException {
-        final Statement statement = AbstractLuaVirtualSchemaIT.EXASOL
-                .createConnectionForUser(user.getName(), user.getPassword()).createStatement();
+        final Statement statement = EXASOL.createConnectionForUser(user.getName(), user.getPassword())
+                .createStatement();
         final ResultSet result = statement.executeQuery(query);
         return result;
     }
 
     protected TimedResultSet executeTimedRlsQueryWithUser(final String query, final User user) throws SQLException {
-        final Statement statement = AbstractLuaVirtualSchemaIT.EXASOL
-                .createConnectionForUser(user.getName(), user.getPassword()).createStatement();
+        final Statement statement = EXASOL.createConnectionForUser(user.getName(), user.getPassword())
+                .createStatement();
         final long before = System.nanoTime();
         final ResultSet result = statement.executeQuery(query);
         final long after = System.nanoTime();

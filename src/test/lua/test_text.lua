@@ -8,12 +8,14 @@ function test_text.test_trim()
 end
 
 function test_text.test_split()
-    tests ={
+    local tests = {
         {
-            input = "foo,bar,baz", expected = {"foo", "bar", "baz"},
-            input = "foo,,bar,baz", expected = {"foo", "bar", "baz"},
-            input = ",1,2,3", expected = {"1", "2", "3"},
-            input = " Hello , world    , ! ", expected = {"Hello", "world", "!"}
+            {input = "foo,bar,baz", expected = {"foo", "bar", "baz"}},
+            {input = "foo,,bar,baz", expected = {"foo", "bar", "baz"}},
+            {input = ",1,2,3", expected = {"1", "2", "3"}},
+            {input = " Hello , world    , ! ", expected = {"Hello", "world", "!"}},
+            {input = "", expected = {}},
+            {input = nil, expected = {}}
         }
     }
     for _, test in ipairs(tests) do

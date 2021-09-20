@@ -23,9 +23,9 @@ end
 ---
 -- Create a virtual schema.
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request
+-- @param request virtual schema request
 --
 -- @return response containing the metadata for the virtual schema like table and column structure
 --
@@ -39,9 +39,9 @@ end
 ---
 -- Drop the virtual schema
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request (not used)
+-- @param request virtual schema request (not used)
 --
 -- @return response confirming the request (otherwise empty)
 --
@@ -49,7 +49,23 @@ function M.drop_virtual_schema()
     return {type = "dropVirtualSchema"}
 end
 
-function M.refresh()
+---
+-- Refresh the metadata of the Virtual Schema.
+-- <p>
+-- Re-reads the structure and data types of the schema protected by RLS.
+-- </p>
+--
+-- @param _ Exasol metadata (not used)
+--
+-- @param request virtual schema request
+--
+-- @return response containing the metadata for the virtual schema like table and column structure
+--
+function M.refresh(_, request)
+    local properties = request.schemaMetadataInfo.properties or {}
+    validate(properties)
+    local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
+    return {type = "refresh", schemaMetadata = schema_metadata}
 end
 
 function M.set_properties()
@@ -74,7 +90,10 @@ end
 ---
 -- Report the capabilities of the Virtual Schema adapter
 --
--- @param request      virtual schema request
+--
+-- @param _ Exasol metadata (not used)
+--
+-- @param request virtual schema request
 --
 -- @return response containing the list of reported capabilities
 --
@@ -92,7 +111,9 @@ end
 ---
 -- Rewrite a pushed down query.
 --
--- @param request      virtual schema request
+-- @param _ Exasol metadata (not used)
+--
+-- @param request virtual schema request
 --
 -- @return response containing the list of reported capabilities
 --
