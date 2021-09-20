@@ -8,7 +8,7 @@ function test_text.test_trim()
 end
 
 function test_text.test_split()
-    local tests ={
+    local tests = {
         {
             {input = "foo,bar,baz", expected = {"foo", "bar", "baz"}},
             {input = "foo,,bar,baz", expected = {"foo", "bar", "baz"}},
