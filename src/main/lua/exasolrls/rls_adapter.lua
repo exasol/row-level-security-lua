@@ -23,9 +23,9 @@ end
 ---
 -- Create a virtual schema.
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request
+-- @param request virtual schema request
 --
 -- @return response containing the metadata for the virtual schema like table and column structure
 --
@@ -39,9 +39,9 @@ end
 ---
 -- Drop the virtual schema
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request (not used)
+-- @param request virtual schema request (not used)
 --
 -- @return response confirming the request (otherwise empty)
 --
@@ -55,9 +55,9 @@ end
 -- Re-reads the structure and data types of the schema protected by RLS.
 -- </p>
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request
+-- @param request virtual schema request
 --
 -- @return response containing the metadata for the virtual schema like table and column structure
 --
@@ -91,9 +91,9 @@ end
 -- Report the capabilities of the Virtual Schema adapter
 --
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request
+-- @param request virtual schema request
 --
 -- @return response containing the list of reported capabilities
 --
@@ -111,9 +111,9 @@ end
 ---
 -- Rewrite a pushed down query.
 --
--- @param exa_metadata Exasol metadata (not used)
+-- @param _ Exasol metadata (not used)
 --
--- @param request      virtual schema request
+-- @param request virtual schema request
 --
 -- @return response containing the list of reported capabilities
 --

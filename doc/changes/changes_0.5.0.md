@@ -6,7 +6,7 @@ Code name: Schema refresh, exclude capabilities and default SRID
 
 Version 0.5.0 of `row-level-security` adds support for `GEOMETRY` columns without explicit SRID.
 
-Lua RLS now supports `ALTER VIRTUAL SCHEMA ... REFRESH` to update the metadata of an existing virtual schema.
+Lua Row Level Security (RLS) now supports `ALTER VIRTUAL SCHEMA ... REFRESH` to update the metadata of an existing virtual schema.
 
 You can now prevent specific SQL constructs from being pushed down by using the `EXCLUDED_CAPABILITIES` property.
 

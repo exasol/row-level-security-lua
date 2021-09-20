@@ -3,7 +3,9 @@ package com.exasol;
 import static com.exasol.RlsTestConstants.IDENTIFIER_TYPE;
 import static com.exasol.RlsTestConstants.ROW_GROUP_COLUMN;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.sql.*;
 
@@ -89,7 +91,8 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
     }
 
     private Matcher<ResultSet> expectRows(final String... strings) {
-        assert ((strings.length % 2) == 0);
+        assertThat("Expected metadata rows must be given as touples of field name and data type.", strings.length % 2,
+                equalTo(0));
         final Builder builder = table();
         for (int i = 0; i < strings.length; i += 2) {
             builder.row(strings[i], strings[i + 1], anything(), anything(), anything());
