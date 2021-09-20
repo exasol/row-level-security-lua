@@ -119,7 +119,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
         try {
             execute(sql);
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to refresh Virtual Schema.", exception);
+            throw new AssertionError("Unable to refresh Virtual Schema using query '" + sql + "'"., exception);
         }
     }
 
