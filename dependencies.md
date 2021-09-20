@@ -5,7 +5,7 @@
 
 | Dependency                        | License  |
 | --------------------------------- | -------- |
-| [maven-project-version-getter][0] | [MIT][1] |
+| [Maven Project Version Getter][0] | [MIT][1] |
 
 ## Test Dependencies
 
@@ -37,10 +37,10 @@
 | [Versions Maven Plugin][38]                             | [Apache License, Version 2.0][25]              |
 | [JaCoCo :: Maven Plugin][40]                            | [Eclipse Public License 2.0][41]               |
 | [error-code-crawler-maven-plugin][42]                   | [MIT][1]                                       |
-| [Reproducible Build Maven Plugin][44]                   | [Apache 2.0][33]                               |
-| [Maven Clean Plugin][46]                                | [The Apache Software License, Version 2.0][33] |
-| [Maven Resources Plugin][48]                            | [The Apache Software License, Version 2.0][33] |
-| [Maven JAR Plugin][50]                                  | [The Apache Software License, Version 2.0][33] |
+| [Apache Maven JAR Plugin][44]                           | [Apache License, Version 2.0][25]              |
+| [Reproducible Build Maven Plugin][46]                   | [Apache 2.0][33]                               |
+| [Maven Clean Plugin][48]                                | [The Apache Software License, Version 2.0][33] |
+| [Maven Resources Plugin][50]                            | [The Apache Software License, Version 2.0][33] |
 | [Maven Install Plugin][52]                              | [The Apache Software License, Version 2.0][33] |
 | [Maven Deploy Plugin][54]                               | [The Apache Software License, Version 2.0][33] |
 | [Maven Site Plugin 3][56]                               | [The Apache Software License, Version 2.0][33] |
@@ -49,7 +49,7 @@
 [40]: https://www.eclemma.org/jacoco/index.html
 [33]: http://www.apache.org/licenses/LICENSE-2.0.txt
 [26]: https://maven.apache.org/surefire/maven-surefire-plugin/
-[46]: http://maven.apache.org/plugins/maven-clean-plugin/
+[48]: http://maven.apache.org/plugins/maven-clean-plugin/
 [3]: https://docs.exasol.com/connect_exasol/drivers/jdbc.htm
 [1]: https://opensource.org/licenses/MIT
 [30]: https://maven.apache.org/surefire/maven-failsafe-plugin/
@@ -63,9 +63,8 @@
 [41]: https://www.eclipse.org/legal/epl-2.0/
 [4]: https://github.com/exasol/exasol-testcontainers
 [10]: https://github.com/exasol/hamcrest-resultset-matcher
-[44]: http://zlika.github.io/reproducible-build-maven-plugin
+[46]: http://zlika.github.io/reproducible-build-maven-plugin
 [37]: https://opensource.org/licenses/mit-license.php
-[50]: http://maven.apache.org/plugins/maven-jar-plugin/
 [19]: http://www.opensource.org/licenses/mit-license.php
 [25]: https://www.apache.org/licenses/LICENSE-2.0.txt
 [24]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
@@ -80,5 +79,6 @@
 [18]: http://www.slf4j.org
 [54]: http://maven.apache.org/plugins/maven-deploy-plugin/
 [56]: http://maven.apache.org/plugins/maven-site-plugin/
-[48]: http://maven.apache.org/plugins/maven-resources-plugin/
+[50]: http://maven.apache.org/plugins/maven-resources-plugin/
 [42]: https://github.com/exasol/error-code-crawler-maven-plugin
+[44]: https://maven.apache.org/plugins/maven-jar-plugin/

@@ -24,3 +24,16 @@ Also, we migrated the system requirement specification over from RLS Java and ad
 * #79: Migrated requirements from RLS Java, added UML model as design.
 
 ## Dependency Updates
+
+### Compile Dependency Updates
+
+* Updated `com.exasol:maven-project-version-getter:0.1.0` to `1.0.0`
+
+### Test Dependency Updates
+
+* Updated `com.exasol:exasol-jdbc:7.1.0` to `7.1.1`
+* Updated `com.exasol:exasol-testcontainers:4.0.1` to `5.0.0`
+
+### Plugin Dependency Updates
+
+* Updated `org.apache.maven.plugins:maven-jar-plugin:2.4` to `3.2.0`

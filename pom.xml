@@ -36,13 +36,13 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-jdbc</artifactId>
-            <version>7.1.0</version>
+            <version>7.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>4.0.1</version>
+            <version>5.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>maven-project-version-getter</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
     <build>
@@ -394,6 +394,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Since this is a Lua project, no production JAR should be created. Empty JAR gets skipped. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <skipIfEmpty>true</skipIfEmpty>
+                </configuration>
+            </plugin>
+            
             <plugin>
                 <groupId>io.github.zlika</groupId>
                 <artifactId>reproducible-build-maven-plugin</artifactId>
