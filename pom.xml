@@ -240,6 +240,7 @@
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
                                 <argument>exasolvs.request_dispatcher</argument>
                                 <argument>exasolvs.query_renderer</argument>
+                                <argument>exasolrls.adapter_capabilities</argument>
                                 <argument>exasolrls.rls_adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>
                                 <argument>exasolrls.table_protection_reader</argument>

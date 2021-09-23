@@ -1,12 +1,11 @@
 local metadata_reader = require("exasolrls.metadata_reader")
 local query_rewriter = require("exasolrls.query_rewriter")
 local text = require("text")
+local adapter_capabilities = require("exasolrls.adapter_capabilities")
 
 local M = {
     VERSION = "0.5.0",
     NAME = "Row-level Security adapter (LUA)",
-    CAPABILITIES = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
-        "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT", "LIMIT_WITH_OFFSET"}
 }
 
 local function is_schema_name_property_present(properties)
@@ -101,10 +100,13 @@ function M.get_capabilities(_, request)
     local excluded_capabilities_property_value = (((request or {}).schemaMetadataInfo or {}).properties or {})
         .EXCLUDED_CAPABILITIES
     if excluded_capabilities_property_value == nil then
-        return {type = "getCapabilities", capabilities = M.CAPABILITIES}
+        return {type = "getCapabilities", capabilities = adapter_capabilities}
     else
         local excluded_capabilities = text.split(excluded_capabilities_property_value)
-        return {type = "getCapabilities", capabilities = subtract_capabilities(M.CAPABILITIES, excluded_capabilities)}
+        return {
+            type = "getCapabilities",
+            capabilities = subtract_capabilities(adapter_capabilities, excluded_capabilities)
+        }
     end
 end
 

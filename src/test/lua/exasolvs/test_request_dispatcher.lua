@@ -5,6 +5,7 @@ package.preload["remotelog"] = function () return log_mock end
 local cjson = require("cjson")
 local adapter = require("exasolrls.rls_adapter")
 local dispatcher = require("exasolvs.request_dispatcher").init(adapter)
+local adapter_capabilities = require("exasolrls.adapter_capabilities")
 
 local verify = mockagne.verify
 
@@ -16,16 +17,7 @@ end
 
 function test_request_dispatcher.test_get_capabilities()
     local response = dispatcher.adapter_call('{"type" : "getCapabilities"}')
-    local expected = {type = "getCapabilities", capabilities = {
-        "SELECTLIST_PROJECTION",
-        "AGGREGATE_SINGLE_GROUP",
-        "AGGREGATE_GROUP_BY_COLUMN",
-        "AGGREGATE_GROUP_BY_TUPLE",
-        "AGGREGATE_HAVING",
-        "ORDER_BY_COLUMN",
-        "LIMIT",
-        "LIMIT_WITH_OFFSET"
-    }}
+    local expected = {type = "getCapabilities", capabilities = adapter_capabilities}
     json_assert(response, expected)
 end
 

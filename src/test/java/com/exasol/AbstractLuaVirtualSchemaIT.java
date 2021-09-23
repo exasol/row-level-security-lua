@@ -10,8 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +23,9 @@ import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 abstract class AbstractLuaVirtualSchemaIT {
+    private static final int DEFAULT_LOG_PORT = 3000;
+    private static final String LOG_PORT_PROPERTY = "com.exasol.log.port";
+    private static final String LOG_HOST_PROPERTY = "com.exasol.log.host";
     private static final String VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     @Container
@@ -73,8 +75,24 @@ abstract class AbstractLuaVirtualSchemaIT {
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(properties) //
+                .properties(addDebugProperties(properties)) //
                 .build();
+    }
+
+    private Map<String, String> addDebugProperties(final Map<String, String> properties) {
+        final String logHost = System.getProperty(LOG_HOST_PROPERTY);
+        if (logHost == null) {
+            return properties;
+        } else {
+            final int logPort = Integer
+                    .parseInt(System.getProperty(LOG_PORT_PROPERTY, Integer.toString(DEFAULT_LOG_PORT)));
+            final String debugAddress = logHost + ":" + logPort;
+            final Map<String, String> mergedProperties = new HashMap<>();
+            mergedProperties.put("DEBUG_ADDRESS", debugAddress);
+            mergedProperties.put("LOG_LEVEL", "TRACE");
+            mergedProperties.putAll(properties);
+            return mergedProperties;
+        }
     }
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
@@ -88,6 +106,10 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected String getVirtualSchemaName(final String sourceSchemaName) {
         return sourceSchemaName + "_RLS";
+    }
+
+    protected String getVirtualSchemaName(final Schema sourceSchema) {
+        return getVirtualSchemaName(sourceSchema.getName());
     }
 
     protected ResultSet executeRlsQueryWithUser(final String query, final User user) throws SQLException {
