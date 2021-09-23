@@ -103,12 +103,16 @@ function M.new (query)
         append(" ")
         append_expression(right)
     end
+    
+    local function is_parameterless_function(function_name)
+        return function_name == "CURRENT_USER" or function_name == "SYSDATE" or function_name == "CURRENT_SCHEMA"
+            or function_name == "CURRENT_SESSION" or function_name == "CURRENT_STATEMENT"
+    end
 
     local function append_scalar_function(scalar_function)
         local function_name = string.upper(scalar_function.name)
         if M.supported_scalar_functions[function_name] then
-            if function_name == "CURRENT_USER" or function_name == "SYSDATE" or function_name == "CURRENT_SCHEMA"
-                or function_name == "CURRENT_SESSION" or function_name == "CURRENT_STATEMENT" then
+            if is_parameterless_function(function_name) then
                 append(function_name)
             else
                 local arguments = scalar_function.arguments
