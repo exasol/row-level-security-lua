@@ -593,8 +593,8 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_type = "literal_exactnumeric",
             first_arg_value = 1,
             second_arg_type = "literal_exactnumeric",
-            second_arg_value = 1,
-            expected = "SELECT 1 + 1"
+            second_arg_value = 2,
+            expected = "SELECT 1 + 2"
         },
         {
             func_name = "ATAN2",
