@@ -17,7 +17,7 @@ Also, we migrated the system requirement specification over from RLS Java and ad
 ## Feature
 
 * #47: Support `GEOMETRY` columns without explicit SRID.
-* #58: Added option to exclude capabilities.
+* #68: Added option to exclude capabilities.
 * #74: Users can now refresh the schema metadata with `ALTER VIRTUAL SCHEMA ... REFRESH`
 * #84: Added scalar function capabilities
 
