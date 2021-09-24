@@ -1,6 +1,6 @@
-# row-level-security-lua 0.5.0, released 2021-09-01
+# row-level-security-lua 0.5.0, released 2021-09-24
 
-Code name: Schema refresh, exclude capabilities and default SRID
+Code name: Schema refresh, scalar functions, exclude capabilities and default SRID
 
 ## Summary
 
@@ -10,6 +10,8 @@ Lua Row Level Security (RLS) now supports `ALTER VIRTUAL SCHEMA ... REFRESH` to 
 
 You can now prevent specific SQL constructs from being pushed down by using the `EXCLUDED_CAPABILITIES` property.
 
+Since the adapter now reports the capabilities for all scalar functions, those functions can now be pushed down, resulting in better performance in many cases where scalar functions are used.
+
 Also, we migrated the system requirement specification over from RLS Java and added a UML model that serves as design.
 
 ## Feature
@@ -17,6 +19,7 @@ Also, we migrated the system requirement specification over from RLS Java and ad
 * #47: Support `GEOMETRY` columns without explicit SRID.
 * #58: Added option to exclude capabilities.
 * #74: Users can now refresh the schema metadata with `ALTER VIRTUAL SCHEMA ... REFRESH`
+* #84: Added scalar function capabilities
 
 ## Documentation
 

@@ -229,6 +229,12 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             expected = "SELECT LN(100)"
         },
         {
+            func_name = "NEG",
+            arg_type = "literal_exactnumeric",
+            arg_value = 42,
+            expected = "SELECT -42"
+        },
+        {
             func_name = "RADIANS",
             arg_type = "literal_exactnumeric",
             arg_value = 180,
@@ -523,10 +529,22 @@ function test_query_renderer.test_scalar_function_in_select_list_with_single_arg
             expected = "SELECT IS_TIMESTAMP('abc')"
         },
         {
+            func_name = "MIN_SCALE",
+            arg_type = "literal_exactnumeric",
+            arg_value = 100.1245,
+            expected = "SELECT MIN_SCALE(100.1245)"
+        },
+        {
             func_name = "NULLIFZERO",
             arg_type = "literal_exactnumeric",
             arg_value = 5,
             expected = "SELECT NULLIFZERO(5)"
+        },
+        {
+            func_name = "TYPEOF",
+            arg_type = "literal_string",
+            arg_value = "foobar",
+            expected = "SELECT TYPEOF('foobar')"
         },
         {
             func_name = "ZEROIFNULL",
@@ -571,6 +589,14 @@ end
 function test_query_renderer.test_scalar_function_in_select_list_with_two_arguments()
     local parameters = {
         {
+            func_name = "ADD",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 1,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 2,
+            expected = "SELECT 1 + 2"
+        },
+        {
             func_name = "ATAN2",
             first_arg_type = "literal_exactnumeric",
             first_arg_value = 1,
@@ -585,6 +611,14 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 6,
             expected = "SELECT DIV(15, 6)"
+        },
+        {
+            func_name = "FLOAT_DIV",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 20,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 4,
+            expected = "SELECT 20 / 4"
         },
         {
             func_name = "LOG",
@@ -603,6 +637,14 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             expected = "SELECT MOD(15, 6)"
         },
         {
+            func_name = "MULT",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 3,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 7,
+            expected = "SELECT 3 * 7"
+        },
+        {
             func_name = "POWER",
             first_arg_type = "literal_exactnumeric",
             first_arg_value = 2,
@@ -617,6 +659,14 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
             expected = "SELECT ROUND(123.456, 2)"
+        },
+        {
+            func_name = "SUB",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = 444,
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = 222,
+            expected = "SELECT 444 - 222"
         },
         {
             func_name = "TO_NUMBER",
@@ -851,12 +901,12 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             expected = "SELECT MINUTES_BETWEEN(TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2000-01-01 11:01:05.1')"
         },
         {
-            func_name = "MONTH_BETWEEN",
+            func_name = "MONTHS_BETWEEN",
             first_arg_type = "literal_date",
             first_arg_value = "1999-12-31",
             second_arg_type = "literal_date",
             second_arg_value = "2000-01-01",
-            expected = "SELECT MONTH_BETWEEN(DATE '1999-12-31', DATE '2000-01-01')"
+            expected = "SELECT MONTHS_BETWEEN(DATE '1999-12-31', DATE '2000-01-01')"
         },
         {
             func_name = "NUMTODSINTERVAL",
@@ -1008,6 +1058,16 @@ function test_query_renderer.test_scalar_function_in_select_list_with_three_argu
             third_arg_type = "literal_string",
             third_arg_value = "xy",
             expected = "SELECT TRANSLATE('abcd', 'abc', 'xy')"
+        },
+        {
+            func_name = "LEAST",
+            first_arg_type = "literal_exactnumeric",
+            first_arg_value = "7",
+            second_arg_type = "literal_exactnumeric",
+            second_arg_value = "101",
+            third_arg_type = "literal_exactnumeric",
+            third_arg_value = "23",
+            expected = "SELECT LEAST(7, 101, 23)"
         },
         {
             func_name = "CONVERT_TZ",

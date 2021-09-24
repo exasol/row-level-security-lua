@@ -3,9 +3,9 @@ local text = require("text")
 local M = {
     supported_scalar_functions_list = {
         -- Numeric functions
-        "ABS", "ACOS", "ASIN", "ATAN", "ATAN2", "CEIL", "COS", "COSH", "COT", "DEGREES", "DIV", "EXP", "FLOOR", "LN",
-        "LOG", "MOD", "POWER", "RADIANS", "RAND", "ROUND", "SIGN", "SIN", "SINH", "SQRT", "TAN", "TANH", "TO_CHAR",
-        "TO_NUMBER", "TRUNC",
+        "ABS", "ACOS", "ADD", "ASIN", "ATAN", "ATAN2", "CEIL", "COS", "COSH", "COT", "DEGREES", "DIV", "EXP",
+        "FLOAT_DIV", "FLOOR", "LEAST", "LN", "LOG", "MOD", "MULT", "NEG", "POWER", "RADIANS", "RAND", "ROUND", "SIGN",
+        "SIN", "SINH", "SQRT", "SUB", "TAN", "TANH", "TO_CHAR", "TO_NUMBER", "TRUNC",
         -- String functions
         "ASCII", "BIT_LENGTH", "CHR", "COLOGNE_PHONETIC", "CONCAT", "DUMP", "EDIT_DISTANCE", "INITCAP", "INSERT",
         "INSTR", "LENGTH", "LOCATE", "LOWER", "LPAD", "LTRIM", "OCTET_LENGTH", "REGEXP_INSTR", "REGEXP_REPLACE",
@@ -13,10 +13,11 @@ local M = {
         "TRANSLATE", "TRIM", "UNICODE", "UNICODECHR", "UPPER",
         -- Date/Time functions
         "ADD_DAYS", "ADD_HOURS", "ADD_MINUTES", "ADD_MONTHS", "ADD_SECONDS", "ADD_WEEKS", "ADD_YEARS", "CONVERT_TZ",
-        "CURRENT_DATE", "CURRENT_TIMESTAMP", "DATE_TRUNC", "DAY", "DAYS_BETWEEN", "DBTIMEZONE", "FROM_POSIX_TIME",
-        "HOUR", "HOURS_BETWEEN", "LOCALTIMESTAMP", "MINUTE", "MINUTES_BETWEEN", "MONTH", "MONTH_BETWEEN",
-        "NUMTODSINTERVAL", "NUMTOYMINTERVAL", "POSIX_TIME", "SECOND", "SECONDS_BETWEEN", "SESSIONTIMEZONE", "SYSDATE",
-        "SYSTIMESTAMP", "TO_DATE", "TO_DSINTERVAL", "TO_TIMESTAMP", "TO_YMINTERVAL", "WEEK", "YEAR", "YEARS_BETWEEN",
+        "CURRENT_DATE", "CURRENT_TIMESTAMP", "DATE_TRUNC", "DAY", "DAYS_BETWEEN", "DBTIMEZONE", "EXTRACT",
+        "FROM_POSIX_TIME", "HOUR", "HOURS_BETWEEN", "LOCALTIMESTAMP", "MINUTE", "MINUTES_BETWEEN", "MONTH",
+        "MONTHS_BETWEEN", "NUMTODSINTERVAL", "NUMTOYMINTERVAL", "POSIX_TIME", "SECOND", "SECONDS_BETWEEN",
+        "SESSIONTIMEZONE", "SYSDATE", "SYSTIMESTAMP", "TO_DATE", "TO_DSINTERVAL", "TO_TIMESTAMP", "TO_YMINTERVAL",
+        "WEEK", "YEAR", "YEARS_BETWEEN",
         -- Geospatial functions
         "ST_AREA", "ST_BOUNDARY", "ST_BUFFER", "ST_CENTROID", "ST_CONTAINS", "ST_CONVEXHULL", "ST_CROSSES",
         "ST_DIFFERENCE", "ST_DIMENSION", "ST_DISJOINT", "ST_DISTANCE", "ST_ENDPOINT", "ST_ENVELOPE", "ST_EQUALS",
@@ -31,7 +32,8 @@ local M = {
         "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST", "HASH_MD5",
         "HASHTYPE_MD5", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
         "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
-        "IS_YMINTERVAL", "IS_TIMESTAMP", "NULLIFZERO", "SYS_GUID", "ZEROIFNULL", "SESSION_PARAMETER"
+        "IS_YMINTERVAL", "IS_TIMESTAMP", "JSON_VALUE", "MIN_SCALE", "NULLIFZERO", "SYS_GUID", "TYPEOF", "ZEROIFNULL",
+        "SESSION_PARAMETER"
     },
     supported_scalar_functions = {},
     join_types = {
@@ -83,21 +85,52 @@ function M.new (query)
         append('"')
     end
 
+    local function append_function_argument_list(arguments)
+        append("(")
+        if (arguments) then
+            for i = 1, #arguments do
+                comma(i)
+                append_expression(arguments[i])
+            end
+        end
+        append(")")
+    end
+    
+    local function append_arithmetic_function(left, operator, right)
+        append_expression(left)
+        append(" ")
+        append(operator)
+        append(" ")
+        append_expression(right)
+    end
+    
+    local function is_parameterless_function(function_name)
+        return function_name == "CURRENT_USER" or function_name == "SYSDATE" or function_name == "CURRENT_SCHEMA"
+            or function_name == "CURRENT_SESSION" or function_name == "CURRENT_STATEMENT"
+    end
+
     local function append_scalar_function(scalar_function)
         local function_name = string.upper(scalar_function.name)
         if M.supported_scalar_functions[function_name] then
-            append(function_name)
-            if function_name ~= "CURRENT_USER" and function_name ~= "SYSDATE" and function_name ~= "CURRENT_SCHEMA"
-                and function_name ~= "CURRENT_SESSION" and function_name ~= "CURRENT_STATEMENT" then
-                append("(")
+            if is_parameterless_function(function_name) then
+                append(function_name)
+            else
                 local arguments = scalar_function.arguments
-                if (arguments) then
-                    for i = 1, #arguments do
-                        comma(i)
-                        append_expression(arguments[i])
-                    end
+                if function_name == "ADD" then
+                    append_arithmetic_function(arguments[1], "+", arguments[2])
+                elseif function_name == "SUB" then
+                    append_arithmetic_function(arguments[1], "-", arguments[2])
+                elseif function_name == "MULT" then
+                    append_arithmetic_function(arguments[1], "*", arguments[2])
+                elseif function_name == "FLOAT_DIV" then
+                    append_arithmetic_function(arguments[1], "/", arguments[2])
+                elseif function_name == "NEG" then
+                    append("-")
+                    append_expression(arguments[1])
+                else
+                    append(function_name)
+                    append_function_argument_list(arguments)
                 end
-                append(")")
             end
         else
             error('E-VS-QR-3: Unable to render unsupported scalar function type "' .. function_name .. '".')

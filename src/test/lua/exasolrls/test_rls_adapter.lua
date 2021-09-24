@@ -2,7 +2,8 @@ local luaunit = require("luaunit")
 local mockagne = require("mockagne")
 local metadata_reader_mock = mockagne.getMock()
 package.preload["exasolrls.metadata_reader"] = function () return metadata_reader_mock end
-
+local text = require("text")
+local adapter_capabilities = require("exasolrls.adapter_capabilities")
 local adapter = require("exasolrls.rls_adapter")
 
 test_rls_adapter = {}
@@ -49,21 +50,18 @@ end
 
 function test_rls_adapter.test_get_capabilites()
     local request = {}
-    local expected = {type = "getCapabilities",
-        capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "AGGREGATE_GROUP_BY_COLUMN",
-            "AGGREGATE_GROUP_BY_TUPLE", "AGGREGATE_HAVING", "ORDER_BY_COLUMN", "LIMIT",
-            "LIMIT_WITH_OFFSET"}}
+    local expected = {type = "getCapabilities", capabilities = adapter_capabilities}
     local actual = adapter.get_capabilities(nil, request)
     luaunit.assertEquals(actual, expected)
 end
 
 function test_rls_adapter.test_get_capabilites_while_excluding_capabilities()
     local input_variants = {
-        "AGGREGATE_GROUP_BY_COLUMN,AGGREGATE_GROUP_BY_TUPLE,AGGREGATE_HAVING",
-        "AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING",
-        " AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING ",
-        "AGGREGATE_GROUP_BY_COLUMN,  AGGREGATE_GROUP_BY_TUPLE  , AGGREGATE_HAVING",
-        ",AGGREGATE_GROUP_BY_COLUMN, , AGGREGATE_GROUP_BY_TUPLE,, AGGREGATE_HAVING",
+        "AGGREGATE_GROUP_BY_COLUMN,AGGREGATE_GROUP_BY_TUPLE,AGGREGATE_HAVING, AGGREGATE_SINGLE_GROUP",
+        "AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING, AGGREGATE_SINGLE_GROUP",
+        " AGGREGATE_GROUP_BY_COLUMN, AGGREGATE_GROUP_BY_TUPLE, AGGREGATE_HAVING, AGGREGATE_SINGLE_GROUP, ",
+        "AGGREGATE_GROUP_BY_COLUMN,  AGGREGATE_GROUP_BY_TUPLE  , AGGREGATE_HAVING, AGGREGATE_SINGLE_GROUP",
+        ",AGGREGATE_GROUP_BY_COLUMN, , AGGREGATE_GROUP_BY_TUPLE,, AGGREGATE_HAVING, AGGREGATE_SINGLE_GROUP",
     }
     for _, input_variant in pairs(input_variants) do
         local request = {
@@ -71,9 +69,13 @@ function test_rls_adapter.test_get_capabilites_while_excluding_capabilities()
                 properties = {EXCLUDED_CAPABILITIES = input_variant}
             }
         }
-        local expected = {type = "getCapabilities",
-            capabilities = {"SELECTLIST_PROJECTION", "AGGREGATE_SINGLE_GROUP", "ORDER_BY_COLUMN", "LIMIT",
-                "LIMIT_WITH_OFFSET"}}
+        local expected_capabilities = {}
+        for _, capability_name in ipairs(adapter_capabilities) do
+            if not text.starts_with(capability_name, "AGGREGATE") then
+                table.insert(expected_capabilities, capability_name)
+            end
+        end
+        local expected = {type = "getCapabilities", capabilities = expected_capabilities}
         local actual = adapter.get_capabilities(nil, request)
         luaunit.assertEquals(actual, expected)
     end
