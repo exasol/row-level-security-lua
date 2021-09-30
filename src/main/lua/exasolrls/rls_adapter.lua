@@ -15,8 +15,7 @@ end
 
 local function handle_schema_scanning_request(request)
     local properties = get_adapter_properties(request)
-    local metadata = metadata_reader.read(properties:get_schema_name(), properties:get_table_filter())
-    return metadata;
+    return metadata_reader.read(properties:get_schema_name(), properties:get_table_filter())
 end
 
 
