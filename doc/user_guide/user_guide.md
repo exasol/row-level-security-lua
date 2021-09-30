@@ -196,6 +196,38 @@ WHERE customer IN ('John Smith', 'Jane Doe');
 
 `NULL` values in the `EXA_ROW_ROLES` column are treated like a role mask with all roles unset, making the row effectively inaccessible.
 
+#### Making a Row in a Role-protected Table Public
+
+You can make rows in a table protected with role-security public. For this you use the *reserved* public role. If a row has the public bit set, all other roles are irrelevant. The row is visible for everyone.
+
+```sql
+INSERT INTO MY_SCHEMA.ORDER_ITEM VALUES
+(1, 'John Smith', 'Gold Bar', 3, 1),
+(2, 'Jane Doe', 'Ruby', 10, 2),
+(3, 'Joe Avarage', 'Six pack', 2, BIT_SET(0,63));
+```
+
+`BIT_SET(0,63)` is a shorter and more readable variant of saying `9223372036854775808` which is a 64 bit number with the highest bit set. Since bit positions are counted from 0, the highest bit position has the index 63. Exasol does not support hexadecimal literals, so you unfortunately can't express this as `0x8000` which would be even more compact.
+
+If your want it to be even more readable and don't mind the extra work, you can also define the following SQL function:
+
+```sql
+CREATE OR REPLACE FUNCTION PUBLIC_ROLE_MASK() RETURN DECIMAL(20,0)
+BEGIN
+    return 9223372036854775808;
+END
+/
+```
+
+The `INSERT` command in the example above then reads:
+
+```sql
+INSERT INTO MY_SCHEMA.ORDER_ITEM VALUES
+(1, 'John Smith', 'Gold Bar', 3, 1),
+(2, 'Jane Doe', 'Ruby', 10, 2),
+(3, 'Joe Avarage', 'Six pack', 2, PUBLIC_ROLE_MASK());
+```
+
 #### Deleting Roles
 
 Delete roles using `DELETE_RLS_ROLE(role_name)` script. The script removes the role from all places where it is mentioned:

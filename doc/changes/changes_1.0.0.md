@@ -6,6 +6,8 @@ Version 1.0.0 of Row Level Security (Lua) adds a table filter controlled by the 
 
 You can now also use `ALTER VIRTUAL SCHEMA ... SET ...` to change the properties of an existing Virtual schema.
 
+And the user guide now explains how to set the public role on a role-protected row.
+
 ## Features
 
 * [#75](https://github.com/exasol/row-level-security-lua/issues/75): Added table filter.
