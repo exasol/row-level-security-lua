@@ -67,7 +67,7 @@ end
 function M.set_properties()
     -- Not implemented yet:
     -- https://github.com/exasol/row-level-security-lua/issues/89
-    return {type ="setProperties"}
+    return {type = "setProperties"}
 end
 
 local function subtract_capabilities(original_capabilities, excluded_capabilities)

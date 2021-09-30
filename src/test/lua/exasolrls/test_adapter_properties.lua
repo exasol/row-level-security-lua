@@ -35,6 +35,14 @@ function test_rls_adapter.test_get_table_filter()
             expected = {"T1", "T2", "T3"}
         },
         {
+            filter = " T1 ,T2,  T3 \t,T4 ",
+            expected = {"T1", "T2", "T3", "T4"}
+        },
+        {
+            filter = "T1 T2, T3",
+            expected = {"T1 T2", "T3"}
+        },
+        {
             filter = "",
             expected = {}
         },

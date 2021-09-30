@@ -2,8 +2,7 @@
 
 Code name: Table filter
 
-Version 1.0.0 of Row Level Security (Lua) adds a table filter controlled by the `TABLE_FILTER` property. This allows users to selectively include tables from the source schema into the Virtual Schema.
-It helps reducing the projected tables on a need-to-know basis and speeds up meta-data scanning, since only the listed tables are scanned instead of all in the schema.
+Version 1.0.0 of Row Level Security (Lua) adds a table filter controlled by the `TABLE_FILTER` property. This allows users to selectively include tables from the source schema into the Virtual Schema. It helps reducing the projected tables on a need-to-know basis and speeds up meta-data scanning, since only the listed tables are scanned instead of all in the schema.
 
 ## Features
 

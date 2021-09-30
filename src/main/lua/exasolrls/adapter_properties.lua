@@ -77,7 +77,7 @@ end
 --
 function M:validate()
     if not self:has_value(M.SCHEMA_NAME_PROPERTY) then
-        error('F-RLS-PROP-1: Missing mandatory property "SCHEMA_NAME". Please define the name of the source schema.');
+        error('F-RLS-PROP-1: Missing mandatory property "' .. M.TABLE_FILTER_PROPERTY .. '". Please define the name of the source schema.');
     end
     if self:is_property_set(M.TABLE_FILTER_PROPERTY) then
         if self:is_empty(M.TABLE_FILTER_PROPERTY) then
