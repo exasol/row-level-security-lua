@@ -1,10 +1,12 @@
 # Exasol Row Level Security (Lua) 1.0.0, released 2021-09-30
 
-Code name: Table filter
+Code name: Table filter, set properties and public role
 
 Version 1.0.0 of Row Level Security (Lua) adds a table filter controlled by the `TABLE_FILTER` property. This allows users to selectively include tables from the source schema into the Virtual Schema. It helps reducing the projected tables on a need-to-know basis and speeds up meta-data scanning, since only the listed tables are scanned instead of all in the schema.
 
 You can now also use `ALTER VIRTUAL SCHEMA ... SET ...` to change the properties of an existing Virtual schema.
+
+Additionally the user guide now explains how to set the public role on a role-protected row.
 
 ## Features
 
