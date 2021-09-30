@@ -431,7 +431,7 @@ Spaces around the table names are ignored.
 
 While you could in theory drop and re-create an Virtual Schema, there is a more convenient way to apply changes in the adapter properties.
 
-Use `ALTER VIRTUAL SCHEMA ... SET` to update an existing Virtual Schema to update the properties and with them an existing Virtual Schema.
+Use `ALTER VIRTUAL SCHEMA ... SET ...` to update the properties of an existing Virtual Schema.
 
 Example:
 
