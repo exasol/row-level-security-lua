@@ -164,4 +164,21 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
             assertThat(resultSet, table().row("T2").row("T3").matches());
         }
     }
+
+    @Test
+    void testSwitchingSourceSchemaWithAlterVirtualSchema() throws SQLException {
+        final String expectedText = "Hello";
+        final Schema schemaA = createSchema("SCHEMA_SET_PROPS_A");
+        schemaA.createTable("T", "C1", "VARCHAR(10)").insert(expectedText);
+        final Date expectedDate = Date.valueOf("1970-01-01");
+        final Schema schemaB = createSchema("SCHEMA_SET_PROPS_B");
+        schemaB.createTable("T", "C1", "DATE").insert(expectedDate);
+        final VirtualSchema virtualSchema = createVirtualSchema(schemaA);
+        final User user = createUserWithVirtualSchemaAccess("USER_SET_PROPS", virtualSchema);
+        assertRlsQueryWithUser("SELECT * FROM " + virtualSchema.getName() + ".T", user,
+                table().row(expectedText).matches());
+        execute("ALTER VIRTUAL SCHEMA " + virtualSchema.getName() + " SET SCHEMA_NAME = '" + schemaB.getName() + "'");
+        assertRlsQueryWithUser("SELECT * FROM " + virtualSchema.getName() + ".T", user,
+                table().row(expectedDate).matches());
+    }
 }
