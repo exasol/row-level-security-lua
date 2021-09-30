@@ -440,7 +440,7 @@ ALTER VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
 SET SCHEMA_NAME = '<new schema name>'
 ```
 
-You can for example change the `SCHEMA_NAME` property to point the Virtual Schema to a new source schema.
+You can for example change the `SCHEMA_NAME` property to point the Virtual Schema to a new source schema or the [table filter](#filtering-tables).
 
 ## Updating a Virtual Schema
 
