@@ -223,4 +223,30 @@ function test_metadata_reader.test_interval_day_to_second()
     assert_column_type_translation({type = "INTERVAL", fromTo= "DAY TO SECONDS", precision = 9, fraction = 5})
 end
 
+function test_metadata_reader.test_table_filter()
+    local exa_mock = mockagne.getMock()
+    mock_tables(exa_mock,
+        {table = "T1", columns = {{COLUMN_NAME = "C1_1", COLUMN_TYPE = "BOOLEAN"}}},
+        {table = "T2", columns = {{COLUMN_NAME = "C2_1", COLUMN_TYPE = "BOOLEAN"}}},
+        {table = "T3", columns = {{COLUMN_NAME = "C3_1", COLUMN_TYPE = "BOOLEAN"}}},
+        {table = "T4", columns = {{COLUMN_NAME = "C4_1", COLUMN_TYPE = "BOOLEAN"}}}
+    )
+    luaunit.assertEquals(reader.read("S", {"T2", "T3"}),
+        {
+            tables =
+            {
+                {
+                    name = "T2",
+                    columns = {{name = "C2_1", dataType = {type = "BOOLEAN"}}}
+                },
+                {
+                    name = "T3",
+                    columns = {{name = "C3_1", dataType = {type = "BOOLEAN"}}}
+                }
+            },
+            adapterNotes = "T2:---,T3:---"
+        }
+    )
+end
+
 os.exit(luaunit.LuaUnit.run())

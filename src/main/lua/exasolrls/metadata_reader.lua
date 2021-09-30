@@ -125,27 +125,49 @@ local function is_rls_metadata_table(table_id)
     return (table_id == "EXA_RLS_USERS") or (table_id == "EXA_ROLE_MAPPING") or (table_id == "EXA_GROUP_MEMBERS")
 end
 
-local function translate_table_metadata(schema_id)
+local function is_included_table(table_id, include_tables_lookup)
+    return include_tables_lookup[table_id]
+end
+
+local function create_lookup(include_tables)
+    local lookup = {}
+    if include_tables == nil then
+        setmetatable(lookup, {__index = function (_, _) return true end})
+    else
+        log.debug("Setting filter for metadata scan to the following tables: " .. table.concat(include_tables, ", "))
+        for _, table_id in ipairs(include_tables) do
+            lookup[table_id] = true
+        end
+    end
+    return lookup
+end
+
+local function translate_table_scan_results(schema_id, result, include_tables)
+    local tables = {}
+    local table_protection = {}
+    local include_tables_lookup = create_lookup(include_tables)
+    for i = 1, #result do
+        local table_id = result[i].TABLE_NAME
+        if is_included_table(table_id, include_tables_lookup) and not is_rls_metadata_table(table_id)
+        then
+            local columns, tenant_protected, role_protected, group_protected =
+                translate_columns_metadata(schema_id, table_id)
+            table.insert(tables, {name = table_id, columns = columns})
+            local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
+                    .. (group_protected and "g" or "-")
+            log.debug('Found table "' .. table_id .. '" (' .. #columns .. ' columns). Protection: ' .. protection)
+            table.insert(table_protection, table_id .. ":" .. protection)
+        end
+    end
+    return tables, table_protection
+end
+
+local function translate_table_metadata(schema_id, include_tables)
     local sql = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \''
         .. schema_id .. "'"
     local ok, result = _G.exa.pquery_no_preprocessing(sql)
-    local tables = {}
-    local table_protection = {}
     if ok then
-        for i = 1, #result do
-            local table_id = result[i].TABLE_NAME
-            if not is_rls_metadata_table(table_id)
-            then
-                local columns, tenant_protected, role_protected, group_protected =
-                    translate_columns_metadata(schema_id, table_id)
-                table.insert(tables, {name = table_id, columns = columns})
-                local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
-                        .. (group_protected and "g" or "-")
-                log.debug('Found table "' .. table_id .. '" (' .. #columns .. ' columns). Protection: ' .. protection)
-                table.insert(table_protection, table_id .. ":" .. protection)
-            end
-        end
-        return tables, table_protection
+        return translate_table_scan_results(schema_id, result, include_tables)
     else
         error("E-MDR-2: Unable to read table metadata from source schema. Caused by: " .. result.error_message)
     end
@@ -153,13 +175,19 @@ end
 
 ---
 -- Read the database metadata of the given schema (i.e. the internal structure of that schema)
+-- <p>
+-- The scan can optionally be limited to a set of user-defined tables. If the list of tables to include in the scan
+-- is omitted, then all tables in the source schema are scanned and reported.
+-- </p>
 --
 -- @param schema schema to be scanned
+-- 
+-- @param include_tables list of tables to be included in the scan (optional, defaults to all tables in the schema)
 --
 -- @return schema metadata
 --
-function M.read(schema_id)
-    local tables, table_protection = translate_table_metadata(schema_id)
+function M.read(schema_id, include_tables)
+    local tables, table_protection = translate_table_metadata(schema_id, include_tables)
     return {tables = tables, adapterNotes = table.concat(table_protection, ",")}
 end
 

@@ -370,6 +370,21 @@ Covers:
 
 Needs: dsn
 
+#### Filtering Tables
+`req~filtering-tables~1`
+
+Data Owners can specify, which tables of the source schema should be visible through the Virtual Schema.
+
+Rationale:
+
+This serves two purposes. It allows to reduce the amount of tables scanned for metadata, thus speeding up the creation and update of the Virtual Schema. And data owner can limit the visibility of tables in case not all tables are relevant in the Virtual Schema.
+
+Covers:
+
+* [feat~row-level-security~1](#row-level-security)
+
+Needs: dsn
+
 ## Quality Requirements
 
 ### Quality Tree

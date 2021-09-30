@@ -1,4 +1,5 @@
 ' [dsn->req~refreshing-an-rls-virtual-schema~1]
+' [dsn->req~filtering-tables~1]
 
 @startuml
 !include ../clean.skin
@@ -9,15 +10,11 @@ Participant request_dispatcher
 Participant rls_adapter
 
 activate request_dispatcher
-request_dispatcher -> rls_adapter : refresh (request)
+request_dispatcher -> rls_adapter : refresh (request, table[])
 activate rls_adapter
 rls_adapter -> metadata_reader : read (schema)
 activate metadata_reader
-loop for each table
-    metadata_reader -> metadata_reader : translate table\nmetadata (schema, table)
-    activate metadata_reader
-    deactivate metadata_reader
-end
+ref over metadata_reader : **[[seq_read_table_metadata.svg read table metadata]]**
 metadata_reader -->> rls_adapter : schema metadata,\ntable protection type
 deactivate metadata_reader
 rls_adapter -->> request_dispatcher : schema metadata, adapter notes

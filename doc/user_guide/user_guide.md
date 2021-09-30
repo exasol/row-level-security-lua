@@ -411,6 +411,22 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
     EXCLUDED_CAPABILITIES = 'SELECTLIST_PROJECTION, ORDER_BY_COLUMN'
 ```
 
+#### Filtering Tables
+
+Often you will not need or even want all of the tables in the source schema to be visible in the RLS-protected schema. In those cases you can simply specify an include list as a property when creating the RLS Virtual Schema.
+
+Just provide a comma-separated list of table names in the property `TABLE_FILTER` and the scan of the source schema will skip all tables that are not listed. In a source schema with a large number of tables, this can also speed up the scan.
+
+```sql
+CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
+    USING RLS_SCHEMA.RLS_ADAPTER
+    WITH
+    SCHEMA_NAME  = '<schema name>'
+    TABLE_FILTER = 'ORDERS, ORDER_ITEMS, PRODUCTS'
+```
+
+Spaces around the table names are ignored.
+
 ## Updating a Virtual Schema
 
 All Virtual Schemas cache their metadata. That metadata for example contains all information about structure and data types of the underlying data source. RLS is a Virtual Schema and uses the same caching mechanism.
