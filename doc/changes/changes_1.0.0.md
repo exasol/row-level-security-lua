@@ -6,7 +6,7 @@ Version 1.0.0 of Row Level Security (Lua) adds a table filter controlled by the 
 
 You can now also use `ALTER VIRTUAL SCHEMA ... SET ...` to change the properties of an existing Virtual schema.
 
-And the user guide now explains how to set the public role on a role-protected row.
+Additionally the user guide now explains how to set the public role on a role-protected row.
 
 ## Features
 

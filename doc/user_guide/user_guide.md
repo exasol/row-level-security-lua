@@ -209,7 +209,7 @@ INSERT INTO MY_SCHEMA.ORDER_ITEM VALUES
 
 `BIT_SET(0,63)` is a shorter and more readable variant of saying `9223372036854775808` which is a 64 bit number with the highest bit set. Since bit positions are counted from 0, the highest bit position has the index 63. Exasol does not support hexadecimal literals, so you unfortunately can't express this as `0x8000` which would be even more compact.
 
-If your want it to be even more readable and don't mind the extra work, you can also define the following SQL function:
+If you want it to be even more readable and don't mind the extra work, you can also define the following SQL function:
 
 ```sql
 CREATE OR REPLACE FUNCTION PUBLIC_ROLE_MASK() RETURN DECIMAL(20,0)
