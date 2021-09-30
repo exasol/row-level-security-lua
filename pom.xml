@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>row-level-security-lua</artifactId>
-    <version>0.5.0</version>
+    <version>1.0.0</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <properties>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>5.0.0</version>
+            <version>5.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -240,6 +240,7 @@
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
                                 <argument>exasolvs.request_dispatcher</argument>
                                 <argument>exasolvs.query_renderer</argument>
+                                <argument>exasolrls.adapter_properties</argument>
                                 <argument>exasolrls.adapter_capabilities</argument>
                                 <argument>exasolrls.rls_adapter</argument>
                                 <argument>exasolrls.metadata_reader</argument>

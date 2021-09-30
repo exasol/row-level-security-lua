@@ -95,7 +95,7 @@ function M.new (query)
         end
         append(")")
     end
-    
+
     local function append_arithmetic_function(left, operator, right)
         append_expression(left)
         append(" ")
@@ -103,7 +103,7 @@ function M.new (query)
         append(" ")
         append_expression(right)
     end
-    
+
     local function is_parameterless_function(function_name)
         return function_name == "CURRENT_USER" or function_name == "SYSDATE" or function_name == "CURRENT_SCHEMA"
             or function_name == "CURRENT_SESSION" or function_name == "CURRENT_STATEMENT"

@@ -81,19 +81,4 @@ function test_rls_adapter.test_get_capabilites_while_excluding_capabilities()
     end
 end
 
-function test_rls_adapter.test_validate_properties_reports_missing_schema_name()
-    local validations = {
-        { input = {},
-          expected = 'Missing mandatory property "SCHEMA_NAME"'
-        },
-        { input = {SCHEMA_NAME = ""},
-          expected = 'Missing mandatory property "SCHEMA_NAME"'
-        }
-    }
-    for _, validation in ipairs(validations) do
-        local request = {schemaMetadataInfo = {name = "V", properties = validation.input}}
-        luaunit.assertErrorMsgContains(validation.expected, adapter.create_virtual_schema, nil, request)
-    end
-end
-
 os.exit(luaunit.LuaUnit.run())

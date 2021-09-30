@@ -2,22 +2,22 @@ local metadata_reader = require("exasolrls.metadata_reader")
 local query_rewriter = require("exasolrls.query_rewriter")
 local text = require("text")
 local adapter_capabilities = require("exasolrls.adapter_capabilities")
+local props = require("exasolrls.adapter_properties")
 
 local M = {
-    VERSION = "0.5.0",
+    VERSION = "1.0.0",
     NAME = "Row-level Security adapter (LUA)",
 }
 
-local function is_schema_name_property_present(properties)
-    local schema_id = properties.SCHEMA_NAME
-    return schema_id and (schema_id ~= "")
+local function get_adapter_properties(request)
+    return props.create(request.schemaMetadataInfo.properties):validate()
 end
 
-local function validate(properties)
-    if not is_schema_name_property_present(properties) then
-        error('F-LRLS-ADA-1: Missing mandatory property "SCHEMA_NAME". Please define the name of the source schema.');
-    end
+local function handle_schema_scanning_request(request)
+    local properties = get_adapter_properties(request)
+    return metadata_reader.read(properties:get_schema_name(), properties:get_table_filter())
 end
+
 
 ---
 -- Create a virtual schema.
@@ -29,10 +29,7 @@ end
 -- @return response containing the metadata for the virtual schema like table and column structure
 --
 function M.create_virtual_schema(_, request)
-    local properties = request.schemaMetadataInfo.properties or {}
-    validate(properties)
-    local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
-    return {type = "createVirtualSchema", schemaMetadata = schema_metadata}
+    return {type = "createVirtualSchema", schemaMetadata = handle_schema_scanning_request(request)}
 end
 
 ---
@@ -61,13 +58,16 @@ end
 -- @return response containing the metadata for the virtual schema like table and column structure
 --
 function M.refresh(_, request)
-    local properties = request.schemaMetadataInfo.properties or {}
-    validate(properties)
-    local schema_metadata = metadata_reader.read(properties.SCHEMA_NAME)
-    return {type = "refresh", schemaMetadata = schema_metadata}
+    return {type = "refresh", schemaMetadata = handle_schema_scanning_request(request)}
 end
 
+---
+-- Alter the schema properties
+--
 function M.set_properties()
+    -- Not implemented yet:
+    -- https://github.com/exasol/row-level-security-lua/issues/89
+    return {type = "setProperties"}
 end
 
 local function subtract_capabilities(original_capabilities, excluded_capabilities)

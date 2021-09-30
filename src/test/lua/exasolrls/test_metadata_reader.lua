@@ -7,13 +7,13 @@ test_metadata_reader = {}
 local function mock_describe_table(exa_mock, table_id, columns)
     mockagne.when(exa_mock.pquery_no_preprocessing('/*snapshot execution*/ '
         .. 'SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
-        .. ' WHERE "COLUMN_SCHEMA" = \'S\' AND "COLUMN_TABLE" = \'' .. table_id .. "'"))
+        .. ' WHERE "COLUMN_SCHEMA" = :s AND "COLUMN_TABLE" = :t', {s = "S", t = table_id}))
         .thenAnswer(true, columns)
 end
 
 local function mock_read_table_catalog(exa_mock, tables)
     mockagne.when(exa_mock.pquery_no_preprocessing('/*snapshot execution*/ '
-        .. 'SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = \'S\''))
+        .. 'SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = :s', {s = "S"}))
         .thenAnswer(true, tables)
 end
 
@@ -221,6 +221,32 @@ function test_metadata_reader.test_interval_day_to_second()
     local exa_mock = mockagne.getMock()
     mock_table_with_single_column_of_type(exa_mock,"INTERVAL DAY(9) TO SECOND(5)")
     assert_column_type_translation({type = "INTERVAL", fromTo= "DAY TO SECONDS", precision = 9, fraction = 5})
+end
+
+function test_metadata_reader.test_table_filter()
+    local exa_mock = mockagne.getMock()
+    mock_tables(exa_mock,
+        {table = "T1", columns = {{COLUMN_NAME = "C1_1", COLUMN_TYPE = "BOOLEAN"}}},
+        {table = "T2", columns = {{COLUMN_NAME = "C2_1", COLUMN_TYPE = "BOOLEAN"}}},
+        {table = "T3", columns = {{COLUMN_NAME = "C3_1", COLUMN_TYPE = "BOOLEAN"}}},
+        {table = "T4", columns = {{COLUMN_NAME = "C4_1", COLUMN_TYPE = "BOOLEAN"}}}
+    )
+    luaunit.assertEquals(reader.read("S", {"T2", "T3"}),
+        {
+            tables =
+            {
+                {
+                    name = "T2",
+                    columns = {{name = "C2_1", dataType = {type = "BOOLEAN"}}}
+                },
+                {
+                    name = "T3",
+                    columns = {{name = "C3_1", dataType = {type = "BOOLEAN"}}}
+                }
+            },
+            adapterNotes = "T2:---,T3:---"
+        }
+    )
 end
 
 os.exit(luaunit.LuaUnit.run())
