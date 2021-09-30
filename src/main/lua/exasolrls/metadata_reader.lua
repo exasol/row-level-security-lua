@@ -47,25 +47,25 @@ end
 local function translate_interval_year_to_month_type(column_id, column_type)
     local precision =  string.match(column_type, "INTERVAL YEAR%((%d+)%) TO MONTH")
     return
-    {
-        name = column_id,
-        dataType = {type = "INTERVAL", fromTo = "YEAR TO MONTH", precision = tonumber(precision)}
-    }
+        {
+            name = column_id,
+            dataType = {type = "INTERVAL", fromTo = "YEAR TO MONTH", precision = tonumber(precision)}
+        }
 end
 
 local function translate_interval_day_to_second(column_id, column_type)
     local precision, fraction =  string.match(column_type, "INTERVAL DAY%((%d+)%) TO SECOND%((%d+)%)")
     return
-    {
-        name = column_id,
-        dataType =
         {
-            type = "INTERVAL",
-            fromTo = "DAY TO SECONDS",
-            precision = tonumber(precision),
-            fraction = tonumber(fraction)
+            name = column_id,
+            dataType =
+            {
+                type = "INTERVAL",
+                fromTo = "DAY TO SECONDS",
+                precision = tonumber(precision),
+                fraction = tonumber(fraction)
+            }
         }
-    }
 end
 
 local function translate_column_metadata(column)
@@ -154,7 +154,7 @@ local function translate_table_scan_results(schema_id, result, include_tables)
                 translate_columns_metadata(schema_id, table_id)
             table.insert(tables, {name = table_id, columns = columns})
             local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
-                    .. (group_protected and "g" or "-")
+                .. (group_protected and "g" or "-")
             log.debug('Found table "' .. table_id .. '" (' .. #columns .. ' columns). Protection: ' .. protection)
             table.insert(table_protection, table_id .. ":" .. protection)
         end
@@ -181,7 +181,7 @@ end
 -- </p>
 --
 -- @param schema schema to be scanned
--- 
+--
 -- @param include_tables list of tables to be included in the scan (optional, defaults to all tables in the schema)
 --
 -- @return schema metadata

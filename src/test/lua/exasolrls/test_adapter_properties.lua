@@ -9,7 +9,7 @@ function test_rls_adapter.test_validate_properties()
             properties = {},
             expected = 'Missing mandatory property "SCHEMA_NAME"',
         },
-        { 
+        {
             properties = {SCHEMA_NAME = ""},
             expected = 'Missing mandatory property "SCHEMA_NAME"',
         },
