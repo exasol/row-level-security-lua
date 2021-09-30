@@ -62,12 +62,16 @@ function M.refresh(_, request)
 end
 
 ---
--- Alter the schema properties
+-- Alter the schema properties.
 --
-function M.set_properties()
-    -- Not implemented yet:
-    -- https://github.com/exasol/row-level-security-lua/issues/89
-    return {type = "setProperties"}
+-- @param _ Exasol metadata (not used)
+--
+-- @param request virtual schema request
+--
+-- @return response containing the metadata for the virtual schema like table and column structure
+--
+function M.set_properties(_, request)
+    return {type = "setProperties", schemaMetadata = handle_schema_scanning_request(request)}
 end
 
 local function subtract_capabilities(original_capabilities, excluded_capabilities)

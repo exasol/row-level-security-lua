@@ -411,7 +411,7 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
     EXCLUDED_CAPABILITIES = 'SELECTLIST_PROJECTION, ORDER_BY_COLUMN'
 ```
 
-#### Filtering Tables
+### Filtering Tables
 
 Often you will not need or even want all of the tables in the source schema to be visible in the RLS-protected schema. In those cases you can simply specify an include list as a property when creating the RLS Virtual Schema.
 
@@ -426,6 +426,21 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
 ```
 
 Spaces around the table names are ignored.
+
+### Changing the Properties of an Existing Virtual Schema
+
+While you could in theory drop and re-create an Virtual Schema, there is a more convenient way to apply changes in the adapter properties.
+
+Use `ALTER VIRTUAL SCHEMA ... SET` to update an existing Virtual Schema to update the properties and with them an existing Virtual Schema.
+
+Example:
+
+```sql
+ALTER VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
+SET SCHEMA_NAME = '<new schema name>'
+```
+
+You can for example change the `SCHEMA_NAME` property to point the Virtual Schema to a new source schema.
 
 ## Updating a Virtual Schema
 
