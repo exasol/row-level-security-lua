@@ -28,4 +28,9 @@ function test_request_dispatcher.test_setup_remote_logging()
     verify(log_mock.connect("10.0.0.1", "4000"))
 end
 
+function test_request_dispatcher.test_unknown_request_type_raises_error()
+    luaunit.assertErrorMsgContains("Unknown Virtual Schema request type 'illegal' received.",
+          dispatcher.adapter_call, '{"type" : "illegal"}')
+end
+
 os.exit(luaunit.LuaUnit.run())

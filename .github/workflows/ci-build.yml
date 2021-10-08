@@ -16,6 +16,7 @@ jobs:
           sudo luarocks install Mockagne
           sudo luarocks install lua-cjson
           sudo luarocks install remotelog
+          sudo luarocks install exaerror
       - uses: actions/checkout@v2
         with:
            fetch-depth: 0

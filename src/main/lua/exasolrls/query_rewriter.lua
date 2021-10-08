@@ -1,17 +1,18 @@
 local renderer = require("exasolvs.query_renderer")
 local protection_reader = require("exasolrls.table_protection_reader")
 local log = require("remotelog")
+local exaerror = require("exaerror")
 
 local M  = { PUBLIC_ROLE_BIT_INDEX = 63 }
 
 local function validate(query)
     if not query then
-        error("E-LRLS-QRW-1: Unable to rewrite query because it was <nil>.")
+        exaerror.error("E-RLSL-QRW-1", "Unable to rewrite query because it was <nil>.")
     end
     local push_down_type = query.type
     if(push_down_type ~= "select") then
-        error('E-LRLS-QRW-2: Unable to rewrite push-down request of type "' .. push_down_type
-            .. '". Only SELECT is supported.')
+        exaerror.error("E-RLSL-QRW-2", "Unable to rewrite push-down query of type {{query_type}}"
+            .. ". Only 'select' is supported.", {query_type =  push_down_type})
     end
 end
 
@@ -105,6 +106,28 @@ local function _user_has_row_role(source_schema_id, table_id)
     )
 end
 
+local function describe_protection_scheme(protection)
+    local scheme = {}
+    if(protection.tenant_protected) then
+        table.insert(scheme, "tenant")
+    end
+    if(protection.group_protected) then
+        table.insert(scheme, "group")
+    end
+    if(protection.role_protected) then
+        table.insert(scheme, "role")
+    end
+    return table.concat(scheme, " + ")
+end
+
+local function raise_protection_scheme_error(source_schema_id, table_id, protection)
+    exaerror.create("E-LRLS-QRW-3",
+        "Unsupported combination of protection methods on the same table {{schema}}.{{table}}: {{combination|u}}",
+        {schema = source_schema_id, table = table_id, combination = describe_protection_scheme(protection)})
+        :add_mitigations("Allowed protection variants are: tenant, group, role, tenant + group, tenant + role")
+        :raise()
+end
+
 local function construct_protection_filter(source_schema_id, table_id, protection)
     if protection.tenant_protected  then
         if protection.group_protected then
@@ -128,7 +151,7 @@ local function construct_protection_filter(source_schema_id, table_id, protectio
         log.debug('Table "%s"."%s" is role-protected. Adding role mask as row filter.', source_schema_id, table_id)
         return _or(_row_has_public_role(table_id), _user_has_row_role(source_schema_id, table_id))
     else
-        error("E-LRLS-QRW-3: Illegal protection scheme used. Allowed schemes are: tenant, group, tenant + group")
+        raise_protection_scheme_error(source_schema_id, table_id, protection)
     end
 end
 
@@ -193,10 +216,9 @@ local function rewrite_without_protection(query)
     expand_select_list_without_protection(query)
 end
 
-local function validate_protection_scheme(schema_id, table_id, protection)
+local function validate_protection_scheme(source_schema_id, table_id, protection)
     if protection.group_protected and protection.role_protected then
-        error('Illegal protection scheme in table "' .. schema_id .. '"."' .. table_id
-            .. '" Combination of role and group security not supported.')
+        raise_protection_scheme_error(source_schema_id, table_id, protection)
     end
 end
 

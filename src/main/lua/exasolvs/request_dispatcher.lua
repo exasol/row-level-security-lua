@@ -1,5 +1,6 @@
 local log = require("remotelog")
 local cjson = require("cjson")
+local exaerror = require("exaerror")
 
 ---
 -- @module exasolvs.request_dispatcher
@@ -44,7 +45,10 @@ local function handle_request(request)
         log.debug("Response:\n" .. response)
         return response
     else
-        error('F-RQD-1: Unknown Virtual Schema request type "' .. request.type .. '" received.')
+        exaerror.create("F-RQD-1", "Unknown Virtual Schema request type {{request_type}} received.",
+            {request_type = request.type})
+            :add_ticket_mitigation()
+            :raise()
     end
 end
 

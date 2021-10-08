@@ -1,3 +1,5 @@
+local exaerror = require("exaerror")
+
 local M = {}
 
 ---
@@ -27,7 +29,10 @@ function M.read(adapter_cache, table_id)
             }
         end
     end
-    error('E-LRLS-TPR-1: Could not find table protection cache entry for table "' .. table_id .. '".')
+    exaerror.create("E-RLSL-TPR-1", "Unable to determine the RLS protection type for table {{table}}."
+        .. " No matching cache entry found.", {table = table_id})
+        :add_ticket_mitigation()
+        :raise()
 end
 
 return M;

@@ -5,7 +5,7 @@ local adapter_capabilities = require("exasolrls.adapter_capabilities")
 local props = require("exasolrls.adapter_properties")
 
 local M = {
-    VERSION = "1.0.0",
+    VERSION = "1.0.1",
     NAME = "Row-level Security adapter (LUA)",
 }
 
