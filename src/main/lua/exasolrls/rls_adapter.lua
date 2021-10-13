@@ -10,7 +10,9 @@ local M = {
 }
 
 local function get_adapter_properties(request)
-    return props.create(request.schemaMetadataInfo.properties):validate()
+    local properties = props.create(request.schemaMetadataInfo.properties)
+    properties:validate()
+    return properties
 end
 
 local function handle_schema_scanning_request(request)

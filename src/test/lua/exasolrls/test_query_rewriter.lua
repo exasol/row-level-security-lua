@@ -127,7 +127,7 @@ function test_query_rewriter.test_unsupported_protection_scheme_raises_error()
         from = {type  = "table", name = "T"}
     }
     luaunit.assertErrorMsgContains("Unsupported combination of protection methods on the same table 'S'.'T':"
-        .. " tenant + group + role",
+        .. " 'tenant + group + role'",
         rewriter.rewrite, original_query, "S", "T:tgr")
 end
 

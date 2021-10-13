@@ -122,7 +122,7 @@ end
 
 local function raise_protection_scheme_error(source_schema_id, table_id, protection)
     exaerror.create("E-LRLS-QRW-3",
-        "Unsupported combination of protection methods on the same table {{schema}}.{{table}}: {{combination|u}}",
+        "Unsupported combination of protection methods on the same table {{schema}}.{{table}}: {{combination}}",
         {schema = source_schema_id, table = table_id, combination = describe_protection_scheme(protection)})
         :add_mitigations("Allowed protection variants are: tenant, group, role, tenant + group, tenant + role")
         :raise()

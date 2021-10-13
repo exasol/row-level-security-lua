@@ -14,7 +14,10 @@ local exaerror = require("exaerror")
 -- To use the dispatcher, you need to inject the concrete adapter the dispatcher should send the prepared requests to.
 -- </p>
 --
-local M = { adapter = nil }
+local M = {
+    adapter = nil,
+    TRUNCATE_ERRORS_AFTER = 3000
+}
 
 ---
 -- Inject the adapter that the dispatcher should dispatch requests to.
@@ -27,7 +30,6 @@ function M.init(adapter)
     M.adapter = adapter
     return M
 end
-
 
 local function handle_request(request)
     local handlers = {
@@ -48,17 +50,27 @@ local function handle_request(request)
         exaerror.create("F-RQD-1", "Unknown Virtual Schema request type {{request_type}} received.",
             {request_type = request.type})
             :add_ticket_mitigation()
-            :raise()
+            :raise(0)
     end
 end
 
 local function log_error(message)
+    log.debug("Error handler called")
     local error_type = string.sub(message, 1, 2)
     if(error_type == "F-") then
         log.fatal(message)
     else
         log.error(message)
     end
+end
+
+local function handle_error(message)
+    if(string.len(message) > M.TRUNCATE_ERRORS_AFTER) then
+        message = string.sub(message, 1, M.TRUNCATE_ERRORS_AFTER) ..
+            "\n... (error message truncated after " .. M.TRUNCATE_ERRORS_AFTER .. " characters)"
+    end
+    log_error(message)
+    return message 
 end
 
 ---
@@ -87,12 +99,11 @@ function M.adapter_call(request_as_json)
         log.connect(host, port)
     end
     log.debug("Raw request:\n%s", request_as_json)
-    local ok, result = pcall(function () return handle_request(request) end)
+    local ok, result = xpcall(function () return handle_request(request) end, handle_error)
     if(ok) then
         log.disconnect()
         return result
     else
-        log_error(result)
         log.disconnect()
         error(result)
     end

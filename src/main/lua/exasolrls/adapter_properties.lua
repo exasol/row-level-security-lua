@@ -1,3 +1,5 @@
+local log = require("remotelog")
+
 ---
 -- This class provides an abstraction to the access of adapter properties.
 --
@@ -74,11 +76,9 @@ end
 --
 -- @raise validation error
 --
--- @return self for fluent programming
---
 function M:validate()
     if not self:has_value(M.SCHEMA_NAME_PROPERTY) then
-        exaerror.create("F-RLS-PROP-1", "Missing mandatory property '".. M.SCHEMA_NAME_PROPERTY .."' ")
+        exaerror.create("F-RLS-PROP-1", "Missing mandatory property '" .. M.SCHEMA_NAME_PROPERTY .. "' ")
             :add_mitigations("Please define the name of the source schema."):raise()
     end
     if self:is_property_set(M.TABLE_FILTER_PROPERTY) then
@@ -86,10 +86,9 @@ function M:validate()
             exaerror.create("F-RLS-PROP-2", "Table filter property '" .. M.TABLE_FILTER_PROPERTY
                 .. "' must not be empty.")
                 :add_mitigations("Please either remove the property or provide a comma separated list of tables"
-                    .. " to be included in the Virtual Schema."):raise()
+                    .. " to be included in the Virtual Schema."):raise(0)
         end
     end
-    return self
 end
 
 ---

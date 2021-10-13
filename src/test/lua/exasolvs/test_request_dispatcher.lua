@@ -33,4 +33,14 @@ function test_request_dispatcher.test_unknown_request_type_raises_error()
           dispatcher.adapter_call, '{"type" : "illegal"}')
 end
 
+function test_request_dispatcher.test_error_wrapping()
+    luaunit.assertErrorMsgContains("Unknown Virtual Schema request type 'illegalRequest' received",
+         dispatcher.adapter_call, '{"type" : "illegalRequest"}')
+    verify(log_mock.fatal([[F-RQD-1: Unknown Virtual Schema request type 'illegalRequest' received.
+
+Mitigations:
+
+* This is an internal software error. Please report it via the project's ticket tracker.]]))
+end
+
 os.exit(luaunit.LuaUnit.run())

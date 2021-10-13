@@ -248,6 +248,8 @@
                                 <argument>exasolrls.query_rewriter</argument>
                                 <argument>remotelog</argument>
                                 <argument>text</argument>
+                                <argument>exaerror</argument>
+                                <argument>message_expander</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -466,7 +468,7 @@
                         <dependency>
                             <groupId>net.sourceforge.plantuml</groupId>
                             <artifactId>plantuml</artifactId>
-                            <version>1.2021.10</version>
+                            <version>1.2021.12</version>
                         </dependency>
                     </dependencies>
                 </plugin>

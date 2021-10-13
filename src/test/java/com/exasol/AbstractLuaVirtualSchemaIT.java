@@ -79,7 +79,7 @@ abstract class AbstractLuaVirtualSchemaIT {
                 .build();
     }
 
-    private Map<String, String> addDebugProperties(final Map<String, String> properties) {
+    protected Map<String, String> addDebugProperties(final Map<String, String> properties) {
         final String logHost = System.getProperty(LOG_HOST_PROPERTY);
         if (logHost == null) {
             return properties;
