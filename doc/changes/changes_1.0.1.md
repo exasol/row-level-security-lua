@@ -1,4 +1,4 @@
-# Exasol Row Level Security (Lua) 1.0.1, released 2021-10-08
+# Exasol Row Level Security (Lua) 1.0.1, released 2021-11-??
 
 Code name: Unified error reporting
 
@@ -14,5 +14,3 @@ We also improved the test coverage in bad-weather scenarios (i.e. test that eval
 ## Features
 
 * #88: Added unified error reporting.
-
-## Dependency Updates
