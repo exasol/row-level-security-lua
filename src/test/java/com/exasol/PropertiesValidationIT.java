@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.IOException;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.dbbuilder.dialects.exasol.AdapterScript;
 import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
+@Disabled("Reenabling requires fix in core database, see https://github.com/exasol/row-level-security-lua/issues/96")
 @Testcontainers
 class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {
     @Test
