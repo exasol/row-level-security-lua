@@ -7,6 +7,18 @@ jobs:
   java-17-compatibility:
     runs-on: ubuntu-latest
     steps:
+      - name: "Install dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt install luarocks
+          sudo luarocks install luacheck
+          sudo luarocks install luacov
+          sudo luarocks install luacov-coveralls
+          sudo luarocks install LuaUnit
+          sudo luarocks install Mockagne
+          sudo luarocks install lua-cjson
+          sudo luarocks install remotelog
+          sudo luarocks install exaerror
       - name: Checkout the repository
         uses: actions/checkout@v2
         with:
