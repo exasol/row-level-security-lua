@@ -36,19 +36,19 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-jdbc</artifactId>
-            <version>7.1.1</version>
+            <version>7.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>5.1.0</version>
+            <version>5.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.16.0</version>
+            <version>1.16.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -104,7 +104,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>0.10.0</version>
+                <version>1.3.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -121,6 +121,7 @@
                         <excludedFile>.github/workflows/release_droid_prepare_original_checksum.yml</excludedFile>
                         <excludedFile>.github/workflows/release_droid_upload_github_release_assets.yml</excludedFile>
                         <excludedFile>.github/workflows/release_droid_print_quick_checksum.yml</excludedFile>
+                        <excludedFile>.gitignore</excludedFile>
                     </excludedFiles>
                     <linkReplacements>
                         <linkReplacement>

@@ -60,7 +60,7 @@ Running the RLS Lua Virtual Schema requires a Exasol with built-in Lua 5.1 or la
 For local unit testing you need to install them on the test machine though.
 
 [luacjson]: https://www.kyne.com.au/~mark/software/lua-cjson.php
-[luasocket]: http://w3.impa.br/~diego/software/luasocket/
+[luasocket]: https://github.com/diegonehab/luasocket
 [remotelog]: https://github.com/exasol/remotelog-lua
 
 ### Test Dependencies

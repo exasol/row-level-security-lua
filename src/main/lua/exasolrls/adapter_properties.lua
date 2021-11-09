@@ -79,7 +79,7 @@ end
 function M:validate()
     if not self:has_value(M.SCHEMA_NAME_PROPERTY) then
         exaerror.create("F-RLS-PROP-1", "Missing mandatory property '" .. M.SCHEMA_NAME_PROPERTY .. "' ")
-            :add_mitigations("Please define the name of the source schema."):raise()
+            :add_mitigations("Please define the name of the source schema."):raise(0)
     end
     if self:is_property_set(M.TABLE_FILTER_PROPERTY) then
         if self:is_empty(M.TABLE_FILTER_PROPERTY) then
