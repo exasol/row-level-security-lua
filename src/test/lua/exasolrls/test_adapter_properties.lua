@@ -7,15 +7,15 @@ function test_rls_adapter.test_validate_properties()
     local tests = {
         {
             properties = {},
-            expected = 'Missing mandatory property "SCHEMA_NAME"',
+            expected = "Missing mandatory property 'SCHEMA_NAME'",
         },
         {
             properties = {SCHEMA_NAME = ""},
-            expected = 'Missing mandatory property "SCHEMA_NAME"',
+            expected = "Missing mandatory property 'SCHEMA_NAME'",
         },
         {
             properties = {SCHEMA_NAME = "THE_SCHEMA", TABLE_FILTER = ""},
-            expected = "Table filter property must not be empty."
+            expected = "Table filter property 'TABLE_FILTER' must not be empty."
         }
     }
     for _, test in ipairs(tests) do

@@ -1,5 +1,6 @@
 local log = require("remotelog")
 local text = require("text")
+local exaerror = require("exaerror")
 
 _G.M = {
     DEFAULT_SRID = 0,
@@ -68,7 +69,7 @@ local function translate_interval_day_to_second(column_id, column_type)
         }
 end
 
-local function translate_column_metadata(column)
+local function translate_column_metadata(table_id, column)
     local column_id = column.COLUMN_NAME
     local column_type = column.COLUMN_TYPE
     if (column_type == "BOOLEAN") or (column_type == "DATE") or text.starts_with(column_type, "DOUBLE") then
@@ -90,7 +91,10 @@ local function translate_column_metadata(column)
     elseif text.starts_with(column_type, "INTERVAL DAY") then
         return translate_interval_day_to_second(column_id, column_type)
     else
-        error('E-LVS-MDR-4: Column "' .. column_id .. '" has unsupported type "' .. column_type .. ".");
+        exaerror.create("E-RLSL-MDR-4", "Column {{table}}.{{column}} has unsupported type {{type}}.",
+            {table = table_id, column = column_id, type = column_type})
+            :add_ticket_mitigation()
+            :raise()
     end
 end
 
@@ -111,13 +115,14 @@ local function translate_columns_metadata(schema_id, table_id)
             elseif(column_id == "EXA_ROW_GROUP") then
                 group_protected = true
             else
-                table.insert(translated_columns, translate_column_metadata(column))
+                table.insert(translated_columns, translate_column_metadata(table_id, column))
             end
         end
         return translated_columns, tenant_protected, role_protected, group_protected
     else
-        error("E-MDR-3: Unable to read column metadata from source table " .. table_id .. ".  Caused by: "
-            .. result.error_message)
+        exaerror.error("E-RLSL-MDR-3",
+            "Unable to read column metadata from source table {{schema}}.{{table}}. Caused by: {{cause}}",
+            {schema = schema_id, table = table_id, cause = result.error_message})
     end
 end
 
@@ -168,7 +173,9 @@ local function translate_table_metadata(schema_id, include_tables)
     if ok then
         return translate_table_scan_results(schema_id, result, include_tables)
     else
-        error("E-MDR-2: Unable to read table metadata from source schema. Caused by: " .. result.error_message)
+        exaerror.error("E-RLSL-MDR-2",
+            "Unable to read table metadata from source schema {{schema}}. Caused by: {{cause}}",
+            {schema = schema_id, cause = result.error_message})
     end
 end
 

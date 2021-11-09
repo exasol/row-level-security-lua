@@ -40,7 +40,7 @@ function test_table_protection_cache_reader.test_read_find_table()
 end
 
 function test_table_protection_cache_reader.test_read_throws_error_when_table_not_found()
-    luaunit.assertErrorMsgContains('Could not find table protection cache entry for table "X"',
+    luaunit.assertErrorMsgContains("Unable to determine the RLS protection type for table 'X'",
         function () reader.read("A:---,B:t--,C:-g-,D:tg-", "X") end)
 end
 

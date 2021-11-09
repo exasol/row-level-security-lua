@@ -2,18 +2,20 @@ local luaunit = require("luaunit")
 local mockagne = require("mockagne")
 local reader = require("exasolrls.metadata_reader")
 
-test_metadata_reader = {}
+local CATALOG_QUERY = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = :s'
+local DESCRIBE_TABLE_QUERY = '/*snapshot execution*/ SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
+    .. ' WHERE "COLUMN_SCHEMA" = :s AND "COLUMN_TABLE" = :t'
 
-local function mock_describe_table(exa_mock, table_id, columns)
-    mockagne.when(exa_mock.pquery_no_preprocessing('/*snapshot execution*/ '
-        .. 'SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
-        .. ' WHERE "COLUMN_SCHEMA" = :s AND "COLUMN_TABLE" = :t', {s = "S", t = table_id}))
+test_metadata_reader = {
+}
+
+local function mock_describe_table(exa_mock, schema_id, table_id, columns)
+    mockagne.when(exa_mock.pquery_no_preprocessing(DESCRIBE_TABLE_QUERY, {s = schema_id, t = table_id}))
         .thenAnswer(true, columns)
 end
 
-local function mock_read_table_catalog(exa_mock, tables)
-    mockagne.when(exa_mock.pquery_no_preprocessing('/*snapshot execution*/ '
-        .. 'SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = :s', {s = "S"}))
+local function mock_read_table_catalog(exa_mock, schema_id, tables)
+    mockagne.when(exa_mock.pquery_no_preprocessing(CATALOG_QUERY, {s = schema_id}))
         .thenAnswer(true, tables)
 end
 
@@ -32,24 +34,26 @@ end
 --
 -- @param exa_mock mock <code>exa</code> object (the object that provides <code>query</code> and <code>pquery</code>)
 --
+-- @param schema_id name of the schema
+--
 -- @param ... list of table definitions.
 --
-local function mock_tables(exa_mock, ...)
+local function mock_tables(exa_mock, schema_id, ...)
     _G.exa = exa_mock
     local tables = {}
     local i = 1
     for _, table_definition in ipairs({...}) do
-        local table = table_definition.table
-        tables[i] = {TABLE_NAME = table}
-        mock_describe_table(exa_mock, table, table_definition.columns)
+        local table_id = table_definition.table
+        tables[i] = {TABLE_NAME = table_id}
+        mock_describe_table(exa_mock, schema_id, table_id, table_definition.columns)
         i = i + 1
     end
-    mock_read_table_catalog(exa_mock, tables)
+    mock_read_table_catalog(exa_mock, schema_id, tables)
 end
 
 function test_metadata_reader.test_hide_control_tables()
     local exa_mock = mockagne.getMock()
-    mock_tables(exa_mock,
+    mock_tables(exa_mock, "S",
         {
             table = "T2",
             columns = {{COLUMN_NAME = "C2", COLUMN_TYPE = "DATE"}}
@@ -77,7 +81,7 @@ end
 
 function test_metadata_reader.test_hide_control_columns()
     local exa_mock = mockagne.getMock()
-    mock_tables(exa_mock,
+    mock_tables(exa_mock, "S",
         {
             table = "T3",
             columns = {
@@ -113,7 +117,7 @@ function test_metadata_reader.test_hide_control_columns()
 end
 
 local function mock_table_with_single_column_of_type(exa_mock, type)
-    mock_tables(exa_mock,
+    mock_tables(exa_mock, "S",
         {
             table = "T",
             columns = {{COLUMN_NAME = "C1", COLUMN_TYPE = type}}
@@ -225,7 +229,7 @@ end
 
 function test_metadata_reader.test_table_filter()
     local exa_mock = mockagne.getMock()
-    mock_tables(exa_mock,
+    mock_tables(exa_mock, "S",
         {table = "T1", columns = {{COLUMN_NAME = "C1_1", COLUMN_TYPE = "BOOLEAN"}}},
         {table = "T2", columns = {{COLUMN_NAME = "C2_1", COLUMN_TYPE = "BOOLEAN"}}},
         {table = "T3", columns = {{COLUMN_NAME = "C3_1", COLUMN_TYPE = "BOOLEAN"}}},
@@ -247,6 +251,44 @@ function test_metadata_reader.test_table_filter()
             adapterNotes = "T2:---,T3:---"
         }
     )
+end
+
+local function mock_schema_metadata_reading_error(exa_mock, schema_id, error_message)
+    _G.exa = exa_mock
+    mockagne.when(exa_mock.pquery_no_preprocessing(CATALOG_QUERY, {s = schema_id}))
+        .thenAnswer(false, {error_message = error_message})
+end
+
+function test_metadata_reader.test_unable_to_read_schema_metadata_raises_error()
+    local exa_mock = mockagne.getMock()
+    mock_schema_metadata_reading_error(exa_mock, "the_schema", "the_cause")
+    luaunit.assertErrorMsgContains("Unable to read table metadata from source schema 'the_schema'."
+        .. " Caused by: 'the_cause'", reader.read, "the_schema")
+end
+
+local function mock_table_metadata_reading_error(exa_mock, schema_id, table_id, error_message)
+    _G.exa = exa_mock
+    mockagne.when(exa_mock.pquery_no_preprocessing(DESCRIBE_TABLE_QUERY, {s = schema_id, t = table_id}))
+        .thenAnswer(false, {error_message = error_message})
+end
+
+function test_metadata_reader.test_unable_to_read_table_metadata_raises_error()
+    local exa_mock = mockagne.getMock()
+    local schema_id = "S"
+    mock_table_metadata_reading_error(exa_mock, schema_id, "T", "another_cause")
+    mock_read_table_catalog(exa_mock, schema_id, {{TABLE_NAME = "T"}})
+    luaunit.assertErrorMsgContains("Unable to read column metadata from source table '" .. schema_id .. "'.'T'."
+        .. " Caused by: 'another_cause'", reader.read, "S")
+end
+
+function test_metadata_reader.test_unknown_column_type_raises_error()
+    local exa_mock = mockagne.getMock()
+    local schema_id = "THE_SCHEMA"
+    mock_tables(exa_mock, schema_id,
+        {table = "THE_TABLE", columns = {{COLUMN_NAME = "THE_COLUMN", COLUMN_TYPE = "THE_TYPE"}}}
+    )
+    luaunit.assertErrorMsgContains("Column 'THE_TABLE'.'THE_COLUMN' has unsupported type 'THE_TYPE'",
+        reader.read, schema_id)
 end
 
 os.exit(luaunit.LuaUnit.run())
