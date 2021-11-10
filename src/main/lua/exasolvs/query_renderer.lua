@@ -29,8 +29,8 @@ local M = {
         "BIT_AND", "BIT_CHECK", "BIT_LROTATE", "BIT_LSHIFT", "BIT_NOT", "BIT_OR", "BIT_RROTATE", "BIT_RSHIFT",
         "BIT_SET", "BIT_TO_NUM", "BIT_XOR",
         -- Other functions
-        "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST", "HASH_MD5",
-        "HASHTYPE_MD5", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
+        "CURRENT_CLUSTER", "CURRENT_SCHEMA", "CURRENT_SESSION", "CURRENT_STATEMENT", "CURRENT_USER", "GREATEST",
+        "HASH_MD5", "HASHTYPE_MD5", "HASH_SHA1", "HASHTYPE_SHA1", "HASH_SHA256", "HASHTYPE_SHA256", "HASH_SHA512",
         "HASHTYPE_SHA512", "HASH_TIGER", "HASHTYPE_TIGER", "IS_NUMBER", "IS_BOOLEAN", "IS_DATE", "IS_DSINTERVAL",
         "IS_YMINTERVAL", "IS_TIMESTAMP", "JSON_VALUE", "MIN_SCALE", "NULLIFZERO", "SYS_GUID", "TYPEOF", "ZEROIFNULL",
         "SESSION_PARAMETER"
@@ -57,7 +57,7 @@ end
 -- @return new query renderer instance
 --
 function M.new (query)
-    local self = {original_query = query, query_elements = {}}
+    local self = { original_query = query, query_elements = {} }
     local OPERATORS = {
         predicate_equal = "=", predicate_notequal = "<>", predicate_less = "<", predicate_greater = ">",
         predicate_and = "AND", predicate_or = "OR", predicate_not = "NOT"
@@ -65,7 +65,7 @@ function M.new (query)
 
     -- forward declarations
     local append_unary_predicate, append_binary_predicate, append_iterated_predicate, append_expression,
-        append_predicate_in, append_select, append_sub_select
+    append_predicate_in, append_select, append_sub_select
 
     local function append(value)
         self.query_elements[#self.query_elements + 1] = value
@@ -106,7 +106,8 @@ function M.new (query)
 
     local function is_parameterless_function(function_name)
         return function_name == "CURRENT_USER" or function_name == "SYSDATE" or function_name == "CURRENT_SCHEMA"
-            or function_name == "CURRENT_SESSION" or function_name == "CURRENT_STATEMENT"
+                or function_name == "CURRENT_SESSION" or function_name == "CURRENT_STATEMENT"
+                or function_name == "CURRENT_CLUSTER"
     end
 
     local function append_scalar_function(scalar_function)
@@ -292,7 +293,6 @@ function M.new (query)
         append(" END")
     end
 
-
     local function append_select_list_elements(select_list)
         for i = 1, #select_list do
             local element = select_list[i]
@@ -377,7 +377,7 @@ function M.new (query)
         append("'")
     end
 
-    append_expression = function (expression)
+    append_expression = function(expression)
         local type = expression.type
         if type == "column" then
             append_column_reference(expression)
@@ -414,7 +414,7 @@ function M.new (query)
         end
     end
 
-    append_unary_predicate = function (predicate)
+    append_unary_predicate = function(predicate)
         append("(")
         append(OPERATORS[predicate.type])
         append(" ")
@@ -422,7 +422,7 @@ function M.new (query)
         append(")")
     end
 
-    append_binary_predicate = function (predicate)
+    append_binary_predicate = function(predicate)
         append("(")
         append_expression(predicate.left)
         append(" ")
@@ -432,7 +432,7 @@ function M.new (query)
         append(")")
     end
 
-    append_iterated_predicate = function (predicate)
+    append_iterated_predicate = function(predicate)
         append("(")
         local expressions = predicate.expressions
         for i = 1, #expressions do
@@ -446,7 +446,7 @@ function M.new (query)
         append(")")
     end
 
-    append_predicate_in = function (predicate)
+    append_predicate_in = function(predicate)
         append("(")
         append_expression(predicate.expression)
         append(" IN (")
@@ -471,7 +471,7 @@ function M.new (query)
         append(")")
     end
 
-    append_select = function (sub_query)
+    append_select = function(sub_query)
         append("SELECT ")
         append_select_list(sub_query.selectList)
         append_from(sub_query.from)
@@ -487,7 +487,7 @@ function M.new (query)
         return table.concat(self.query_elements, "")
     end
 
-    return {render = render}
+    return { render = render }
 end
 
 return M
