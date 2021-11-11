@@ -487,7 +487,7 @@ function M.new (query)
         return table.concat(self.query_elements, "")
     end
 
-    return { render = render }
+    return {render = render}
 end
 
 return M

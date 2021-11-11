@@ -1386,7 +1386,6 @@ function test_query_renderer.test_current_user()
         selectList = {{type = "function_scalar", name = "CURRENT_USER"}}
     }
     assert_renders_to(original_query, 'SELECT CURRENT_USER')
-
 end
 
 function test_query_renderer.test_current_cluster()
@@ -1395,7 +1394,6 @@ function test_query_renderer.test_current_cluster()
         selectList = {{type = "function_scalar", name = "CURRENT_CLUSTER"}}
     }
     assert_renders_to(original_query, 'SELECT CURRENT_CLUSTER')
-
 end
 
 function test_query_renderer.test_predicate_in_constlist()
