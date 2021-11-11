@@ -57,7 +57,7 @@ end
 -- @return new query renderer instance
 --
 function M.new (query)
-    local self = { original_query = query, query_elements = {} }
+    local self = {original_query = query, query_elements = {}}
     local OPERATORS = {
         predicate_equal = "=", predicate_notequal = "<>", predicate_less = "<", predicate_greater = ">",
         predicate_and = "AND", predicate_or = "OR", predicate_not = "NOT"
@@ -65,7 +65,7 @@ function M.new (query)
 
     -- forward declarations
     local append_unary_predicate, append_binary_predicate, append_iterated_predicate, append_expression,
-    append_predicate_in, append_select, append_sub_select
+        append_predicate_in, append_select, append_sub_select
 
     local function append(value)
         self.query_elements[#self.query_elements + 1] = value
