@@ -1,8 +1,11 @@
-# Exasol Row Level Security (Lua) 1.0.2, released 2021-11-15
+# Exasol Row Level Security (Lua) 1.0.2, released 2021-11-16
 
-Code name: 
+Code name: Updated capabilities
 
 ## Summary
+
+In this release we have disabled unimplemented and enabled implemented capabilities.
+We have also added a new function CURRENT_CLUSTER.
 
 ## Features
 
