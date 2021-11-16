@@ -1634,7 +1634,8 @@ function test_query_renderer.test_group_by_expressions()
             {type = "column", name = "C2", tableName = "T1", columnNr = 1}
         }
     }
-    assert_renders_to(original_query, 'SELECT ("T1"."C1" + 1), "T1"."C2" FROM "T1" GROUP BY ("T1"."C1" + 1), "T1"."C2"')
+    assert_renders_to(original_query,
+            'SELECT ("T1"."C1" + 1), "T1"."C2" FROM "T1" GROUP BY ("T1"."C1" + 1), "T1"."C2"')
 end
 
 os.exit(luaunit.LuaUnit.run())
