@@ -594,7 +594,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = 1,
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 2,
-            expected = "SELECT 1 + 2"
+            expected = "SELECT (1 + 2)"
         },
         {
             func_name = "ATAN2",
@@ -618,7 +618,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = 20,
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 4,
-            expected = "SELECT 20 / 4"
+            expected = "SELECT (20 / 4)"
         },
         {
             func_name = "LOG",
@@ -642,7 +642,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = 3,
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 7,
-            expected = "SELECT 3 * 7"
+            expected = "SELECT (3 * 7)"
         },
         {
             func_name = "POWER",
@@ -666,7 +666,7 @@ function test_query_renderer.test_scalar_function_in_select_list_with_two_argume
             first_arg_value = 444,
             second_arg_type = "literal_exactnumeric",
             second_arg_value = 222,
-            expected = "SELECT 444 - 222"
+            expected = "SELECT (444 - 222)"
         },
         {
             func_name = "TO_NUMBER",
@@ -1563,6 +1563,78 @@ function test_query_renderer.test_unknown_data_type_throws_error()
        }
     }
     assert_rendering_error_contains(original_query, "unknown data type")
+end
+
+function test_query_renderer.test_group_by_with_literal()
+    local original_query = {
+        type = "select",
+        aggregationType = "group_by",
+        selectList = { {type = "literal_exactnumeric", value = "1"} },
+        from = {type  = "table", name = "T1"},
+        groupBy = { {type = "literal_string", value = "a"} }
+    }
+    assert_renders_to(original_query, 'SELECT 1 FROM "T1" GROUP BY \'a\'')
+end
+
+function test_query_renderer.test_group_by_columns()
+    local original_query = {
+        type = "select",
+        aggregationType = "group_by",
+        selectList = {
+            {type = "column", name = "C1", tableName = "T1", columnNr = 0},
+            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
+        },
+        from = {type  = "table", name = "T1"},
+        groupBy = {
+            {type = "column", name = "C1", tableName = "T1", columnNr = 0},
+            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
+        }
+    }
+    assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1" GROUP BY "T1"."C1", "T1"."C2"')
+end
+
+function test_query_renderer.test_group_by_columns()
+    local original_query = {
+        type = "select",
+        aggregationType = "group_by",
+        selectList = {
+            {type = "column", name = "C1", tableName = "T1", columnNr = 0},
+            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
+        },
+        from = {type  = "table", name = "T1"},
+        groupBy = {
+            {type = "column", name = "C1", tableName = "T1", columnNr = 0},
+            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
+        }
+    }
+    assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1" GROUP BY "T1"."C1", "T1"."C2"')
+end
+
+function test_query_renderer.test_group_by_expressions()
+    local original_query = {
+        type = "select",
+        aggregationType = "group_by",
+        selectList = {
+            {type = "function_scalar", name = "ADD", numArgs = 2, infix = true,
+             arguments = {
+                 {type = "column", name = "C1", tableName = "T1", columnNr = 0},
+                 {type = "literal_exactnumeric", value = "1" }
+             }
+            },
+            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
+        },
+        from = {type  = "table", name = "T1"},
+        groupBy = {
+            {type = "function_scalar", name = "ADD", numArgs = 2, infix = true,
+             arguments = {
+                 {type = "column", name = "C1", tableName = "T1", columnNr = 0},
+                 {type = "literal_exactnumeric", value = "1" }
+             }
+            },
+            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
+        }
+    }
+    assert_renders_to(original_query, 'SELECT ("T1"."C1" + 1), "T1"."C2" FROM "T1" GROUP BY ("T1"."C1" + 1), "T1"."C2"')
 end
 
 os.exit(luaunit.LuaUnit.run())

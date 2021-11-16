@@ -97,11 +97,13 @@ function M.new (query)
     end
 
     local function append_arithmetic_function(left, operator, right)
+        append("(")
         append_expression(left)
         append(" ")
         append(operator)
         append(" ")
         append_expression(right)
+        append(")")
     end
 
     local function is_parameterless_function(function_name)
@@ -465,6 +467,13 @@ function M.new (query)
         end
     end
 
+    local function append_group_by(groupBy)
+        if groupBy then
+            append(" GROUP BY ")
+            append_select_list(groupBy)
+        end
+    end
+
     append_sub_select = function(sub_query)
         append("(")
         append_select(sub_query)
@@ -475,6 +484,7 @@ function M.new (query)
         append("SELECT ")
         append_select_list(sub_query.selectList)
         append_from(sub_query.from)
+        append_group_by(sub_query.groupBy)
         append_filter(sub_query.filter)
     end
 
