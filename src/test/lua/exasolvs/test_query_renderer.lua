@@ -1638,4 +1638,25 @@ function test_query_renderer.test_group_by_expressions()
             'SELECT ("T1"."C1" + 1), "T1"."C2" FROM "T1" GROUP BY ("T1"."C1" + 1), "T1"."C2"')
 end
 
+function test_query_renderer.test_single_group_aggregation()
+    local original_query = {
+        type = "select",
+        aggregationType = "single_group",
+        selectList = {{type = "literal_string", value = "a"}},
+        from = {type  = "table", name = "T1"}
+    }
+    assert_renders_to(original_query, 'SELECT \'a\' FROM "T1" GROUP BY \'a\'')
+end
+
+--- This test is disabled until we implement aggregate functions parsing: https://github.com/exasol/row-level-security-lua/issues/103
+--function test_query_renderer.test_single_group_aggregation_and_aggregation_function()
+--    local original_query = {
+--        type = "select",
+--        aggregationType = "single_group",
+--        selectList = {{type = "function_aggregate", name = "sum", arguments = {type = "literal_exactnumeric", value = "5"}}},
+--        from = {type  = "table", name = "T1"}
+--    }
+--    assert_renders_to(original_query, 'SELECT \'a\' FROM "T1" GROUP BY \'a\'')
+--end
+
 os.exit(luaunit.LuaUnit.run())

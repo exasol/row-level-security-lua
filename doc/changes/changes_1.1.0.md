@@ -6,7 +6,11 @@ Code name: New capabilities for GROUP BY
 
 In this release we have implemented GROUP BY capabilities support.
 
-## Features
+## Bug Fixes
+
+* #94: Added aggregationType parsing (single_group).
+
+## Features 
 
 * #99: Implemented GROUP BY capabilities support.
 
