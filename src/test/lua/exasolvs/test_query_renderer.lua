@@ -1593,23 +1593,6 @@ function test_query_renderer.test_group_by_columns()
     assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1" GROUP BY "T1"."C1", "T1"."C2"')
 end
 
-function test_query_renderer.test_group_by_columns()
-    local original_query = {
-        type = "select",
-        aggregationType = "group_by",
-        selectList = {
-            {type = "column", name = "C1", tableName = "T1", columnNr = 0},
-            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
-        },
-        from = {type  = "table", name = "T1"},
-        groupBy = {
-            {type = "column", name = "C1", tableName = "T1", columnNr = 0},
-            {type = "column", name = "C2", tableName = "T1", columnNr = 1}
-        }
-    }
-    assert_renders_to(original_query, 'SELECT "T1"."C1", "T1"."C2" FROM "T1" GROUP BY "T1"."C1", "T1"."C2"')
-end
-
 function test_query_renderer.test_group_by_expressions()
     local original_query = {
         type = "select",
