@@ -38,6 +38,19 @@ class CapabilitiesIT extends AbstractLuaVirtualSchemaIT {
                 "SELECT * FROM \"" + sourceSchemaName + "\".\"T\"");
     }
 
+    // This test is disabled until we implement aggregate functions parsing:
+    // https://github.com/exasol/row-level-security-lua/issues/103
+    void testAggregateSingleGroupCapability() {
+        final String sourceSchemaName = "HAS_AGGREGATE_SINGLE_GROUP_CAPABILITY_SCHEMA";
+        final Schema sourceSchema = createSchema(sourceSchemaName);
+        sourceSchema.createTable("T", "C1", "DECIMAL(10,0)");
+        final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
+        final User user = createUserWithVirtualSchemaAccess("ASG_USER", virtualSchema);
+        assertQueryWithUserRewrittenTo(
+                "SELECT 1 AS BAR FROM (SELECT SUM(C1) X FROM " + getVirtualSchemaName(sourceSchemaName) + ".T)", user,
+                "SELECT NULL FROM \"" + sourceSchemaName + "\".\"T\" GROUP BY ''a''");
+    }
+
     private void assertQueryWithUserRewrittenTo(final String sql, final User user, final String expectedQuery) {
         assertRlsQueryWithUser("EXPLAIN VIRTUAL " + sql, user,
                 table().row(anything(), equalTo(expectedQuery), anything(), anything()).matches());

@@ -65,7 +65,7 @@ function M.new (query)
 
     -- forward declarations
     local append_unary_predicate, append_binary_predicate, append_iterated_predicate, append_expression,
-        append_predicate_in, append_select, append_sub_select
+    append_predicate_in, append_select, append_sub_select, has_single_group_aggregation, has_aggregate_function
 
     local function append(value)
         self.query_elements[#self.query_elements + 1] = value
@@ -97,11 +97,13 @@ function M.new (query)
     end
 
     local function append_arithmetic_function(left, operator, right)
+        append("(")
         append_expression(left)
         append(" ")
         append(operator)
         append(" ")
         append_expression(right)
+        append(")")
     end
 
     local function is_parameterless_function(function_name)
@@ -465,6 +467,31 @@ function M.new (query)
         end
     end
 
+    has_single_group_aggregation = function(select)
+        return select.aggregationType == "single_group"
+    end
+
+    has_aggregate_function = function(select_list)
+        if not select_list then
+            return false
+        end
+        for i = 1, #select_list do
+            if select_list[i].type == "function_aggregate" then
+                return true
+            end
+        end
+        return false
+    end
+
+    local function append_group_by(subquery)
+        if has_single_group_aggregation(subquery) and not has_aggregate_function(subquery.selectList) then
+            append(" GROUP BY 'a'")
+        elseif subquery.groupBy then
+            append(" GROUP BY ")
+            append_select_list(subquery.groupBy)
+        end
+    end
+
     append_sub_select = function(sub_query)
         append("(")
         append_select(sub_query)
@@ -475,6 +502,7 @@ function M.new (query)
         append("SELECT ")
         append_select_list(sub_query.selectList)
         append_from(sub_query.from)
+        append_group_by(sub_query)
         append_filter(sub_query.filter)
     end
 
