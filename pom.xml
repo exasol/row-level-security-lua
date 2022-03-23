@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>row-level-security-lua</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <properties>
@@ -240,8 +240,6 @@
                                 <argument>-s</argument>
                                 <argument>entry.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
-                                <argument>exasolvs.request_dispatcher</argument>
-                                <argument>exasolvs.query_renderer</argument>
                                 <argument>exasolrls.adapter_properties</argument>
                                 <argument>exasolrls.adapter_capabilities</argument>
                                 <argument>exasolrls.rls_adapter</argument>
@@ -252,6 +250,7 @@
                                 <argument>text</argument>
                                 <argument>exaerror</argument>
                                 <argument>message_expander</argument>
+                                <argument>virtual-schema-common-lua</argument>
                             </arguments>
                         </configuration>
                     </execution>

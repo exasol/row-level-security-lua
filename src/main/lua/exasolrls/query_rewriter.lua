@@ -1,4 +1,4 @@
-local renderer = require("exasolvs.query_renderer")
+local QueryRenderer = require("exasolvs.QueryRenderer")
 local protection_reader = require("exasolrls.table_protection_reader")
 local log = require("remotelog")
 local exaerror = require("exaerror")
@@ -248,7 +248,8 @@ function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tab
         rewrite_without_protection(query)
         log.debug('Table "%s" is not protected. No filters added.', table_id)
     end
-    return renderer.new(query).render()
+    local renderer = QueryRenderer.create(query)
+    return renderer:render()
 end
 
 return M

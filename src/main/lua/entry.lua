@@ -5,7 +5,7 @@
 -- </p>
 
 local adapter = require("exasolrls.rls_adapter")
-local dispatcher = require("exasolvs.request_dispatcher").init(adapter)
+local dispatcher = require("exasolvs.RequestDispatcher").init(adapter)
 
 ---
 -- Handle a Virtual Schema request.
