@@ -1,9 +1,13 @@
 local QueryRenderer = require("exasolvs.QueryRenderer")
-local protection_reader = require("exasolrls.table_protection_reader")
+local protection_reader = require("exasolrls.TableProtectionReader")
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
-local M  = { PUBLIC_ROLE_BIT_INDEX = 63 }
+--- This class rewrites the query, adding RLS protection if necessary.
+--
+-- @type QueryRewriter
+--
+local QueryRewriter = {}
 
 local function validate(query)
     if not query then
@@ -235,7 +239,7 @@ end
 --
 -- @return string containing the rewritten query
 --
-function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
+function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
     validate(original_query)
     local query = original_query
     local table_id = query.from.name
@@ -252,4 +256,4 @@ function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tab
     return renderer:render()
 end
 
-return M
+return QueryRewriter

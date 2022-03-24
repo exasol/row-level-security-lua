@@ -12,7 +12,7 @@ local function get_pom_path()
 end
 
 local M = {
-    pom_path = pom_path or get_pom_path()
+    pom_path = get_pom_path()
 }
 
 function M.get_version()

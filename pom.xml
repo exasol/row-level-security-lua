@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>row-level-security-lua</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.0</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <properties>
@@ -240,17 +240,20 @@
                                 <argument>-s</argument>
                                 <argument>entry.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
-                                <argument>exasolrls.adapter_properties</argument>
                                 <argument>exasolrls.adapter_capabilities</argument>
-                                <argument>exasolrls.rls_adapter</argument>
-                                <argument>exasolrls.metadata_reader</argument>
-                                <argument>exasolrls.table_protection_reader</argument>
-                                <argument>exasolrls.query_rewriter</argument>
+                                <argument>exasolrls.AdapterProperties</argument>
+                                <argument>exasolrls.RlsAdapter</argument>
+                                <argument>exasolrls.MetadataReader</argument>
+                                <argument>exasolrls.TableProtectionReader</argument>
+                                <argument>exasolrls.QueryRewriter</argument>
                                 <argument>remotelog</argument>
-                                <argument>text</argument>
                                 <argument>exaerror</argument>
                                 <argument>message_expander</argument>
-                                <argument>virtual-schema-common-lua</argument>
+                                <!-- from virtual-schema-common-lua -->
+                                <argument>exasolvs.AbstractVirtualSchemaAdapter</argument>
+                                <argument>exasolvs.RequestDispatcher</argument>
+                                <argument>exasolvs.QueryRenderer</argument>
+                                <argument>text</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -469,7 +472,7 @@
                         <dependency>
                             <groupId>net.sourceforge.plantuml</groupId>
                             <artifactId>plantuml</artifactId>
-                            <version>1.2021.12</version>
+                            <version>1.2022.12</version>
                         </dependency>
                     </dependencies>
                 </plugin>

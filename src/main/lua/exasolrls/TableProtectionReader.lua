@@ -1,6 +1,10 @@
 local exaerror = require("exaerror")
 
-local M = {}
+--- This class decodes the table protection information as cached in the adapter notes.
+--
+-- @type TableProtectionReader
+--
+local TableProtectionReader = {}
 
 ---
 -- Read table protection status from the adapter cache.
@@ -11,7 +15,7 @@ local M = {}
 --
 -- @return Lua table containing one entry per database table that lists the protection details
 --
-function M.read(adapter_cache, table_id)
+function TableProtectionReader.read(adapter_cache, table_id)
     for table_protection_cache in string.gmatch(adapter_cache, "[^,]+") do
         local colon_index = string.find(table_protection_cache, ":", 1, true)
         local extracted_table_id = string.sub(table_protection_cache, 1, colon_index - 1)
@@ -35,4 +39,4 @@ function M.read(adapter_cache, table_id)
         :raise()
 end
 
-return M;
+return TableProtectionReader;
