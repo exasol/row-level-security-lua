@@ -5,6 +5,7 @@
 -- </p>
 
 local RlsAdapter = require("exasolrls.RlsAdapter")
+local RlsAdapterProperties = require("exasolrls.RlsAdapterProperties")
 local MetadataReader = require("exasolrls.MetadataReader")
 local RequestDispatcher = require("exasolvs.RequestDispatcher")
 
@@ -19,6 +20,6 @@ function adapter_call(request_as_json)
     local exasol_context = _G.exa
     local metadata_reader = MetadataReader:new(exasol_context)
     local adapter = RlsAdapter.create(metadata_reader)
-    local dispatcher = RequestDispatcher.create(adapter)
+    local dispatcher = RequestDispatcher.create(adapter, RlsAdapterProperties)
     return dispatcher:adapter_call(request_as_json)
 end

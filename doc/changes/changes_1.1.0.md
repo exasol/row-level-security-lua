@@ -15,3 +15,7 @@ In this release we have implemented GROUP BY capabilities support.
 * #99: Implemented GROUP BY capabilities support.
 
 ## Dependency Updates
+
+### Test Dependency Updates
+
+* Updated `com.exasol:exasol-testcontainers:5.1.1` to `6.1.1`

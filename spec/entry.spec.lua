@@ -1,7 +1,7 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
 
-local entry = require("entry")
+require("entry")
 
 describe("Entry script", function()
     it("handles an adapter call to drop the virtual schema", function()

@@ -1,6 +1,6 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
-local AdapterProperties = require("exasolrls.AdapterProperties")
+local RlsAdapterProperties = require("exasolrls.RlsAdapterProperties")
 
 describe("adapter_properties", function()
     describe("validates property rule:", function()
@@ -20,14 +20,14 @@ describe("adapter_properties", function()
             }
             for _, test in ipairs(tests) do
                 it(test.expected, function()
-                    local properties = AdapterProperties:new(test.properties)
+                    local properties = RlsAdapterProperties.create(test.properties)
                     assert.error_matches(function () properties:validate() end,  test.expected, 1, true)
                 end)
             end
     end)
 
     it("gets the SCHEMA_NAME property", function()
-        assert.is("a_schema", AdapterProperties:new({SCHEMA_NAME = "a_schema"}):get_schema_name())
+        assert.is("a_schema", RlsAdapterProperties:new({SCHEMA_NAME = "a_schema"}):get_schema_name())
     end)
 
     describe("get the TABLE_FILTER property:", function()
@@ -54,7 +54,7 @@ describe("adapter_properties", function()
             }
         }
         for _, test in ipairs(tests) do
-            assert.is(test.expected, AdapterProperties:new({TABLE_FILTER = test.filter}):get_table_filter(), test)
+            assert.is(test.expected, RlsAdapterProperties:new({TABLE_FILTER = test.filter}):get_table_filter(), test)
         end
     end)
 end)

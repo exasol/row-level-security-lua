@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>5.1.1</version>
+            <version>6.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -241,7 +241,7 @@
                                 <argument>entry.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
                                 <argument>exasolrls.adapter_capabilities</argument>
-                                <argument>exasolrls.AdapterProperties</argument>
+                                <argument>exasolrls.RlsAdapterProperties</argument>
                                 <argument>exasolrls.RlsAdapter</argument>
                                 <argument>exasolrls.MetadataReader</argument>
                                 <argument>exasolrls.TableProtectionReader</argument>
@@ -251,6 +251,7 @@
                                 <argument>message_expander</argument>
                                 <!-- from virtual-schema-common-lua -->
                                 <argument>exasolvs.AbstractVirtualSchemaAdapter</argument>
+                                <argument>exasolvs.AdapterProperties</argument>
                                 <argument>exasolvs.RequestDispatcher</argument>
                                 <argument>exasolvs.QueryRenderer</argument>
                                 <argument>text</argument>
