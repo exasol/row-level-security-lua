@@ -170,7 +170,8 @@ function MetadataReader:_translate_table_scan_results(schema_id, result, include
         local table_id = result[i].TABLE_NAME
         if self:_is_included_table(table_id, include_tables_lookup) and not self:_is_rls_metadata_table(table_id)
         then
-            local columns, tenant_protected, role_protected, group_protected = self:_translate_columns_metadata(schema_id, table_id)
+            local columns, tenant_protected, role_protected, group_protected =
+                    self:_translate_columns_metadata(schema_id, table_id)
             table.insert(tables, {name = table_id, columns = columns})
             local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
                     .. (group_protected and "g" or "-")

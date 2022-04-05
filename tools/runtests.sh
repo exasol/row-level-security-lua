@@ -76,7 +76,7 @@ function run_static_code_analysis {
     echo
     echo "Running static code analysis"
     echo
-    luacheck "$src_exasolrls_path" "$test_module_path" --codes --ignore 111 --ignore 112
+    luacheck "$src_exasolrls_path" "$test_module_path" --codes --ignore 111 --ignore 112 --ignore 212
     luacheck "$src_administration_path" --codes --ignore 111 --ignore 112 --ignore 113
     return "$?"
 }

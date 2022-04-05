@@ -1,6 +1,6 @@
 local text = require("text")
 local exaerror = require("exaerror")
-local AdapterProperties = require("exasolvs/AdapterProperties")
+local AdapterProperties = require("exasolvs.AdapterProperties")
 
 --- This class abstracts access to the user-defined properties of the Virtual Schema.
 -- @type RlsAdapterProperties

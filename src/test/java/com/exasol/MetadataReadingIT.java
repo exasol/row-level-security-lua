@@ -86,13 +86,12 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
 
     private void assertVirtualTableStructure(final Table table, final User user,
             final Matcher<ResultSet> tableMatcher) {
-        assertRlsQueryWithUser("DESCRIBE " + getVirtualSchemaName(table.getParent().getName()) + "." + table.getName(),
-                user, //
-                tableMatcher);
+        assertRlsQueryWithUser("/*snapshot execution*/DESCRIBE " + getVirtualSchemaName(table.getParent().getName())
+                        + "." + table.getName(), user, tableMatcher);
     }
 
     private Matcher<ResultSet> expectRows(final String... strings) {
-        assertThat("Expected metadata rows must be given as touples of field name and data type.", strings.length % 2,
+        assertThat("Expected metadata rows must be given as tuples of field name and data type.", strings.length % 2,
                 equalTo(0));
         final Builder builder = table();
         for (int i = 0; i < strings.length; i += 2) {
@@ -102,7 +101,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
     }
 
     @Test
-    void testRefreshMetadata() throws SQLException {
+    void testRefreshMetadata() {
         final Schema sourceSchema = createSchema("SCHEMA_FOR_REFRESH");
         final Table originalTable = sourceSchema.createTable("T", "BO", "BOOLEAN", "DA", "DATE");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);

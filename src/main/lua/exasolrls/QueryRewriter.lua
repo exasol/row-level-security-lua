@@ -226,6 +226,10 @@ local function validate_protection_scheme(source_schema_id, table_id, protection
     end
 end
 
+local function extend_query_with_source_schema(query, source_schema_id)
+    query.from.schema = source_schema_id
+end
+
 ---
 -- Rewrite the original query with RLS restrictions.
 --
@@ -243,7 +247,6 @@ function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, 
     validate(original_query)
     local query = original_query
     local table_id = query.from.name
-    query.from.schema = source_schema_id
     local protection = protection_reader.read(adapter_cache, table_id)
     if protection.protected then
         validate_protection_scheme(source_schema_id, table_id, protection)
@@ -252,6 +255,7 @@ function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, 
         rewrite_without_protection(query)
         log.debug('Table "%s" is not protected. No filters added.', table_id)
     end
+    extend_query_with_source_schema(query, source_schema_id)
     local renderer = QueryRenderer.create(query)
     return renderer:render()
 end

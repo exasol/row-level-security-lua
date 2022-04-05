@@ -1,10 +1,6 @@
 package.path = "target/?.lua;" .. package.path
 require("busted.runner")()
 
---package.cpath = package.cpath .. ';/home/sebastian/.local/share/JetBrains/IdeaIC2021.3/EmmyLua/debugger/emmy/linux/?.so'
---local dbg = require('emmy_core')
---dbg.tcpConnect('localhost', 9966)
-
 local pom = require("spec.pom.reader")
 
 local VERSION <const> = pom.get_version()
@@ -50,7 +46,7 @@ end
 if load_distribution() then
     describe("Distribution (smoke test)", function()
         it("handles an adapter call to drop the virtual schema", function()
-            local result = adapter_call([[{"type" : "dropVirtualSchema"}]])
+            local result = _G.adapter_call([[{"type" : "dropVirtualSchema"}]])
             assert.are.equal([[{"type":"dropVirtualSchema"}]], result)
         end)
 
@@ -68,7 +64,7 @@ if load_distribution() then
 
         it("handles an adapter call to create the virtual schema", function()
             _G.exa = create_exasol_context_stub()
-            local result = adapter_call(
+            local result = _G.adapter_call(
                     [[{"type" : "createVirtualSchema",
                          "schemaMetadataInfo" : {
                             "properties" : {"SCHEMA_NAME" : "S"}

@@ -1,5 +1,4 @@
 local AbstractVirtualSchemaAdapter = require("exasolvs.AbstractVirtualSchemaAdapter")
-local AdapterProperties = require("exasolrls.RlsAdapterProperties")
 local adapter_capabilities = require("exasolrls.adapter_capabilities")
 local QueryRewriter = require("exasolrls.QueryRewriter")
 
@@ -75,7 +74,7 @@ end
 -- @return response containing the list of reported capabilities
 function RlsAdapter:push_down(request, properties)
     local adapter_cache = request.schemaMetadataInfo.adapterNotes
-    local rewritten_query = QueryRewriter.rewrite(request.pushdownRequest, properties.SCHEMA_NAME,
+    local rewritten_query = QueryRewriter.rewrite(request.pushdownRequest, properties:get_schema_name(),
             adapter_cache, request.involvedTables)
     return {type = "pushdown", sql = rewritten_query}
 end

@@ -1,11 +1,10 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
-
 require("entry")
 
 describe("Entry script", function()
     it("handles an adapter call to drop the virtual schema", function()
-        local result = adapter_call([[{"type" : "dropVirtualSchema"}]])
+        local result = _G.adapter_call([[{"type" : "dropVirtualSchema"}]])
         assert.are.equal([[{"type":"dropVirtualSchema"}]], result)
     end)
 
@@ -23,7 +22,7 @@ describe("Entry script", function()
 
     it("handles an adapter call to create the virtual schema", function()
         _G.exa = create_exasol_context_stub()
-        local result = adapter_call(
+        local result = _G.adapter_call(
                 [[{"type" : "createVirtualSchema",
                      "schemaMetadataInfo" : {
                         "properties" : {"SCHEMA_NAME" : "S"}
