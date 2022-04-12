@@ -39,6 +39,7 @@ sudo luarocks install luacov
 sudo luarocks install luacov-coveralls
 sudo luarocks install luacheck
 sudo luarocks install exaerror
+sudo luarocks install amalg
 ```
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.

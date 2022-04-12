@@ -229,11 +229,10 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>lua</executable>
+                            <executable>amalg.lua</executable>
                             <useMavenLogger>true</useMavenLogger>
                             <workingDirectory>${lua.src}</workingDirectory>
                             <arguments>
-                                <argument>${basedir}/tools/amalg.lua</argument>
                                 <argument>-o</argument>
                                 <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
                                 <!-- Include main script containing the adapter entry point -->

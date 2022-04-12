@@ -20,6 +20,7 @@ jobs:
           sudo luarocks install remotelog
           sudo luarocks install exaerror
           sudo luarocks install virtual-schema-common-lua
+          sudo luarocks install amalg
       - uses: actions/checkout@v2
         with:
            fetch-depth: 0

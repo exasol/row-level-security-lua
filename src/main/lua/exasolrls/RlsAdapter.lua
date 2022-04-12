@@ -31,7 +31,7 @@ end
 --- Get the name of the Virtual Schema adapter.
 -- @return Virtual Schema adapter name
 function RlsAdapter:get_name()
-    return "Row-level Security adapter (LUA)"
+    return "Row-level Security adapter (Lua)"
 end
 
 --- Create a virtual schema.

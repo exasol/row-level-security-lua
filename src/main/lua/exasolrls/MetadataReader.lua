@@ -175,7 +175,7 @@ function MetadataReader:_translate_table_scan_results(schema_id, result, include
             table.insert(tables, {name = table_id, columns = columns})
             local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
                     .. (group_protected and "g" or "-")
-            log.debug('Found table "' .. table_id .. '" (' .. #columns .. ' columns). Protection: ' .. protection)
+            log.debug("Found table '%s' (%d columns). Protection: %s", table_id, #columns, protection)
             table.insert(table_protection, table_id .. ":" .. protection)
         end
     end

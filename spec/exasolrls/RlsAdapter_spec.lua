@@ -26,7 +26,7 @@ describe("RlsAdapter", function()
     end)
 
     it("reports the name of the adapter", function()
-        assert.are.equal("Row-level Security adapter (LUA)", adapter:get_name())
+        assert.are.equal("Row-level Security adapter (Lua)", adapter:get_name())
     end)
 
     it("answers a request to create the Virtual Schema with the metadata of the source schema", function()
