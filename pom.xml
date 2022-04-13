@@ -229,31 +229,11 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>amalg.lua</executable>
+                            <executable>luarocks</executable>
                             <useMavenLogger>true</useMavenLogger>
-                            <workingDirectory>${lua.src}</workingDirectory>
                             <arguments>
-                                <argument>-o</argument>
-                                <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
-                                <!-- Include main script containing the adapter entry point -->
-                                <argument>-s</argument>
-                                <argument>entry.lua</argument>
-                                <!-- Include modules by name (no slashes, no ".lua"!) -->
-                                <argument>exasolrls.adapter_capabilities</argument>
-                                <argument>exasolrls.RlsAdapterProperties</argument>
-                                <argument>exasolrls.RlsAdapter</argument>
-                                <argument>exasolrls.MetadataReader</argument>
-                                <argument>exasolrls.TableProtectionReader</argument>
-                                <argument>exasolrls.QueryRewriter</argument>
-                                <argument>remotelog</argument>
-                                <argument>exaerror</argument>
-                                <argument>message_expander</argument>
-                                <!-- from virtual-schema-common-lua -->
-                                <argument>exasolvs.AbstractVirtualSchemaAdapter</argument>
-                                <argument>exasolvs.AdapterProperties</argument>
-                                <argument>exasolvs.RequestDispatcher</argument>
-                                <argument>exasolvs.QueryRenderer</argument>
-                                <argument>text</argument>
+                                <argument>--local</argument>
+                                <argument>make</argument>
                             </arguments>
                         </configuration>
                     </execution>
