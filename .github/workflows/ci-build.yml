@@ -16,6 +16,9 @@ jobs:
         uses: leafo/gh-actions-luarocks@v4
         with:
           luarocksVersion: "3.8.0"
+      - name: "Install dependencies"
+        run: |
+          luarocks --local install --deps-only
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
