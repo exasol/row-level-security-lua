@@ -12,7 +12,7 @@ public final class RlsTestConstants {
     public static final String ROLE_MASK_TYPE = "DECIMAL(20,0)";
     public static final String IDENTIFIER_TYPE = "VARCHAR(128)";
     public static final int PUBLIC_ROLE_BIT_INDEX = 63;
-    public static final String DOCKER_DB = "exasol/docker-db:7.1.0-d1";
+    public static final String DOCKER_DB = "exasol/docker-db:7.1.8";
 
     private RlsTestConstants() {
         // prevent instantiation

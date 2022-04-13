@@ -1,9 +1,13 @@
-local renderer = require("exasolvs.query_renderer")
-local protection_reader = require("exasolrls.table_protection_reader")
+local QueryRenderer = require("exasolvs.QueryRenderer")
+local protection_reader = require("exasolrls.TableProtectionReader")
 local log = require("remotelog")
 local exaerror = require("exaerror")
 
-local M  = { PUBLIC_ROLE_BIT_INDEX = 63 }
+--- This class rewrites the query, adding RLS protection if necessary.
+--
+-- @type QueryRewriter
+--
+local QueryRewriter = {}
 
 local function validate(query)
     if not query then
@@ -222,6 +226,10 @@ local function validate_protection_scheme(source_schema_id, table_id, protection
     end
 end
 
+local function extend_query_with_source_schema(query, source_schema_id)
+    query.from.schema = source_schema_id
+end
+
 ---
 -- Rewrite the original query with RLS restrictions.
 --
@@ -235,11 +243,10 @@ end
 --
 -- @return string containing the rewritten query
 --
-function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
+function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
     validate(original_query)
     local query = original_query
     local table_id = query.from.name
-    query.from.schema = source_schema_id
     local protection = protection_reader.read(adapter_cache, table_id)
     if protection.protected then
         validate_protection_scheme(source_schema_id, table_id, protection)
@@ -248,7 +255,9 @@ function M.rewrite(original_query, source_schema_id, adapter_cache, involved_tab
         rewrite_without_protection(query)
         log.debug('Table "%s" is not protected. No filters added.', table_id)
     end
-    return renderer.new(query).render()
+    extend_query_with_source_schema(query, source_schema_id)
+    local renderer = QueryRenderer.create(query)
+    return renderer:render()
 end
 
-return M
+return QueryRewriter

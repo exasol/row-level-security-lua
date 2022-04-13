@@ -19,6 +19,7 @@ jobs:
           sudo luarocks install lua-cjson
           sudo luarocks install remotelog
           sudo luarocks install exaerror
+          sudo luarocks install amalg
       - uses: actions/checkout@v2
       - name: Checkout the repository
         uses: actions/checkout@v2

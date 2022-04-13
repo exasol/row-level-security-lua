@@ -36,19 +36,19 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-jdbc</artifactId>
-            <version>7.1.2</version>
+            <version>7.1.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>5.1.1</version>
+            <version>6.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.16.2</version>
+            <version>1.16.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -229,29 +229,31 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>lua</executable>
+                            <executable>amalg.lua</executable>
                             <useMavenLogger>true</useMavenLogger>
                             <workingDirectory>${lua.src}</workingDirectory>
                             <arguments>
-                                <argument>${basedir}/tools/amalg.lua</argument>
                                 <argument>-o</argument>
                                 <argument>${basedir}/target/row-level-security-dist-${project.version}.lua</argument>
                                 <!-- Include main script containing the adapter entry point -->
                                 <argument>-s</argument>
                                 <argument>entry.lua</argument>
                                 <!-- Include modules by name (no slashes, no ".lua"!) -->
-                                <argument>exasolvs.request_dispatcher</argument>
-                                <argument>exasolvs.query_renderer</argument>
-                                <argument>exasolrls.adapter_properties</argument>
                                 <argument>exasolrls.adapter_capabilities</argument>
-                                <argument>exasolrls.rls_adapter</argument>
-                                <argument>exasolrls.metadata_reader</argument>
-                                <argument>exasolrls.table_protection_reader</argument>
-                                <argument>exasolrls.query_rewriter</argument>
+                                <argument>exasolrls.RlsAdapterProperties</argument>
+                                <argument>exasolrls.RlsAdapter</argument>
+                                <argument>exasolrls.MetadataReader</argument>
+                                <argument>exasolrls.TableProtectionReader</argument>
+                                <argument>exasolrls.QueryRewriter</argument>
                                 <argument>remotelog</argument>
-                                <argument>text</argument>
                                 <argument>exaerror</argument>
                                 <argument>message_expander</argument>
+                                <!-- from virtual-schema-common-lua -->
+                                <argument>exasolvs.AbstractVirtualSchemaAdapter</argument>
+                                <argument>exasolvs.AdapterProperties</argument>
+                                <argument>exasolvs.RequestDispatcher</argument>
+                                <argument>exasolvs.QueryRenderer</argument>
+                                <argument>text</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -470,7 +472,7 @@
                         <dependency>
                             <groupId>net.sourceforge.plantuml</groupId>
                             <artifactId>plantuml</artifactId>
-                            <version>1.2021.12</version>
+                            <version>1.2022.12</version>
                         </dependency>
                     </dependencies>
                 </plugin>

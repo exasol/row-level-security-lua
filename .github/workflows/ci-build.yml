@@ -5,21 +5,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Install dependencies"
-        run: |
-          sudo apt-get update
-          sudo apt install luarocks
-          sudo luarocks install luacheck
-          sudo luarocks install luacov
-          sudo luarocks install luacov-coveralls
-          sudo luarocks install LuaUnit
-          sudo luarocks install Mockagne
-          sudo luarocks install lua-cjson
-          sudo luarocks install remotelog
-          sudo luarocks install exaerror
       - uses: actions/checkout@v2
         with:
            fetch-depth: 0
+      - name: "Install Lua"
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: 5.4
+      - name: "Install LuaRocks"
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luarocksVersion: "3.8.0"
+      - name: "Install dependencies"
+        run: |
+          luarocks install --local busted
+          luarocks install --local luacheck
+          luarocks install --local luacov
+          luarocks install --local luacov-coveralls
+          luarocks install --local LuaUnit
+          luarocks install --local Mockagne
+          luarocks install --local lua-cjson 2.1.0
+          luarocks install --local remotelog
+          luarocks install --local exaerror
+          luarocks install --local virtual-schema-common-lua
+          luarocks install --local amalg
       - name: "Set up JDK"
         uses: actions/setup-java@v2
         with:
@@ -37,6 +46,7 @@ jobs:
           echo 'testcontainers.reuse.enable=true' > "/home/runner/.testcontainers.properties"
       - name: "Build with Maven"
         run: |
+          eval $(luarocks path)
           mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2

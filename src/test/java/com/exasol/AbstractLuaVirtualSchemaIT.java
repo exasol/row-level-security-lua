@@ -34,10 +34,8 @@ abstract class AbstractLuaVirtualSchemaIT {
                     .withRequiredServices() //
                     .withExposedPorts(8563) //
                     .withReuse(true);
-    private static final String LUA51_LOADERS = "package.loaders";
-    private static final String LUA54_SEARCHERS = "package.searchers";
     private static final String EXASOL_LUA_MODULE_LOADER_WORKAROUND = "table.insert(" //
-            + (isLua54Used() ? LUA54_SEARCHERS : LUA51_LOADERS) //
+            + "package.searchers" //
             + ",\n" //
             + "    function (module_name)\n" //
             + "        local loader = package.preload[module_name]\n" //
@@ -58,10 +56,6 @@ abstract class AbstractLuaVirtualSchemaIT {
         connection = EXASOL.createConnection("");
         factory = new ExasolObjectFactory(connection);
         scriptSchema = factory.createSchema("L");
-    }
-
-    private static boolean isLua54Used() {
-        return !DOCKER_DB.contains(":7.0");
     }
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema, final Map<String, String> properties) {

@@ -4,16 +4,22 @@
 -- It is responsible for creating and wiring up the main adapter objects.
 -- </p>
 
-local adapter = require("exasolrls.rls_adapter")
-local dispatcher = require("exasolvs.request_dispatcher").init(adapter)
+local RlsAdapter = require("exasolrls.RlsAdapter")
+local RlsAdapterProperties = require("exasolrls.RlsAdapterProperties")
+local MetadataReader = require("exasolrls.MetadataReader")
+local RequestDispatcher = require("exasolvs.RequestDispatcher")
 
 ---
 -- Handle a Virtual Schema request.
--- 
+--
 -- @param request_as_json JSON-encoded adapter request
--- 
+--
 -- @return JSON-encoded adapter response
--- 
+--
 function adapter_call(request_as_json)
-    return dispatcher.adapter_call(request_as_json)
+    local exasol_context = _G.exa
+    local metadata_reader = MetadataReader:new(exasol_context)
+    local adapter = RlsAdapter.create(metadata_reader)
+    local dispatcher = RequestDispatcher.create(adapter, RlsAdapterProperties)
+    return dispatcher:adapter_call(request_as_json)
 end
