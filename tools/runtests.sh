@@ -33,7 +33,7 @@ function create_target_directories {
 #
 function run_tests {
     cd "$base_dir" || exit
-    busted --coverage
+    luarocks test
 }
 
 ##
