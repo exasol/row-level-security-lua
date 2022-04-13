@@ -5,32 +5,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Install Lua"
-        uses: leafo/gh-actions-lua@v8
-        with:
-          luaVersion: 5.4
-      - name: "Install LuaRocks"
-        uses: leafo/gh-actions-luarocks@v4
-        with:
-          luarocksVersion: "3.8.0"
-      - name: "Print versions"
-        run: |
-          lua -v
-          luarocks --version
-          luarocks path
-      - name: "Install dependencies"
-        run: |
-          luarocks install --local busted
-          luarocks install --local luacheck
-          luarocks install --local luacov
-          luarocks install --local luacov-coveralls
-          luarocks install --local LuaUnit
-          luarocks install --local Mockagne
-          luarocks install --local lua-cjson
-          luarocks install --local remotelog
-          luarocks install --local exaerror
-          luarocks install --local virtual-schema-common-lua
-          luarocks install --local amalg
       - uses: actions/checkout@v2
         with:
            fetch-depth: 0
@@ -49,6 +23,34 @@ jobs:
       - name: "Prepare container reuse"
         run: |
           echo 'testcontainers.reuse.enable=true' > "/home/runner/.testcontainers.properties"
+      - name: "Install Lua"
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: 5.4
+      - name: "Install LuaRocks"
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luarocksVersion: "3.8.0"
+      - name: "Print versions"
+        run: |
+          which lua
+          which luarocks
+          lua -v
+          luarocks --version
+          luarocks path
+      - name: "Install dependencies"
+        run: |
+          luarocks install --local busted
+          luarocks install --local luacheck
+          luarocks install --local luacov
+          luarocks install --local luacov-coveralls
+          luarocks install --local LuaUnit
+          luarocks install --local Mockagne
+          luarocks install --local lua-cjson 2.1.0
+          luarocks install --local remotelog
+          luarocks install --local exaerror
+          luarocks install --local virtual-schema-common-lua
+          luarocks install --local amalg
       - name: "Build with Maven"
         run: |
           eval $(luarocks path)
