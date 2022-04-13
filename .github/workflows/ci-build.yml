@@ -13,6 +13,11 @@ jobs:
         uses: leafo/gh-actions-luarocks@v4
         with:
           luarocksVersion: "3.8.0"
+      - name: "Print versions"
+          run: |
+            lua -v
+            luarocks --version
+            luarocks path
       - name: "Install dependencies"
         run: |
           luarocks install --local busted
