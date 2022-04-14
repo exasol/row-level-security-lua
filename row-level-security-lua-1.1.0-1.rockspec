@@ -25,7 +25,7 @@ dependencies = {
     "virtual-schema-common-lua = 1.0.0"
 }
 
-build_dependencies {
+build_dependencies = {
     "amalg"
 }
 
