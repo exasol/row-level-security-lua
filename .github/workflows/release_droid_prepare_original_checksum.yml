@@ -7,30 +7,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+      - name: "Install Lua"
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: 5.4
+      - name: "Install LuaRocks"
+        uses: leafo/gh-actions-luarocks@v4
+        with:
+          luarocksVersion: "3.8.0"
       - name: "Install dependencies"
         run: |
-          sudo apt-get update
-          sudo apt install luarocks
-          sudo luarocks install luacheck
-          sudo luarocks install luacov
-          sudo luarocks install luacov-coveralls
-          sudo luarocks install LuaUnit
-          sudo luarocks install Mockagne
-          sudo luarocks install lua-cjson
-          sudo luarocks install remotelog
-          sudo luarocks install exaerror
-          sudo luarocks install amalg
-      - uses: actions/checkout@v2
-      - name: Checkout the repository
-        uses: actions/checkout@v2
+          luarocks --local install *.rockspec --deps-only
+      - name: "Set up JDK"
+        uses: actions/setup-java@v3
         with:
-          fetch-depth: 0
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
+          java-version: '11'
+          distribution: 'temurin'
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -39,8 +36,10 @@ jobs:
       - name: "Prepare container reuse"
         run: |
           echo 'testcontainers.reuse.enable=true' > "/home/runner/.testcontainers.properties"
-      - name: Run tests and build with Maven
-        run: mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify --file pom.xml
+      - name: "Build with Maven"
+        run: |
+          eval $(luarocks path)
+          mvn verify --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
       - name: Prepare checksum
         run: find target -maxdepth 1 '(' -name "*.lua" -o -name "*.sql" ')' -exec sha256sum "{}" + > original_checksum
       - name: Upload checksum to the artifactory

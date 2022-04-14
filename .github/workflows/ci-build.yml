@@ -18,19 +18,9 @@ jobs:
           luarocksVersion: "3.8.0"
       - name: "Install dependencies"
         run: |
-          luarocks install --local busted
-          luarocks install --local luacheck
-          luarocks install --local luacov
-          luarocks install --local luacov-coveralls
-          luarocks install --local LuaUnit
-          luarocks install --local Mockagne
-          luarocks install --local lua-cjson 2.1.0
-          luarocks install --local remotelog
-          luarocks install --local exaerror
-          luarocks install --local virtual-schema-common-lua
-          luarocks install --local amalg
+          luarocks --local install *.rockspec --deps-only
       - name: "Set up JDK"
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
