@@ -25,6 +25,10 @@ dependencies = {
     "virtual-schema-common-lua = 1.0.0"
 }
 
+build_dependencies {
+    "amalg"
+}
+
 test_dependencies = {
     "busted >= 2.0.0",
     "luacheck >= 0.25.0",
@@ -35,20 +39,6 @@ test_dependencies = {
 test = {
     type = "busted"
 }
-
---build = {
---    type = "builtin",
---    modules = {
---        ["exasolrls.adapter_capabilities"] = src .. "/exasolrls/adapter_capabilities.lua",
---        ["exasolrls.MetadataReader"] = src .. "/exasolrls/MetadataReader.lua",
---        ["exasolrls.QueryRewriter"] = src .. "/exasolrls/QueryRewriter.lua",
---        ["exasolrls.RlsAdapter"] = src .. "/exasolrls/RlsAdapter.lua",
---        ["exasolrls.RlsAdapterProperties"] = src .. "/exasolrls/RlsAdapterProperties.lua",
---        ["exasolrls.TableProtectionReader"] = src .. "/exasolrls/TableProtectionReader.lua",
---        ["entry"] = src .. "/text.lua"
---    },
---    copy_directories = { "doc"}
---}
 
 local package_items = {
     "exasolrls.adapter_capabilities", "exasolrls.RlsAdapterProperties", "exasolrls.RlsAdapter",
