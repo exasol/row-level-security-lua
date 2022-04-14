@@ -4,7 +4,7 @@ Code name: New capabilities for GROUP BY
 
 ## Summary
 
-In this release we have implemented GROUP BY capabilities support.
+In this release we have implemented GROUP BY capabilities support. The release also introduces a new foundation based on Exasol's `virtual-schema-common-lua`. We improved handling and validation of user-defined properties (like `SCHEMA_NAME` and `TABLE_FILTER`). We also improve Lua build, dependency management and testing.
 
 ## Bug Fixes
 
@@ -13,6 +13,11 @@ In this release we have implemented GROUP BY capabilities support.
 ## Features 
 
 * #99: Implemented GROUP BY capabilities support.
+
+## Refactoring
+
+* #106: Switched to `virtual-schema-common-lua` as basis for the Virtual Schema
+* #109: Added a rockspec for Lua dependency management
 
 ## Dependency Updates
 

@@ -50,7 +50,7 @@ local package_items = {
 }
 
 local item_path_list = ""
-for i=1, #package_items do
+for i = 1, #package_items do
     item_path_list = item_path_list .. " " .. package_items[i]
 end
 
