@@ -27,7 +27,7 @@ dependencies = {
 
 build_dependencies = {
     "amalg", -- bundling scripts and modules into one big script
-    "luasec" -- needed for HTTPS downloads from LuaRocks
+    "LuaSec" -- needed for HTTPS downloads from LuaRocks
 }
 
 test_dependencies = {
