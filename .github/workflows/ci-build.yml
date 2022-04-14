@@ -20,7 +20,7 @@ jobs:
         run: |
           luarocks --local install *.rockspec --deps-only
       - name: "Set up JDK"
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
