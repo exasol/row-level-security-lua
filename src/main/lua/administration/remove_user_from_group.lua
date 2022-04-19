@@ -1,9 +1,7 @@
 --[[
 CREATE OR REPLACE SCRIPT REMOVE_USER_FROM_GROUP(user_name, array user_groups) AS
 --]]
--- [impl->dsn~remove-user-from-group~1]
--- [impl->dsn~remove-user-from-group-validates-user-name~1]
--- [impl->dsn~remove-user-from-group-validates-group-names~1]
+-- [impl -> dsn~removing-users-from-groups~0]
 import(exa.meta.script_schema .. '.EXA_IDENTIFIER', 'identifier')
 
 function remove_members()

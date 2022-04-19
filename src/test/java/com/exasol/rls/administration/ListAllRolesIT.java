@@ -19,7 +19,7 @@ class ListAllRolesIT extends AbstractAdminScriptIT {
         initialize(EXASOL, "LIST_ALL_ROLES", PATH_TO_LIST_ALL_ROLES);
     }
 
-    // [itest->dsn~listing-all-roles~1]
+    // [itest -> dsn~listing-all-roles~0]
     @Test
     void testListAllRoles() {
         try {

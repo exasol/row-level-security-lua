@@ -29,7 +29,7 @@ class ListUserGroupsIT extends AbstractAdminScriptIT {
                 .insert("TAKESHI", "MARTIAL_ARTISTS");
     }
 
-    // [itest->dsn~listing-a-users-groups~1]
+    // [itest -> dsn~listing-a-users-groups~0]
     @Test
     void testListRlsGroupsSingleUser() {
         assertThat(script.executeQuery("KLAUS"), contains(contains("SOCCER_PLAYERS"), contains("TENNIS_PLAYERS")));

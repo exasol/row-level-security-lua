@@ -194,7 +194,7 @@ Covers:
 Needs: dsn
 
 #### Assigning Users to Groups
-`req~assigning-users-to-groups ~1`
+`req~assigning-users-to-groups~1`
 
 Data Owners can assign zero or more users to a named group.
 

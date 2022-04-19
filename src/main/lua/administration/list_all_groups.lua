@@ -1,7 +1,7 @@
 --[[
 CREATE OR REPLACE SCRIPT LIST_ALL_GROUPS() RETURNS TABLE AS
 --]]
--- [impl->dsn~listing-all-groups~1]
+-- [impl -> dsn~listing-all-groups~0]
 exit(query([[SELECT EXA_GROUP, COUNT(1) AS NUMBER_OF_MEMBERS
 FROM ::s.EXA_GROUP_MEMBERS
 GROUP BY EXA_GROUP

@@ -26,7 +26,7 @@ class ListUsersAndRolesIT extends AbstractAdminScriptIT {
                 .insert("ROLE_63", 63);
     }
 
-    // [itest->dsn~listing-users-and-roles~1]
+    // [itest -> dsn~listing-users-and-roles~0]
     @Test
     void testListRlsUsersWithRoles() {
         schema.createTable(USERS_TABLE, "EXA_USER_NAME", "VARCHAR(128)", "EXA_ROLE_MASK", "DECIMAL(20,0)") //

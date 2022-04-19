@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+// [itest -> dsn~assigning-users-to-groups~0]
 @Testcontainers
 @Tag("integration")
 @Tag("slow")
@@ -32,8 +33,6 @@ class AddUserToGroupIT extends AbstractAdminScriptIT {
         return schema.getFullyQualifiedName() + "." + EXA_GROUP_MEMBERS_TABLE_NAME;
     }
 
-    // [itest->dsn~add-user-to-group~1]
-    // [itest->dsn~adding-user-to-group-creates-member-table~1]
     @Test
     void testAddUserToGroup() throws SQLException {
         factory.createLoginUser("ROLF");
@@ -54,7 +53,6 @@ class AddUserToGroupIT extends AbstractAdminScriptIT {
                 "$STARTS_WITH_SPECIAL_CHAR", null);
     }
 
-    // [itest->dsn~add-user-to-group-validates-user-name~1]
     @MethodSource("produceInvalidIdentifiers")
     @ParameterizedTest
     void testAddUserToGroupValidatesUserName(final String identifier, final String quotedIdentifier) {
@@ -62,7 +60,6 @@ class AddUserToGroupIT extends AbstractAdminScriptIT {
                 identifier, List.of("IRRELEVANT"));
     }
 
-    // [itest->dsn~add-user-to-group-validates-group-names~1]
     @MethodSource("produceInvalidIdentifiersInList")
     @ParameterizedTest
     void testAddUserToGroupValidatesGroups(final List<String> invalidGroupNames, final String quotedGroupNames) {

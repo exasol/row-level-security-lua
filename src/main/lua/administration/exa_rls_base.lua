@@ -1,6 +1,3 @@
--- [impl->dsn~add-rls-role-creates-a-table~1]
--- [impl->dsn~add-rls-roles-checks-parameters~1]
--- [impl->dsn~assign-roles-to-user-creates-a-table~1]
 --[[
 CREATE OR REPLACE SCRIPT EXA_RLS_BASE AS
 --]]
