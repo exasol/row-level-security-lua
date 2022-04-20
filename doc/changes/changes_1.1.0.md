@@ -1,4 +1,4 @@
-# Exasol Row Level Security (Lua) 1.1.0, released 2021-11-??
+# Exasol Row Level Security (Lua) 1.1.0, released 2022-04-20
 
 Code name: New capabilities for GROUP BY
 
