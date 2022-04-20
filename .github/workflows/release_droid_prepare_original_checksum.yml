@@ -28,13 +28,6 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
       - name: "Prepare container reuse"
         run: |
           echo 'testcontainers.reuse.enable=true' > "/home/runner/.testcontainers.properties"
