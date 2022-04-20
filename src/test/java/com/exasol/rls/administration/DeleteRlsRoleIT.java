@@ -20,7 +20,7 @@ import com.exasol.dbbuilder.dialects.Table;
 import com.exasol.matcher.ResultSetStructureMatcher;
 import com.exasol.matcher.ResultSetStructureMatcher.Builder;
 
-// [itest->dsn~delete-a-role~1]
+// [itest -> dsn~removing-roles-from-users~0]
 @Tag("integration")
 @Tag("slow")
 @Testcontainers
@@ -50,7 +50,6 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
         return schema.getFullyQualifiedName() + "." + USERS_TABLE;
     }
 
-    // [itest->dsn~delete-rls-role-removes-a-role-from-administrative-tables~1]
     @CsvSource({ "'Sales', 'Development', 'Finance', 'Support'", "'Development', 'Finance', 'Sales', 'Support'",
             "'Finance', 'Development', 'Sales', 'Support'", "'Support',  'Development', 'Finance', 'Sales'" })
     @ParameterizedTest
@@ -69,7 +68,6 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
                 .insert("Support", 4);
     }
 
-    // [itest->dsn~delete-rls-role-removes-a-role-from-administrative-tables~1]
     @Test
     void testDeleteRlsRoleUnknownRole() throws SQLException {
         rolesTable.insert("Sales", 1) //
@@ -77,7 +75,6 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
         assertScriptThrows("Unable to delete RLS role \"Support\" because it does not exist.", "Support");
     }
 
-    // [itest->dsn~delete-rls-role-removes-a-role-from-user-table~1]
     @ParameterizedTest
     @MethodSource("provideValuesForTestDeleteRlsRoleFromExaRlsUsers")
     void testDeleteRlsRoleFromExaRlsUsers(final String roleToDelete, final Object[][] expectedRows)
@@ -106,7 +103,6 @@ class DeleteRlsRoleIT extends AbstractAdminScriptIT {
                 Arguments.of("Support", new Object[][] { { "RLS_USR_1", 7 }, { "RLS_USR_2", 1 } }));
     }
 
-    // [itest->dsn~delete-rls-role-removes-a-role-from-roles-secured-tables~1]
     @ParameterizedTest
     @MethodSource("provideValuesForTestDeleteRlsRoleFromPayloadTable")
     void testDeleteRlsRoleFromPayloadTable(final String roleToDelete, final Object[][] expectedRows)

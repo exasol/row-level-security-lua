@@ -12,7 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-// [itest->dsn~add-a-new-role~1]
+// [itest -> dsn~assigning-roles-to-users~0]
 @Tag("integration")
 @Tag("slow")
 @Testcontainers
@@ -31,7 +31,6 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
         return schema.getFullyQualifiedName() + "." + EXA_ROLES_MAPPING_TABLE_NAME;
     }
 
-    // [itest->dsn~add-rls-role-creates-a-table~1]
     @Test
     void testAddRlsRole() throws SQLException {
         script.execute("Sales", 1);
@@ -45,14 +44,12 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
                         .matches());
     }
 
-    // [itest->dsn~add-rls-roles-checks-parameters~1]
     @Test
     void testAddRlsRoleExistingIdException() throws SQLException {
         script.execute("Sales", 1);
         assertScriptThrows("Role id 1 already exists (role name \"Sales\").", "Finance", 1);
     }
 
-    // [itest->dsn~add-rls-roles-checks-parameters~1]
     @ParameterizedTest
     @ValueSource(strings = { "SALES", "Sales", "sales" })
     void testAddRlsRoleExistingNameException(final String roleName) throws SQLException {
@@ -60,7 +57,6 @@ class AddRlsRoleIT extends AbstractAdminScriptIT {
         assertScriptThrows("Role name \"" + roleName + "\" already exists (role id 1).", roleName, 2);
     }
 
-    // [itest->dsn~add-rls-roles-checks-parameters~1]
     @ParameterizedTest
     @ValueSource(ints = { -5, 0, 64, 70 })
     void testAddRlsRoleInvalidRoleIdException(final int rlsRole) throws SQLException {

@@ -15,6 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.dbbuilder.dialects.Table;
 
+// [itest -> dsn~removing-users-from-groups~0]
 @Testcontainers
 @Tag("integration")
 @Tag("slow")
@@ -37,7 +38,6 @@ class RemoveUserFromGroupIT extends AbstractAdminScriptIT {
         execute("DROP TABLE " + this.memberTable.getFullyQualifiedName());
     }
 
-    // [itest->dsn~remove-user-from-group~1]
     @Test
     void testRemoveUserFromGroup() throws SQLException {
         this.memberTable.insert("ROLF", "ARTISTS") //
@@ -54,7 +54,6 @@ class RemoveUserFromGroupIT extends AbstractAdminScriptIT {
                         .matches());
     }
 
-    // [itest->dsn~remove-user-from-group-validates-user-name~1]
     @MethodSource("produceInvalidIdentifiers")
     @ParameterizedTest
     void testRemoveUserFromGroupValidatesUserName(final String identifier, final String quotedIdentifier) {
@@ -62,7 +61,6 @@ class RemoveUserFromGroupIT extends AbstractAdminScriptIT {
                 identifier, List.of("IRRELEVANT"));
     }
 
-    // [itest->dsn~remove-user-from-group-validates-group-names~1]
     @MethodSource("produceInvalidIdentifiersInList")
     @ParameterizedTest
     void testRemoveUserFromGroupValidatesGroups(final List<String> invalidGroupNames, final String quotedGroupNames) {
