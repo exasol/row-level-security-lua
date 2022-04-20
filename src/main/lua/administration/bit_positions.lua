@@ -1,4 +1,3 @@
--- [impl->dsn~get-a-role-mask~1]
 --[[
 CREATE OR REPLACE LUA SCALAR SCRIPT BIT_POSITIONS(num DOUBLE) EMITS(pos DOUBLE) AS
 --]]

@@ -29,7 +29,7 @@ class ListAllGroupsIT extends AbstractAdminScriptIT {
                 .insert("TAKESHI", "MARTIAL_ARTISTS");
     }
 
-    // [itest->dsn~listing-all-groups~1]
+    // [itest -> dsn~listing-all-groups~0]
     @Test
     void testListRlsGroupsAll() {
         assertThat(script.executeQuery(), contains(contains("MARTIAL_ARTISTS", 1L), contains("SOCCER_PLAYERS", 2L),

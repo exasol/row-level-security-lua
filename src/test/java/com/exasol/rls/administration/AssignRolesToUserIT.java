@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-// [itest->dsn~assign-roles-to-a-user~1]
+// [itest -> dsn~assigning-roles-to-users~0]
 @Tag("integration")
 @Tag("slow")
 @Testcontainers
@@ -44,8 +44,6 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
         return schema.getFullyQualifiedName() + "." + USERS_TABLE;
     }
 
-    // [itest->dsn~assign-roles-to-user-creates-a-table~1]
-    // [itest->dsn~assign-roles-to-user-creates-a-role~1]
     @ParameterizedTest
     @MethodSource("provideValuesForTestAssignRolesToUser")
     void testAssignRolesToUser(final List<String> rolesToAssign, final long maskValue) throws SQLException {
@@ -64,7 +62,6 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                         BitField64.ofIndices(1, 2, 52, 62).toLong()));
     }
 
-    // [itest->dsn~assign-roles-to-user-creates-a-role~1]
     @Test
     void testAssignRolesToUserUpdatesUserRoles() throws SQLException {
         script.execute("NORBERT", List.of("role_1", "role_2", "role_63"));
@@ -74,7 +71,6 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                 .matches(NO_JAVA_TYPE_CHECK));
     }
 
-    // [itest->dsn~assign-roles-to-user-creates-a-role~1]
     @MethodSource("produceInvalidIdentifiers")
     @ParameterizedTest
     void testAssingingToIllegalUserThrowsException(final String userName, final String quotedUserName) {
@@ -82,7 +78,6 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                 userName, List.of("role_1"));
     }
 
-    // [itest->dsn~assign-roles-to-user-creates-a-role~1]
     @MethodSource("produceInvalidIdentifiersInList")
     @ParameterizedTest
     void testAssignIllegalRoleToUserThrowsException(final List<String> invalidRoleNames, final String quotedRoleNames) {

@@ -18,7 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.exasol.dbbuilder.dialects.Table;
 
-// [itest->dsn~get-a-role-mask~1]
 @Tag("integration")
 @Tag("slow")
 @Testcontainers
@@ -42,7 +41,6 @@ class RoleMaskIT extends AbstractAdminScriptIT {
         statement.execute("DROP FUNCTION IF EXISTS " + schema.getName() + ".ROLE_NAME");
     }
 
-    // [itest->dsn~get-a-role-mask~1]
     @MethodSource("produceValuesForTestRoleMask")
     @ParameterizedTest
     void testRoleMask(final int roleId, final Long expectedMask) throws SQLException {
@@ -61,7 +59,6 @@ class RoleMaskIT extends AbstractAdminScriptIT {
                 Arguments.of(65, null));
     }
 
-    // [itest->dsn~get-a-role-mask~1]
     @ParameterizedTest
     @MethodSource("produceValuesForTestSumRolesMask")
     void testSumRolesMask(final String roles, final long maskValue) throws SQLException {

@@ -1,7 +1,7 @@
 --[[
 CREATE OR REPLACE SCRIPT LIST_USERS_AND_ROLES() RETURNS TABLE AS
 --]]
--- [impl->dsn~listing-users-and-roles~1]
+-- [impl -> dsn~listing-users-and-roles~0]
 exit(query([[SELECT *
     FROM (
     (

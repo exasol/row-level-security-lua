@@ -7,9 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-          with:
-            fetch-depth: 0
+      - name: "Checkout the repository"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: "Install Lua"
         uses: leafo/gh-actions-lua@v8
         with:
@@ -26,8 +27,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+          cache: 'maven'
       - name: Cache local Maven repository
-        uses: actions/cache@v3
+        uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -39,10 +41,10 @@ jobs:
       - name: "Build with Maven"
         run: |
           eval $(luarocks path)
-          mvn verify --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-      - name: Prepare checksum
-        run: find target -maxdepth 1 '(' -name "*.lua" -o -name "*.sql" ')' -exec sha256sum "{}" + > original_checksum
-      - name: Upload checksum to the artifactory
+          mvn verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+      - name: "Prepare checksum"
+        run: find target -maxdepth 1 \( -name '*.lua' -o -name '*.sql' \) -exec sha256sum "{}" + > original_checksum
+      - name: "Upload checksum as artifact"
         uses: actions/upload-artifact@v2
         with:
           name: original_checksum
