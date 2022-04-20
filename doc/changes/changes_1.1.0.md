@@ -24,12 +24,13 @@ In this release we have implemented GROUP BY capabilities support. The release a
 
 ### Compile Dependency Updates
 
-* Updated `com.exasol:maven-project-version-getter:1.0.0` to `1.1.0`
+* Removed `com.exasol:maven-project-version-getter:1.0.0`
 
 ### Test Dependency Updates
 
 * Updated `com.exasol:exasol-jdbc:7.1.2` to `7.1.7`
 * Updated `com.exasol:exasol-testcontainers:5.1.1` to `6.1.1`
+* Added `com.exasol:maven-project-version-getter:1.1.0`
 * Updated `com.exasol:test-db-builder-java:3.2.1` to `3.3.1`
 * Updated `org.junit.jupiter:junit-jupiter-engine:5.8.1` to `5.8.2`
 * Updated `org.junit.jupiter:junit-jupiter-params:5.8.1` to `5.8.2`
