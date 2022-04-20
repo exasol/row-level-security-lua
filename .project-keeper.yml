@@ -9,3 +9,5 @@ excludes:
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_prepare_original_checksum.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_print_quick_checksum.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_upload_github_release_assets.yml'"
+  # Pinned version of link checker as workaround for: https://github.com/gaurav-nelson/github-action-markdown-link-check/issues/127
+  - "E-PK-CORE-18: Outdated content: '.github/workflows/broken_links_checker.yml'"
