@@ -8,6 +8,8 @@ Release 1.2.0 of `row-level-security-lua` upgrades the base module to `virtual-s
 
 Note that this version requires Exasol 7.1.10 or later to run stable, because earlier versions had a problem in handling Lua's `pcall` and `xpcall` functions. Please upgrade your database before running RLS!
 
+We also added validation for Virtual Schema properties to all requests that use properties.
+
 ### Know Issues
 
 Push-down of aggregate functions is not yet implemented. We will add that in a future version.
@@ -21,6 +23,7 @@ Push-down of aggregate functions is not yet implemented. We will add that in a f
 
 * Updated `com.exasol:exasol-jdbc:7.1.7` to `7.1.10`
 * Updated `com.exasol:test-db-builder-java:3.3.1` to `3.3.2`
+* Updated `org.testcontainers:junit-jupiter:1.17.1` to `1.17.2`
 
 ### Plugin Dependency Updates
 
