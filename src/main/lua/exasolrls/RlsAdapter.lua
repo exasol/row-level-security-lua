@@ -4,7 +4,7 @@ local QueryRewriter = require("exasolrls.QueryRewriter")
 
 -- Derive from AbstractVirtualSchemaAdapter
 local RlsAdapter = AbstractVirtualSchemaAdapter:new()
-local VERSION <const> = "1.1.0"
+local VERSION <const> = "1.2.0"
 
 --- Create an <code>RlsAdapter</code>
 -- @param metadata_reader metadata reader

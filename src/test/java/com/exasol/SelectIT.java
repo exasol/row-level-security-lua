@@ -4,6 +4,7 @@ import static com.exasol.RlsTestConstants.IDENTIFIER_TYPE;
 import static com.exasol.RlsTestConstants.ROW_TENANT_COLUMN;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 
+import com.exasol.matcher.TypeMatchMode;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -12,7 +13,7 @@ import com.exasol.dbbuilder.dialects.User;
 import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
 @Testcontainers
-class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
+class SelectIT extends AbstractLuaVirtualSchemaIT {
     @Test
     void testSelectStarOnUnprotectedTable() {
         final String sourceSchemaName = "SELECT_STAR_SCHEMA";
@@ -50,5 +51,29 @@ class SelectListVariantsIT extends AbstractLuaVirtualSchemaIT {
         final User user = createUserWithVirtualSchemaAccess("EMPTY_SELECT_USER", virtualSchema);
         assertRlsQueryWithUser("SELECT 'foo' FROM " + getVirtualSchemaName(sourceSchemaName) + ".T", user,
                 table().row("foo").row("foo").matches());
+    }
+
+    @Test
+    void testSelectWithOrderByColumnAndLimit() {
+        final String sourceSchemaName = "ORDER_LIMIT_SCHEMA";
+        final Schema sourceSchema = createSchema(sourceSchemaName);
+        sourceSchema.createTable("T", "NR", "INTEGER").insert(1).insert(2).insert(3);
+        final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
+        final User user = createUserWithVirtualSchemaAccess("EMPTY_SELECT_USER", virtualSchema);
+        assertRlsQueryWithUser("SELECT NR FROM " + getVirtualSchemaName(sourceSchemaName)
+                        + ".T ORDER BY NR LIMIT 2", user,
+                table().row(1).row(2).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
+    }
+
+    @Test
+    void testSelectWithOrderByExpressionAndLimitWithOffset() {
+        final String sourceSchemaName = "ORDER_LIMIT_OFFSET_SCHEMA";
+        final Schema sourceSchema = createSchema(sourceSchemaName);
+        sourceSchema.createTable("T", "TXT", "VARCHAR(10)").insert("a").insert("bb").insert("ccc").insert("dddd");
+        final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
+        final User user = createUserWithVirtualSchemaAccess("EMPTY_SELECT_USER", virtualSchema);
+        assertRlsQueryWithUser("SELECT TXT FROM " + getVirtualSchemaName(sourceSchemaName)
+                        + ".T ORDER BY LENGTH(TXT) LIMIT 2 OFFSET 1", user,
+                table().row("bb").row("ccc").matches());
     }
 }

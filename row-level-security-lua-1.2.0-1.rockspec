@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.1.0"
+local tag = "1.2.0"
 local project = "row-level-security-lua"
 local src = "src/main/lua"
 
@@ -22,7 +22,7 @@ description = {
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 1.0.0"
+    "virtual-schema-common-lua = 1.1.0"
 }
 
 build_dependencies = {
@@ -46,7 +46,9 @@ local package_items = {
     "message_expander",
     -- from virtual-schema-common-lua"
     "exasolvs.AbstractVirtualSchemaAdapter", "exasolvs.AdapterProperties", "exasolvs.RequestDispatcher",
-    "exasolvs.QueryRenderer", "text"
+    "exasolvs.Query", "exasolvs.QueryRenderer", "exasolvs.queryrenderer.AbstractQueryAppender",
+    "exasolvs.queryrenderer.ExpressionAppender", "exasolvs.queryrenderer.ScalarFunctionAppender",
+    "exasolvs.queryrenderer.SelectAppender", "text"
 }
 
 local item_path_list = ""
