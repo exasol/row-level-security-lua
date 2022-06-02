@@ -12,11 +12,12 @@ We also added validation for Virtual Schema properties to all requests that use 
 
 ### Know Issues
 
-Push-down of aggregate functions is not yet implemented. We will add that in a future version.
+Push-down of aggregate functions is not yet implemented. We will add that in a future version (issue [#120](https://github.com/exasol/row-level-security-lua/issues/120)).
 
 ## Features 
 
-* #118: `ORDER BY`, `LIMIT` more scalar functions
+* #118: Added support for `ORDER BY`, `LIMIT` more scalar functions
+
 ## Dependency Updates
 
 ### Test Dependency Updates
