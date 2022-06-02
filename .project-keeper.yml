@@ -3,6 +3,8 @@ sources:
     path: pom.xml
     modules:
       - integration_tests
+link_replacements:
+  - "LICENSE-exasol-jdbc.txt|https://docs.exasol.com/db/latest/connect_exasol/drivers/jdbc.htm"
 excludes:
   - "E-PK-CORE-17: Missing required file: '.github/workflows/ci-build-next-java.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/ci-build.yml'"
