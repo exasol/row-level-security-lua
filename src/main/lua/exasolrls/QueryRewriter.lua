@@ -256,7 +256,7 @@ function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, 
         log.debug('Table "%s" is not protected. No filters added.', table_id)
     end
     extend_query_with_source_schema(query, source_schema_id)
-    local renderer = QueryRenderer.create(query)
+    local renderer = QueryRenderer:new(query)
     return renderer:render()
 end
 
