@@ -20,7 +20,7 @@ Push-down of aggregate functions is not yet implemented. We will add that in a f
 
 ## Refactoring
 
-* #122: Applied new object-orientation style 
+* #122: Applied new object-oriented style 
 
 ## Features 
 
