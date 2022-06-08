@@ -20,7 +20,7 @@ describe("adapter_properties", function()
             }
             for _, test in ipairs(tests) do
                 it(test.expected, function()
-                    local properties = RlsAdapterProperties.create(test.properties)
+                    local properties = RlsAdapterProperties:new(test.properties)
                     assert.error_matches(function () properties:validate() end,  test.expected, 1, true)
                 end)
             end

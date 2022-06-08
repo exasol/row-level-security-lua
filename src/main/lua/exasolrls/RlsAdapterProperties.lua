@@ -3,24 +3,22 @@ local exaerror = require("exaerror")
 local AdapterProperties = require("exasolvs.AdapterProperties")
 
 --- This class abstracts access to the user-defined properties of the Virtual Schema.
--- @type RlsAdapterProperties
-local RlsAdapterProperties = AdapterProperties:new()
+-- @classmod RlsAdapterProperties
+local RlsAdapterProperties = {}
+RlsAdapterProperties.__index = RlsAdapterProperties
+setmetatable(RlsAdapterProperties, AdapterProperties)
 
---- Factory method for RLS adapter properties
--- @param raw_properties comma-separated list of property names
--- @return RLS adapter properties object
-function RlsAdapterProperties.create(raw_properties)
-    return RlsAdapterProperties:new({raw_properties = raw_properties})
+--- Create a new `RlsAdapterProperties` instance
+-- @param raw_properties unparsed user-defined properties
+-- @return new RLS adaper properties
+function RlsAdapterProperties:new(raw_properties)
+    local instance = setmetatable({}, self)
+    instance:_init(raw_properties)
+    return instance
 end
 
---- Create a new <code>RlsAdapterProperties</code> instance
--- @param object pre-initialized object
--- @return new RLS adaper properties
-function RlsAdapterProperties:new(object)
-    object = AdapterProperties.new(self, object)
-    self.__index = self
-    setmetatable(object, self)
-    return object
+function RlsAdapterProperties:_init(raw_properties)
+    AdapterProperties._init(self, raw_properties)
 end
 
 local SCHEMA_NAME_PROPERTY <const> = "SCHEMA_NAME"

@@ -14,7 +14,7 @@ describe("RlsAdapter", function()
 
     before_each(function()
         metadata_reader_mock = mockagne.getMock()
-        adapter = RlsAdapter.create(metadata_reader_mock)
+        adapter = RlsAdapter:new(metadata_reader_mock)
         properties_stub = {
             get_table_filter = function() return {} end,
             has_excluded_capabilities = function() return false end
@@ -45,7 +45,7 @@ describe("RlsAdapter", function()
     end)
 
     it("confirms a request to drop the Virtual Schema with an empty response", function()
-        assert.are.same({type = "dropVirtualSchema"}, RlsAdapter.drop_virtual_schema())
+        assert.are.same({type = "dropVirtualSchema"}, adapter:drop_virtual_schema())
     end)
 
     it("reports the supported capabilities", function()

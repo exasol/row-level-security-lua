@@ -3,23 +3,23 @@ local adapter_capabilities = require("exasolrls.adapter_capabilities")
 local QueryRewriter = require("exasolrls.QueryRewriter")
 
 -- Derive from AbstractVirtualSchemaAdapter
-local RlsAdapter = AbstractVirtualSchemaAdapter:new()
+local RlsAdapter = {}
+RlsAdapter.__index = RlsAdapter
+setmetatable(RlsAdapter, {__index = AbstractVirtualSchemaAdapter})
 local VERSION <const> = "1.1.0"
 
---- Create an <code>RlsAdapter</code>
+--- Create an `RlsAdapter`.
 -- @param metadata_reader metadata reader
-function RlsAdapter.create(metadata_reader)
-    return RlsAdapter:new({metadata_reader = metadata_reader})
+-- @return RlsAdapter
+function RlsAdapter:new(metadata_reader)
+    local instance = setmetatable({}, self)
+    instance:_init(metadata_reader)
+    return instance
 end
 
---- Create an <code>RlsAdapter</code>.
--- @param object to initialize the adapter with
--- @return RlsAdapter
-function RlsAdapter:new(object)
-    object = AbstractVirtualSchemaAdapter:new(object)
-    self.__index = self
-    setmetatable(object, self)
-    return object
+function RlsAdapter:_init(metadata_reader)
+    AbstractVirtualSchemaAdapter._init(self)
+    self._metadata_reader = metadata_reader
 end
 
 --- Get the version number of the Virtual Schema adapter.
@@ -46,7 +46,7 @@ end
 function RlsAdapter:_handle_schema_scanning_request(request, properties)
     local schema_name = properties:get_schema_name()
     local table_filter = properties:get_table_filter()
-    return self.metadata_reader:read(schema_name, table_filter)
+    return self._metadata_reader:read(schema_name, table_filter)
 end
 
 --- Refresh the metadata of the Virtual Schema.

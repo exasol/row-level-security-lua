@@ -7,15 +7,21 @@ local DEFAULT_SRID <const> = 0
 --- This class reads schema, table and column metadata from the source.
 -- @type MetadataReader
 local MetadataReader = {}
+MetadataReader.__index = MetadataReader
 
---- Create a new <code>MetadataReader<code>.
--- @param exasol_context pre-initialized instance
+--- Create a new `MetadataReader`.
+-- @param exasol_context handle to local database functions and status
 -- @return metadata reader
 function MetadataReader:new(exasol_context)
-    local object = {exasol_context = exasol_context}
-    self.__index = self
-    setmetatable(object, self)
-    return object
+    assert(exasol_context ~= nil,
+            "The metadata reader requires an Exasol context handle in order to read metadata from the database")
+    local instance = setmetatable({}, self)
+    instance:_init(exasol_context)
+    return instance
+end
+
+function MetadataReader:_init(exasol_context)
+    self._exasol_context = exasol_context
 end
 
 function MetadataReader:_translate_parameterless_type(column_id, column_type)
@@ -113,7 +119,7 @@ end
 function MetadataReader:_translate_columns_metadata(schema_id, table_id)
     local sql = '/*snapshot execution*/ SELECT "COLUMN_NAME", "COLUMN_TYPE" FROM "SYS"."EXA_ALL_COLUMNS"'
             .. ' WHERE "COLUMN_SCHEMA" = :s AND "COLUMN_TABLE" = :t'
-    local ok, result = self.exasol_context.pquery_no_preprocessing(sql, {s = schema_id, t = table_id})
+    local ok, result = self._exasol_context.pquery_no_preprocessing(sql, {s = schema_id, t = table_id})
     local translated_columns = {}
     local tenant_protected, role_protected, group_protected
     if ok then
@@ -184,7 +190,7 @@ end
 
 function MetadataReader:_translate_table_metadata(schema_id, include_tables)
     local sql = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE "TABLE_SCHEMA" = :s'
-    local ok, result = self.exasol_context.pquery_no_preprocessing(sql, {s = schema_id})
+    local ok, result = self._exasol_context.pquery_no_preprocessing(sql, {s = schema_id})
     if ok then
         return self:_translate_table_scan_results(schema_id, result, include_tables)
     else

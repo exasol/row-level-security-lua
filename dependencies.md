@@ -13,7 +13,7 @@
 | [JUnit Jupiter Engine][10]                     | [Eclipse Public License v2.0][11] |
 | [JUnit Jupiter Params][10]                     | [Eclipse Public License v2.0][11] |
 | [SLF4J JDK14 Binding][14]                      | [MIT License][15]                 |
-| [Test Database Builder for Java][16]           | [MIT][3]                          |
+| [Test Database Builder for Java][16]           | [MIT License][17]                 |
 | [Maven Project Version Getter][18]             | [MIT][3]                          |
 
 ## Plugin Dependencies
@@ -45,12 +45,13 @@
 | [Maven Site Plugin 3][62]                               | [The Apache Software License, Version 2.0][27]                 |
 
 [1]: LICENSE-exasol-jdbc.txt
+[16]: https://github.com/exasol/test-db-builder-java/
 [27]: http://www.apache.org/licenses/LICENSE-2.0.txt
 [32]: https://maven.apache.org/surefire/maven-surefire-plugin/
 [54]: http://maven.apache.org/plugins/maven-clean-plugin/
 [3]: https://opensource.org/licenses/MIT
 [36]: https://maven.apache.org/surefire/maven-failsafe-plugin/
-[16]: https://github.com/exasol/test-db-builder-java
+[26]: https://www.mojohaus.org/flatten-maven-plugin/
 [18]: https://github.com/exasol/maven-project-version-getter
 [42]: http://www.mojohaus.org/exec-maven-plugin
 [34]: http://www.mojohaus.org/versions-maven-plugin/
@@ -58,6 +59,7 @@
 [7]: http://opensource.org/licenses/BSD-3-Clause
 [22]: https://maven.apache.org/plugins/maven-compiler-plugin/
 [5]: http://opensource.org/licenses/MIT
+[17]: https://github.com/exasol/test-db-builder-java/blob/main/LICENSE
 [44]: https://github.com/itsallcode/openfasttrace-maven-plugin
 [39]: https://www.eclipse.org/legal/epl-2.0/
 [21]: http://www.gnu.org/licenses/lgpl.txt
@@ -79,7 +81,6 @@
 [10]: https://junit.org/junit5/
 [28]: https://sonatype.github.io/ossindex-maven/maven-plugin/
 [4]: https://testcontainers.org
-[26]: https://www.mojohaus.org/flatten-maven-plugin/flatten-maven-plugin
 [46]: http://www.mojohaus.org/build-helper-maven-plugin/
 [52]: https://github.com/Huluvu424242/plantuml-maven-plugin
 [6]: http://hamcrest.org/JavaHamcrest/
