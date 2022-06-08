@@ -6,7 +6,7 @@ local QueryRewriter = require("exasolrls.QueryRewriter")
 local RlsAdapter = {}
 RlsAdapter.__index = RlsAdapter
 setmetatable(RlsAdapter, {__index = AbstractVirtualSchemaAdapter})
-local VERSION <const> = "1.1.0"
+local VERSION <const> = "1.2.0"
 
 --- Create an `RlsAdapter`.
 -- @param metadata_reader metadata reader
