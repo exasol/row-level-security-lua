@@ -8,13 +8,13 @@ local ALLOWED_IDENTIFIER = "Allowed identifiers are ASCII only, starting with a 
 ---
 -- Validate an Exasol identifier.
 -- <p>
--- Note that string parameters passed to Exasol scripts can never be empty. Exasol replaces empty <code>VARCHAR</code>
--- values by <code>NULL</code>. So if an identifier is stored or passed as as <code>VARCHAR</code> this rule applies.
+-- Note that string parameters passed to Exasol scripts can never be empty. Exasol replaces empty `VARCHAR`
+-- values by `NULL`. So if an identifier is stored or passed as as `VARCHAR` this rule applies.
 -- </p>
 --
--- @param identifer identifier to be validated against the rules for being a valid Exasol identifier
+-- @param identifier identifier to be validated against the rules for being a valid Exasol identifier
 --
--- @return <code>true</code> if the identifier is valid. Otherwise return false and a quoted identifier for use in an
+-- @return `true` if the identifier is valid. Otherwise return false and a quoted identifier for use in an
 -- error message
 --
 function validate(identifier)
@@ -32,7 +32,7 @@ function validate(identifier)
 end
 
 ---
--- Add quotes around a string and display <code>nil</code> and <code>null</code> in a clear fashion.
+-- Add quotes around a string and display `nil` and `null` in a clear fashion.
 --
 -- @param string string to be quoted
 --

@@ -1,10 +1,6 @@
----
--- Get the role mask for a single role ID.
---
+--- Get the role mask for a single role ID.
 -- @param role_id ID of the role for which the mask should be calculated
---
--- @return role mask or <code>NULL</code> if the role ID is out of bounds.
---
+-- @return role mask or `NULL` if the role ID is out of bounds.
 CREATE OR REPLACE FUNCTION ROLE_MASK (ROLE_ID IN DECIMAL(2,0))
 RETURN DECIMAL(20,0)
 BEGIN

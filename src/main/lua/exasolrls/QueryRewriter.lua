@@ -4,9 +4,7 @@ local log = require("remotelog")
 local exaerror = require("exaerror")
 
 --- This class rewrites the query, adding RLS protection if necessary.
---
--- @type QueryRewriter
---
+-- @classmod QueryRewriter
 local QueryRewriter = {}
 
 local function validate(query)

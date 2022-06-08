@@ -23,26 +23,6 @@ local function load_distribution()
     end
 end
 
---local function search_ignoring_dots(module_name)
---    local message = {}
---    print("no dot searcher: " .. package.path)
---    for path in string.gmatch(package.path, "[^;]+") do
---        local module_path = string.gsub(path, "?", module_name)
---        print("Checking " .. module_path)
---        local file <close> = io.open(module_path)
---        if file then
---            return module_path
---        else
---            table.insert(message, "\n\tno file (..) '" .. module_path .. "'")
---        end
---    end
---    return nil, table.concat(message)
---end
---
---table.insert(package.searchers, 2, search_ignoring_dots)
---
---local distribution = require(DISTRIBUTION_MODULE .. "-" .. VERSION)
-
 if load_distribution() then
     describe("Distribution (smoke test)", function()
         it("handles an adapter call to drop the virtual schema", function()

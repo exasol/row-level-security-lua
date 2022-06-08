@@ -204,6 +204,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.exasol</groupId>
+                <artifactId>error-code-crawler-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <!-- Prevent the crawler from running, Java is only used for tests. -->
+                        <id>verify</id>
+                        <goals/>
+                        <phase/>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Since this is a Lua project, no production JAR should be created. Empty JAR gets skipped. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

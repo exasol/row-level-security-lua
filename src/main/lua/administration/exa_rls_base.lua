@@ -31,7 +31,7 @@ end
 --
 -- @param role_name name of the role
 --
--- @return ID of the role or <code>nil</code> if the role does not exist
+-- @return ID of the role or `nil` if the role does not exist
 --
 function get_role_id_by_name(role_name)
     res = query([[SELECT role_id FROM ::s.EXA_ROLES_MAPPING WHERE upper(role_name) = upper(:r)]],
@@ -48,7 +48,7 @@ end
 --
 -- @param role_id ID of the role
 --
--- @return name of the role or <code>nil</code if the role does not exist
+-- @return name of the role or `nil` if the role does not exist
 --
 function get_role_name_by_id(role_id)
     res = query([[SELECT role_name FROM ::s.EXA_ROLES_MAPPING WHERE role_id = :i]],

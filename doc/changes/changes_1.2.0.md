@@ -1,10 +1,10 @@
-# Exasol Row Level Security (Lua) 1.2.0, released 2022-05-??
+# Exasol Row Level Security (Lua) 1.2.0, released 2022-06-08
 
-Code name: `ORDER BY`, `LIMIT`, more functions and unified error handling
+Code name: LIMIT, GROUP BY
 
 ## Summary
 
-Release 1.2.0 of `row-level-security-lua` upgrades the base module to `virtual-schema-common-lua` 1.1.0, which brings support for the `ORDER BY` and `LIMIT` clause as well as more scalar function coverage and uniform error reporting. 
+RLS (Lua) version 1.2.0 brings support for `LIMIT` with an optional offset and for `GROUP BY` clauses.
 
 Note that this version requires Exasol 7.1.10 or later to run stable, because earlier versions had a problem in handling Lua's `pcall` and `xpcall` functions. Please upgrade your database before running RLS!
 
@@ -13,6 +13,14 @@ We also added validation for Virtual Schema properties to all requests that use 
 ### Know Issues
 
 Push-down of aggregate functions is not yet implemented. We will add that in a future version (issue [#120](https://github.com/exasol/row-level-security-lua/issues/120)).
+
+## Features
+
+* #118: Added support for `LIMIT` and `GROUP BY` via update of `virtual-schema-common-lua`
+
+## Refactoring
+
+* #122: Applied new object-oriented style 
 
 ## Features 
 

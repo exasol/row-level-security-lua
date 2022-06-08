@@ -3,11 +3,6 @@ require("busted.runner")()
 require("entry")
 
 describe("Entry script", function()
-    it("handles an adapter call to drop the virtual schema", function()
-        local result = _G.adapter_call([[{"type" : "dropVirtualSchema"}]])
-        assert.are.equal([[{"type":"dropVirtualSchema"}]], result)
-    end)
-
     local function create_exasol_context_stub()
         return {
             pquery_no_preprocessing = function(query)
@@ -20,8 +15,14 @@ describe("Entry script", function()
         }
     end
 
+    _G.exa = create_exasol_context_stub()
+
+    it("handles an adapter call to drop the virtual schema", function()
+        local result = _G.adapter_call([[{"type" : "dropVirtualSchema"}]])
+        assert.are.equal([[{"type":"dropVirtualSchema"}]], result)
+    end)
+
     it("handles an adapter call to create the virtual schema", function()
-        _G.exa = create_exasol_context_stub()
         local result = _G.adapter_call(
                 [[{"type" : "createVirtualSchema",
                      "schemaMetadataInfo" : {
