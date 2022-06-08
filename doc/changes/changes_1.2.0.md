@@ -6,6 +6,14 @@ Code name: LIMIT, GROUP BY
 
 RLS (Lua) version 1.2.0 brings support for `LIMIT` with an optional offset and for `GROUP BY` clauses.
 
+Note that this version requires Exasol 7.1.10 or later to run stable, because earlier versions had a problem in handling Lua's `pcall` and `xpcall` functions. Please upgrade your database before running RLS!
+
+We also added validation for Virtual Schema properties to all requests that use properties.
+
+### Know Issues
+
+Push-down of aggregate functions is not yet implemented. We will add that in a future version (issue [#120](https://github.com/exasol/row-level-security-lua/issues/120)).
+
 ## Features
 
 * #118: Added support for `LIMIT` and `GROUP BY` via update of `virtual-schema-common-lua`
@@ -13,6 +21,10 @@ RLS (Lua) version 1.2.0 brings support for `LIMIT` with an optional offset and f
 ## Refactoring
 
 * #122: Applied new object-orientation style 
+
+## Features 
+
+* #118: Added support for `ORDER BY`, `LIMIT` more scalar functions
 
 ## Dependency Updates
 

@@ -39,6 +39,7 @@ describe("RlsAdapter", function()
         local expected = {type = "createVirtualSchema",
                           schemaMetadata = schema_metadata}
         local request = {schemaMetadataInfo = {name = "V"}}
+        properties_stub.validate = function()  end
         properties_stub.get_schema_name = function() return "S" end
         local actual = adapter:create_virtual_schema(request, properties_stub)
         assert.are.same(expected, actual)
@@ -53,5 +54,11 @@ describe("RlsAdapter", function()
         local expected = {type = "getCapabilities", capabilities = adapter_capabilities}
         local actual = adapter:get_capabilities(request, properties_stub)
         assert.are.same(expected, actual)
+    end)
+
+    it("raises an error if the SCHEMA parameter is missing when trying to create a Virtual Schema", function()
+        properties_stub.validate = function() error("validation failed") end
+        local request = {schemaMetadataInfo = {name = "V"}}
+        assert.error_matches(function() adapter:create_virtual_schema(request, properties_stub) end, "validation failed")
     end)
 end)
