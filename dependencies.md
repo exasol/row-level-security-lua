@@ -34,17 +34,16 @@
 | [Exec Maven Plugin][42]                                 | [Apache License 2][27]                                         |
 | [OpenFastTrace Maven Plugin][44]                        | [GNU General Public License v3.0][45]                          |
 | [Build Helper Maven Plugin][46]                         | [The MIT License][47]                                          |
-| [error-code-crawler-maven-plugin][48]                   | [MIT][3]                                                       |
-| [Apache Maven JAR Plugin][50]                           | [Apache License, Version 2.0][23]                              |
-| [Maven PlantUML plugin][52]                             | [Apache License
-                Version 2.0, January 2004][53] |
+| [Apache Maven JAR Plugin][48]                           | [Apache License, Version 2.0][23]                              |
+| [Maven PlantUML plugin][50]                             | [Apache License
+                Version 2.0, January 2004][51] |
+| [error-code-crawler-maven-plugin][52]                   | [MIT][3]                                                       |
 | [Maven Clean Plugin][54]                                | [The Apache Software License, Version 2.0][27]                 |
 | [Maven Resources Plugin][56]                            | [The Apache Software License, Version 2.0][27]                 |
 | [Maven Install Plugin][58]                              | [The Apache Software License, Version 2.0][27]                 |
 | [Maven Deploy Plugin][60]                               | [The Apache Software License, Version 2.0][27]                 |
 | [Maven Site Plugin 3][62]                               | [The Apache Software License, Version 2.0][27]                 |
 
-[1]: LICENSE-exasol-jdbc.txt
 [16]: https://github.com/exasol/test-db-builder-java/
 [27]: http://www.apache.org/licenses/LICENSE-2.0.txt
 [32]: https://maven.apache.org/surefire/maven-surefire-plugin/
@@ -52,6 +51,7 @@
 [3]: https://opensource.org/licenses/MIT
 [36]: https://maven.apache.org/surefire/maven-failsafe-plugin/
 [26]: https://www.mojohaus.org/flatten-maven-plugin/
+[1]: https://docs.exasol.com/db/latest/connect_exasol/drivers/jdbc.htm
 [18]: https://github.com/exasol/maven-project-version-getter
 [42]: http://www.mojohaus.org/exec-maven-plugin
 [34]: http://www.mojohaus.org/versions-maven-plugin/
@@ -65,7 +65,7 @@
 [21]: http://www.gnu.org/licenses/lgpl.txt
 [2]: https://github.com/exasol/exasol-testcontainers
 [38]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
-[53]: https://www.apache.org/licenses/LICENSE-2.0
+[51]: https://www.apache.org/licenses/LICENSE-2.0
 [8]: https://github.com/exasol/hamcrest-resultset-matcher
 [30]: http://zlika.github.io/reproducible-build-maven-plugin
 [41]: https://github.com/exasol/project-keeper/blob/main/LICENSE
@@ -82,11 +82,11 @@
 [28]: https://sonatype.github.io/ossindex-maven/maven-plugin/
 [4]: https://testcontainers.org
 [46]: http://www.mojohaus.org/build-helper-maven-plugin/
-[52]: https://github.com/Huluvu424242/plantuml-maven-plugin
+[50]: https://github.com/Huluvu424242/plantuml-maven-plugin
 [6]: http://hamcrest.org/JavaHamcrest/
 [14]: http://www.slf4j.org
 [60]: http://maven.apache.org/plugins/maven-deploy-plugin/
 [62]: http://maven.apache.org/plugins/maven-site-plugin/
 [56]: http://maven.apache.org/plugins/maven-resources-plugin/
-[48]: https://github.com/exasol/error-code-crawler-maven-plugin
-[50]: https://maven.apache.org/plugins/maven-jar-plugin/
+[52]: https://github.com/exasol/error-code-crawler-maven-plugin
+[48]: https://maven.apache.org/plugins/maven-jar-plugin/

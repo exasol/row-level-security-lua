@@ -14,7 +14,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.exasol.dbbuilder.dialects.exasol.AdapterScript;
 import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
 
-@Disabled("Reenabling requires fix in core database, see https://github.com/exasol/row-level-security-lua/issues/96")
 @Testcontainers
 class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {
     @Test
@@ -25,6 +24,6 @@ class PropertiesValidationIT extends AbstractLuaVirtualSchemaIT {
                 .adapterScript(adapter) //
                 .properties(addDebugProperties(Map.of()));
         final Exception exception = assertThrows(Exception.class, () -> virtualSchemaBuilder.build());
-        assertThat(exception.getCause().getMessage(), containsString("Missing mandatory property \"SCHEMA_NAME\"."));
+        assertThat(exception.getCause().getMessage(), containsString("Missing mandatory property 'SCHEMA_NAME'"));
     }
 }

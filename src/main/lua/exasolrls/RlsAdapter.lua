@@ -39,6 +39,7 @@ end
 -- @param properties user-defined properties
 -- @return response containing the metadata for the virtual schema like table and column structure
 function RlsAdapter:create_virtual_schema(request, properties)
+    properties:validate()
     local metadata = self:_handle_schema_scanning_request(request, properties)
     return {type = "createVirtualSchema", schemaMetadata = metadata}
 end
@@ -57,6 +58,7 @@ end
 -- @param properties user-defined properties
 -- @return response containing the metadata for the virtual schema like table and column structure
 function RlsAdapter:refresh(request, properties)
+    properties:validate()
     return {type = "refresh", schemaMetadata = self:_handle_schema_scanning_request(request, properties)}
 end
 
@@ -65,6 +67,7 @@ end
 -- @param properties user-defined properties
 -- @return response containing the metadata for the virtual schema like table and column structure
 function RlsAdapter:set_properties(request, properties)
+    properties:validate()
     return {type = "setProperties", schemaMetadata = self:_handle_schema_scanning_request(request, properties)}
 end
 
@@ -73,6 +76,7 @@ end
 -- @param properties user-defined properties
 -- @return response containing the list of reported capabilities
 function RlsAdapter:push_down(request, properties)
+    properties:validate()
     local adapter_cache = request.schemaMetadataInfo.adapterNotes
     local rewritten_query = QueryRewriter.rewrite(request.pushdownRequest, properties:get_schema_name(),
             adapter_cache, request.involvedTables)
