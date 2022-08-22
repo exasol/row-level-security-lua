@@ -50,7 +50,7 @@ GRANT SELECT ON RLS_CHICAGO_TAXI_VS TO LUHAK_CORP;
 
 Now is the moment of truth. You are going to impersonate a taxi company and verify that we only see entries that this company should be able to see.
 
-Log in first with the owner account `BACP` and run this query:
+Log in first with the owner account `BACP` and run this query on the **source schema** (which belongs to `BACP`):
 
 ```sql
 SELECT COMPANY, COUNT(1)
@@ -59,7 +59,7 @@ GROUP BY COMPANY
 ORDER BY COMPANY;
 ```
 
-Now login as `LUHAK_CORP` and run this query for comparison:
+Now login as `LUHAK_CORP` and run this query **on the RLS Virtual Schema** for comparison:
 
 ```sql
 SELECT COMPANY, COUNT(1)
