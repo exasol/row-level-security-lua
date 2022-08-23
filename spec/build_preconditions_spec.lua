@@ -1,12 +1,12 @@
 package.path = "spec/?.lua;" .. package.path
 require("busted.runner")()
-local Reader = require("pom.Reader")
+local Reader = require("PomReader")
 
 local function get_project_base_path()
     return debug.getinfo(1,"S").source:sub(2):gsub("[^/]*$", "") .. ".."
 end
 
-local reader = Reader:new(get_project_base_path() .. "/pom.xml")
+local pom = Reader:new(get_project_base_path() .. "/pom.xml")
 
 local function load_rockspec(path)
     local env = {}
@@ -17,7 +17,7 @@ end
 
 local function get_rockspec_path() --
     return get_project_base_path() .. "/"
-            .. (string.format("%s-%s-1.rockspec", reader:get_artifact_id(), reader:get_artifact_version()))
+            .. (string.format("%s-%s-1.rockspec", pom:get_artifact_id(), pom:get_artifact_version()))
 end
 
 local rockspec = load_rockspec(get_rockspec_path())
@@ -39,7 +39,7 @@ describe("Build precondition", function()
             end)
 
             it("starts with the same version number as the main artifact in the Maven POM file", function()
-                assert.matches(reader:get_artifact_version() .. "%-%d+", rockspec.version)
+                assert.matches(pom:get_artifact_version() .. "%-%d+", rockspec.version)
             end)
         end)
     end)

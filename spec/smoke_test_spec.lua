@@ -1,15 +1,15 @@
 package.path = "target/?.lua;" .. package.path
 require("busted.runner")()
-local Reader = require("spec.pom.Reader")
+local Reader = require("PomReader")
 
 local function get_project_base_path()
     return debug.getinfo(1,"S").source:sub(2):gsub("[^/]*$", "") .. ".."
 end
 
-local reader = Reader:new(get_project_base_path() .. "/pom.xml")
+local pom = Reader:new(get_project_base_path() .. "/pom.xml")
 
-local VERSION <const> = reader:get_artifact_version()
-local PROJECT <const> = reader:get_artifact_id()
+local VERSION <const> = pom:get_artifact_version()
+local PROJECT <const> = pom:get_artifact_id()
 local DISTRIBUTION_MODULE <const> = PROJECT .. "-dist"
 local DISTRIBUTION_PATH = "target"
 

@@ -6,6 +6,6 @@ Code name:
 
 ## Features
 
-* #121: Verify references
+* #121: Added tests to verify version references
 
 ## Dependency Updates
