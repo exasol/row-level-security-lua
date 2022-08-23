@@ -1,5 +1,5 @@
 local text = require("text")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 local AdapterProperties = require("exasolvs.AdapterProperties")
 
 --- This class abstracts access to the user-defined properties of the Virtual Schema.
@@ -29,11 +29,11 @@ local TABLE_FILTER_PROPERTY <const> = "TABLE_FILTER"
 function RlsAdapterProperties:validate()
     AdapterProperties.validate(self) -- super call
     if not self:has_value(SCHEMA_NAME_PROPERTY) then
-        exaerror.create("F-RLS-PROP-1", "Missing mandatory property '" .. SCHEMA_NAME_PROPERTY .. "' ")
+        ExaError:new("F-RLS-PROP-1", "Missing mandatory property '" .. SCHEMA_NAME_PROPERTY .. "' ")
                 :add_mitigations("Please define the name of the source schema."):raise(0)
     end
     if self:is_property_set(TABLE_FILTER_PROPERTY) and self:is_empty(TABLE_FILTER_PROPERTY) then
-        exaerror.create("F-RLS-PROP-2", "Table filter property '" .. TABLE_FILTER_PROPERTY .. "' must not be empty.")
+        ExaError:new("F-RLS-PROP-2", "Table filter property '" .. TABLE_FILTER_PROPERTY .. "' must not be empty.")
                 :add_mitigations("Please either remove the property or provide a comma separated list of tables"
                 .. " to be included in the Virtual Schema."):raise(0)
     end
