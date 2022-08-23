@@ -5,7 +5,13 @@ local mockagne = require("mockagne")
 local adapter_capabilities = require("exasolrls.adapter_capabilities")
 local RlsAdapter = require("exasolrls.RlsAdapter")
 require("exasolrls.RlsAdapterProperties")
-local pom = require("spec.pom.reader")
+local Reader = require("PomReader")
+
+local function get_project_base_path()
+    return debug.getinfo(1,"S").source:sub(2):gsub("[^/]*$", "") .. "../.."
+end
+
+local pom = Reader:new(get_project_base_path() .. "/pom.xml")
 
 describe("RlsAdapter", function()
     local adapter
@@ -22,7 +28,7 @@ describe("RlsAdapter", function()
     end)
 
     it("has the same version number as the project in the Maven POM file", function()
-        assert.are.equal(pom.get_version(), adapter:get_version())
+        assert.are.equal(pom:get_artifact_version(), adapter:get_version())
     end)
 
     it("reports the name of the adapter", function()

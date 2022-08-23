@@ -1,6 +1,6 @@
 local log = require("remotelog")
 local text = require("text")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 
 local DEFAULT_SRID <const> = 0
 
@@ -109,7 +109,7 @@ function MetadataReader:_translate_column_metadata(table_id, column)
     elseif text.starts_with(column_type, "INTERVAL DAY") then
         return self:_translate_interval_day_to_second(column_id, column_type)
     else
-        exaerror.create("E-RLSL-MDR-4", "Column {{table}}.{{column}} has unsupported type {{type}}.",
+        ExaError:new("E-RLSL-MDR-4", "Column {{table}}.{{column}} has unsupported type {{type}}.",
                 {table = table_id, column = column_id, type = column_type})
                 :add_ticket_mitigation()
                 :raise()
@@ -138,7 +138,7 @@ function MetadataReader:_translate_columns_metadata(schema_id, table_id)
         end
         return translated_columns, tenant_protected, role_protected, group_protected
     else
-        exaerror.error("E-RLSL-MDR-3",
+        ExaError.error("E-RLSL-MDR-3",
                 "Unable to read column metadata from source table {{schema}}.{{table}}. Caused by: {{cause}}",
                 {schema = schema_id, table = table_id, cause = result.error_message})
     end
@@ -194,7 +194,7 @@ function MetadataReader:_translate_table_metadata(schema_id, include_tables)
     if ok then
         return self:_translate_table_scan_results(schema_id, result, include_tables)
     else
-        exaerror.error("E-RLSL-MDR-2",
+        ExaError.error("E-RLSL-MDR-2",
                 "Unable to read table metadata from source schema {{schema}}. Caused by: {{cause}}",
                 {schema = schema_id, cause = result.error_message})
     end

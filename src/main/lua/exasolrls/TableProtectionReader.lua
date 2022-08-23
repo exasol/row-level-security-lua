@@ -1,4 +1,4 @@
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 
 --- This class decodes the table protection information as cached in the adapter notes.
 --
@@ -33,7 +33,7 @@ function TableProtectionReader.read(adapter_cache, table_id)
             }
         end
     end
-    exaerror.create("E-RLSL-TPR-1", "Unable to determine the RLS protection type for table {{table}}."
+    ExaError:new("E-RLSL-TPR-1", "Unable to determine the RLS protection type for table {{table}}."
         .. " No matching cache entry found.", {table = table_id})
         :add_ticket_mitigation()
         :raise()
