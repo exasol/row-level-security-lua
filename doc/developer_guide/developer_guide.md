@@ -38,7 +38,7 @@ sudo luarocks install remotelog
 sudo luarocks install luacov
 sudo luarocks install luacov-coveralls
 sudo luarocks install luacheck
-sudo luarocks install exaerror
+sudo luarocks install ExaError
 sudo luarocks install amalg
 ```
 

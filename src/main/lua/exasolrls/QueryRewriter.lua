@@ -1,7 +1,7 @@
 local QueryRenderer = require("exasolvs.QueryRenderer")
 local protection_reader = require("exasolrls.TableProtectionReader")
 local log = require("remotelog")
-local exaerror = require("exaerror")
+local ExaError = require("ExaError")
 
 --- This class rewrites the query, adding RLS protection if necessary.
 -- @classmod QueryRewriter
@@ -9,11 +9,11 @@ local QueryRewriter = {}
 
 local function validate(query)
     if not query then
-        exaerror.error("E-RLSL-QRW-1", "Unable to rewrite query because it was <nil>.")
+        ExaError.error("E-RLSL-QRW-1", "Unable to rewrite query because it was <nil>.")
     end
     local push_down_type = query.type
     if(push_down_type ~= "select") then
-        exaerror.error("E-RLSL-QRW-2", "Unable to rewrite push-down query of type {{query_type}}"
+        ExaError.error("E-RLSL-QRW-2", "Unable to rewrite push-down query of type {{query_type}}"
             .. ". Only 'select' is supported.", {query_type =  push_down_type})
     end
 end
@@ -123,7 +123,7 @@ local function describe_protection_scheme(protection)
 end
 
 local function raise_protection_scheme_error(source_schema_id, table_id, protection)
-    exaerror.create("E-LRLS-QRW-3",
+    ExaError:new("E-LRLS-QRW-3",
         "Unsupported combination of protection methods on the same table {{schema}}.{{table}}: {{combination}}",
         {schema = source_schema_id, table = table_id, combination = describe_protection_scheme(protection)})
         :add_mitigations("Allowed protection variants are: tenant, group, role, tenant + group, tenant + role")

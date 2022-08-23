@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.2.0"
+local tag = "1.3.0"
 local project = "row-level-security-lua"
 local src = "src/main/lua"
 
@@ -22,7 +22,7 @@ description = {
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 2.0.0"
+    "virtual-schema-common-lua = 2.1.0"
 }
 
 build_dependencies = {
@@ -30,7 +30,7 @@ build_dependencies = {
 }
 
 test_dependencies = {
-    "busted >= 2.0.0",
+    "busted >= 2.0.0-1",
     "luacheck >= 0.25.0",
     "luacov >= 0.15.0",
     "luacov-coveralls >= 0.2.3"
@@ -42,8 +42,8 @@ test = {
 
 local package_items = {
     "exasolrls.adapter_capabilities", "exasolrls.RlsAdapterProperties", "exasolrls.RlsAdapter",
-    "exasolrls.MetadataReader", "exasolrls.TableProtectionReader", "exasolrls.QueryRewriter", "remotelog", "exaerror",
-    "message_expander",
+    "exasolrls.MetadataReader", "exasolrls.TableProtectionReader", "exasolrls.QueryRewriter", "remotelog", "ExaError",
+    "MessageExpander",
     -- from virtual-schema-common-lua"
     "exasolvs.AbstractVirtualSchemaAdapter", "exasolvs.AdapterProperties", "exasolvs.RequestDispatcher",
     "exasolvs.Query", "exasolvs.QueryRenderer",
