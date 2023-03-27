@@ -34,6 +34,14 @@
             <artifactId>junit-jupiter</artifactId>
             <version>1.17.6</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Required to fix exception during tests:
+                    NoSuchMethod 'java.lang.String[] org.junit.platform.commons.util.ReflectionUtils.parseQualifiedMethodName(java.lang.String)' -->
+                <exclusion>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-platform-commons</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
