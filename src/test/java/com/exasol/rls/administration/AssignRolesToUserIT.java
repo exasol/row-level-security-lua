@@ -45,7 +45,7 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
     }
 
     @ParameterizedTest
-    @MethodSource("provideValuesForTestAssignRolesToUser")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#provideValuesForTestAssignRolesToUser")
     void testAssignRolesToUser(final List<String> rolesToAssign, final long maskValue) throws SQLException {
         script.execute("MONICA", rolesToAssign);
         assertThat(query("SELECT EXA_USER_NAME, EXA_ROLE_MASK FROM " + getUserTableName()), table() //
@@ -71,14 +71,14 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                 .matches(NO_JAVA_TYPE_CHECK));
     }
 
-    @MethodSource("produceInvalidIdentifiers")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#produceInvalidIdentifiers")
     @ParameterizedTest
     void testAssingingToIllegalUserThrowsException(final String userName, final String quotedUserName) {
         assertScriptThrows("The user name " + quotedUserName + " is invalid. " + ALLOWED_IDENTIFIER_EXPLAINATION,
                 userName, List.of("role_1"));
     }
 
-    @MethodSource("produceInvalidIdentifiersInList")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#produceInvalidIdentifiersInList")
     @ParameterizedTest
     void testAssignIllegalRoleToUserThrowsException(final List<String> invalidRoleNames, final String quotedRoleNames) {
         assertScriptThrows(

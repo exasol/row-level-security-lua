@@ -53,14 +53,14 @@ class AddUserToGroupIT extends AbstractAdminScriptIT {
                 "$STARTS_WITH_SPECIAL_CHAR", null);
     }
 
-    @MethodSource("produceInvalidIdentifiers")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#produceInvalidIdentifiers")
     @ParameterizedTest
     void testAddUserToGroupValidatesUserName(final String identifier, final String quotedIdentifier) {
         assertScriptThrows("The user name " + quotedIdentifier + " is invalid. " + ALLOWED_IDENTIFIER_EXPLAINATION,
                 identifier, List.of("IRRELEVANT"));
     }
 
-    @MethodSource("produceInvalidIdentifiersInList")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#produceInvalidIdentifiersInList")
     @ParameterizedTest
     void testAddUserToGroupValidatesGroups(final List<String> invalidGroupNames, final String quotedGroupNames) {
         assertScriptThrows(
