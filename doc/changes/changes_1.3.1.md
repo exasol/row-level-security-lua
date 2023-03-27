@@ -14,7 +14,7 @@ Code name:
 
 * Updated `com.exasol:exasol-jdbc:7.1.10` to `7.1.19`
 * Updated `com.exasol:exasol-testcontainers:6.1.1` to `6.5.1`
-* Updated `com.exasol:hamcrest-resultset-matcher:1.5.1` to `1.5.2`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.5.1` to `1.5.3`
 * Updated `com.exasol:maven-project-version-getter:1.1.0` to `1.2.0`
 * Updated `com.exasol:test-db-builder-java:3.3.2` to `3.4.2`
 * Updated `org.junit.jupiter:junit-jupiter-engine:5.8.2` to `5.9.2`
