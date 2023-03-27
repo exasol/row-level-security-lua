@@ -45,7 +45,7 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
     }
 
     @ParameterizedTest
-    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#provideValuesForTestAssignRolesToUser")
+    @MethodSource("provideValuesForTestAssignRolesToUser")
     void testAssignRolesToUser(final List<String> rolesToAssign, final long maskValue) throws SQLException {
         script.execute("MONICA", rolesToAssign);
         assertThat(query("SELECT EXA_USER_NAME, EXA_ROLE_MASK FROM " + getUserTableName()), table() //
@@ -53,7 +53,7 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                 .matches(NO_JAVA_TYPE_CHECK));
     }
 
-    private static Stream<Arguments> provideValuesForTestAssignRolesToUser() {
+    static Stream<Arguments> provideValuesForTestAssignRolesToUser() {
         return Stream.of(Arguments.of(List.of("role_1"), 1), //
                 Arguments.of(List.of("role_1", "role_2"), 3), //
                 Arguments.of(List.of("role_1", "role_4"), 9), //
