@@ -2,9 +2,13 @@
 
 # This script finds and runs Lua unit tests, collects coverage and runs static code analysis.
 
-readonly script_dir=/Users/chp/git/row-level-security-lua/tools
-
-    readonly base_dir=/Users/chp/git/row-level-security-lua/
+readonly script_dir=$(dirname "$(readlink -f "$0")")
+if [[ -v $1 ]]
+then
+    readonly base_dir="$1"
+else
+    readonly base_dir=$(readlink -f "$script_dir/..")
+fi
 
 readonly exit_ok=0
 readonly exit_software=2
