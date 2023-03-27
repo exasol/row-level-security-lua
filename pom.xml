@@ -200,10 +200,9 @@
                 <version>1.2.2</version>
                 <executions>
                     <execution>
-                        <!-- Prevent the crawler from running, Java is only used for tests. -->
                         <id>verify</id>
-                        <goals/>
-                        <phase/>
+                        <!-- intentionally switched off the Java crawler for Lua projects -->
+                        <phase>dont-execute</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -236,17 +235,6 @@
                         <version>1.2023.5</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>com.exasol</groupId>
-                <artifactId>error-code-crawler-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>verify</id>
-                        <!-- intentionally switched off the Java crawler for Lua projects -->
-                        <phase>dont-execute</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
