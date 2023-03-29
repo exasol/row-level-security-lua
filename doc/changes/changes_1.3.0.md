@@ -1,4 +1,4 @@
-# Exasol Row Level Security (Lua) 1.3.0, released 2023-03-28
+# Exasol Row Level Security (Lua) 1.3.0, released 2023-03-29
 
 Code name: Remove decommissioned maven.exasol.com repository
 
