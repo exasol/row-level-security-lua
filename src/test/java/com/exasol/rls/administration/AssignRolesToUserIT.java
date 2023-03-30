@@ -53,7 +53,7 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                 .matches(NO_JAVA_TYPE_CHECK));
     }
 
-    private static Stream<Arguments> provideValuesForTestAssignRolesToUser() {
+    static Stream<Arguments> provideValuesForTestAssignRolesToUser() {
         return Stream.of(Arguments.of(List.of("role_1"), 1), //
                 Arguments.of(List.of("role_1", "role_2"), 3), //
                 Arguments.of(List.of("role_1", "role_4"), 9), //
@@ -71,14 +71,14 @@ class AssignRolesToUserIT extends AbstractAdminScriptIT {
                 .matches(NO_JAVA_TYPE_CHECK));
     }
 
-    @MethodSource("produceInvalidIdentifiers")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#produceInvalidIdentifiers")
     @ParameterizedTest
     void testAssingingToIllegalUserThrowsException(final String userName, final String quotedUserName) {
         assertScriptThrows("The user name " + quotedUserName + " is invalid. " + ALLOWED_IDENTIFIER_EXPLAINATION,
                 userName, List.of("role_1"));
     }
 
-    @MethodSource("produceInvalidIdentifiersInList")
+    @MethodSource("com.exasol.rls.administration.AbstractAdminScriptIT#produceInvalidIdentifiersInList")
     @ParameterizedTest
     void testAssignIllegalRoleToUserThrowsException(final List<String> invalidRoleNames, final String quotedRoleNames) {
         assertScriptThrows(

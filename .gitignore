@@ -19,6 +19,7 @@ target
 dependency-reduced-pom.xml
 .project
 .classpath
+.settings/org.eclipse.jdt.apt.core.prefs
 pom.xml.versionsBackup
 ~*
 *.lock
