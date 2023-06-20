@@ -3,7 +3,7 @@
 local QueryRewriter = {}
 
 local QueryRenderer = require("exasol.vscl.QueryRenderer")
-local protection_reader = require("exasolrls.TableProtectionReader")
+local protection_reader = require("exasol.rls.TableProtectionReader")
 local log = require("remotelog")
 local ExaError = require("ExaError")
 

@@ -1,6 +1,6 @@
 include = {
-    "main/lua/exasolrls$",
-    "main/lua/exasolrls%/.+$",
+    "main/lua/exasol.rls$",
+    "main/lua/exasol.rls%/.+$",
     "main/lua/exasolvs$",
     "main/lua/exasolvs%/.+$"
 }

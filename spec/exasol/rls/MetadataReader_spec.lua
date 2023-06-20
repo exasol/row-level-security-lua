@@ -1,7 +1,7 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
 local mockagne = require("mockagne")
-local MetadataReader = require("exasolrls.MetadataReader")
+local MetadataReader = require("exasol.rls.MetadataReader")
 
 local CATALOG_QUERY <const> = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE '
         .. '"TABLE_SCHEMA" = :s'

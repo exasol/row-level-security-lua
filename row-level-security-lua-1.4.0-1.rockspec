@@ -41,8 +41,8 @@ test = {
 }
 
 local package_items = {
-    "exasolrls.adapter_capabilities", "exasolrls.RlsAdapterProperties", "exasolrls.RlsAdapter",
-    "exasolrls.MetadataReader", "exasolrls.TableProtectionReader", "exasolrls.QueryRewriter",
+    "exasol.rls.adapter_capabilities", "exasol.rls.RlsAdapterProperties", "exasol.rls.RlsAdapter",
+    "exasol.rls.MetadataReader", "exasol.rls.TableProtectionReader", "exasol.rls.QueryRewriter",
     "remotelog", "ExaError", "MessageExpander",
     -- from virtual-schema-common-lua"
     "exasol.vscl.AbstractVirtualSchemaAdapter", "exasol.vscl.AdapterProperties", "exasol.vscl.RequestDispatcher",
