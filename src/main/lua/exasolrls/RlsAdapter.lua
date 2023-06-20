@@ -1,12 +1,12 @@
-local AbstractVirtualSchemaAdapter = require("exasolvs.AbstractVirtualSchemaAdapter")
-local adapter_capabilities = require("exasolrls.adapter_capabilities")
-local QueryRewriter = require("exasolrls.QueryRewriter")
-
 -- Derive from AbstractVirtualSchemaAdapter
 local RlsAdapter = {}
 RlsAdapter.__index = RlsAdapter
+local AbstractVirtualSchemaAdapter = require("exasol.vscl.AbstractVirtualSchemaAdapter")
 setmetatable(RlsAdapter, {__index = AbstractVirtualSchemaAdapter})
-local VERSION <const> = "1.3.0"
+local VERSION <const> = "1.4.0"
+
+local adapter_capabilities = require("exasolrls.adapter_capabilities")
+local QueryRewriter = require("exasolrls.QueryRewriter")
 
 --- Create an `RlsAdapter`.
 -- @param metadata_reader metadata reader

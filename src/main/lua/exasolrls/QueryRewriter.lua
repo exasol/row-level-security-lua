@@ -1,11 +1,11 @@
-local QueryRenderer = require("exasolvs.QueryRenderer")
-local protection_reader = require("exasolrls.TableProtectionReader")
-local log = require("remotelog")
-local ExaError = require("ExaError")
-
 --- This class rewrites the query, adding RLS protection if necessary.
 -- @classmod QueryRewriter
 local QueryRewriter = {}
+
+local QueryRenderer = require("exasol.vscl.QueryRenderer")
+local protection_reader = require("exasolrls.TableProtectionReader")
+local log = require("remotelog")
+local ExaError = require("ExaError")
 
 local function validate(query)
     if not query then

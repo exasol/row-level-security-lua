@@ -1,13 +1,13 @@
-local log = require("remotelog")
-local text = require("text")
-local ExaError = require("ExaError")
-
-local DEFAULT_SRID <const> = 0
-
 --- This class reads schema, table and column metadata from the source.
 -- @type MetadataReader
 local MetadataReader = {}
 MetadataReader.__index = MetadataReader
+
+local log = require("remotelog")
+local text = require("exasol.vscl.text")
+local ExaError = require("ExaError")
+
+local DEFAULT_SRID <const> = 0
 
 --- Create a new `MetadataReader`.
 -- @param exasol_context handle to local database functions and status

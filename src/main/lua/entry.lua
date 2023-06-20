@@ -4,7 +4,7 @@
 local RlsAdapter = require("exasolrls.RlsAdapter")
 local RlsAdapterProperties = require("exasolrls.RlsAdapterProperties")
 local MetadataReader = require("exasolrls.MetadataReader")
-local RequestDispatcher = require("exasolvs.RequestDispatcher")
+local RequestDispatcher = require("exasol.vscl.RequestDispatcher")
 
 --- Handle a Virtual Schema request.
 -- @param request_as_json JSON-encoded adapter request

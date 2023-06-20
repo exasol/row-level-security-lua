@@ -1,12 +1,13 @@
-local text = require("text")
-local ExaError = require("ExaError")
-local AdapterProperties = require("exasolvs.AdapterProperties")
-
 --- This class abstracts access to the user-defined properties of the Virtual Schema.
 -- @classmod RlsAdapterProperties
 local RlsAdapterProperties = {}
+local AdapterProperties = require("exasol.vscl.AdapterProperties")
 RlsAdapterProperties.__index = RlsAdapterProperties
 setmetatable(RlsAdapterProperties, AdapterProperties)
+
+local text = require("exasol.vscl.text")
+local ExaError = require("ExaError")
+
 
 --- Create a new `RlsAdapterProperties` instance
 -- @param raw_properties unparsed user-defined properties
