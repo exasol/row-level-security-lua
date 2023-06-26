@@ -1,6 +1,6 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
-local rewriter = require("exasolrls.QueryRewriter")
+local rewriter = require("exasol.rls.QueryRewriter")
 
 describe("Query rewriter", function()
     local function assert_rewrite(original_query, source_schema, adapter_cache, expected)

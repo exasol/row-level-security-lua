@@ -1,6 +1,6 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
-local reader = require("exasolrls.TableProtectionReader")
+local reader = require("exasol.rls.TableProtectionReader")
 
 describe("table_protection_reader", function()
     it("interprets that a table is unprotected", function()

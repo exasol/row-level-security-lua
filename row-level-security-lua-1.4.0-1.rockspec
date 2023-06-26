@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.3.0"
+local tag = "1.4.0"
 local project = "row-level-security-lua"
 local src = "src/main/lua"
 
@@ -22,7 +22,7 @@ description = {
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 2.1.0"
+    "virtual-schema-common-lua = 4.0.0"
 }
 
 build_dependencies = {
@@ -41,15 +41,16 @@ test = {
 }
 
 local package_items = {
-    "exasolrls.adapter_capabilities", "exasolrls.RlsAdapterProperties", "exasolrls.RlsAdapter",
-    "exasolrls.MetadataReader", "exasolrls.TableProtectionReader", "exasolrls.QueryRewriter", "remotelog", "ExaError",
-    "MessageExpander",
+    "exasol.rls.adapter_capabilities", "exasol.rls.RlsAdapterProperties", "exasol.rls.RlsAdapter",
+    "exasol.rls.MetadataReader", "exasol.rls.TableProtectionReader", "exasol.rls.QueryRewriter",
+    "remotelog", "ExaError", "MessageExpander",
     -- from virtual-schema-common-lua"
-    "exasolvs.AbstractVirtualSchemaAdapter", "exasolvs.AdapterProperties", "exasolvs.RequestDispatcher",
-    "exasolvs.Query", "exasolvs.QueryRenderer",
-    "exasolvs.queryrenderer.AbstractQueryAppender", "exasolvs.queryrenderer.ExpressionAppender",
-    "exasolvs.queryrenderer.ScalarFunctionAppender", "exasolvs.queryrenderer.SelectAppender",
-    "text"
+    "exasol.vscl.AbstractVirtualSchemaAdapter", "exasol.vscl.AdapterProperties", "exasol.vscl.RequestDispatcher",
+    "exasol.vscl.Query", "exasol.vscl.QueryRenderer",
+    "exasol.vscl.queryrenderer.AbstractQueryAppender", "exasol.vscl.queryrenderer.AggregateFunctionAppender",
+    "exasol.vscl.queryrenderer.ExpressionAppender", "exasol.vscl.queryrenderer.ImportAppender",
+    "exasol.vscl.queryrenderer.ScalarFunctionAppender", "exasol.vscl.queryrenderer.SelectAppender",
+    "exasol.vscl.text", "exasol.vscl.validator"
 }
 
 local item_path_list = ""

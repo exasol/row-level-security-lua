@@ -6,7 +6,7 @@ title: RLS Lua Components
 component row-level-security-lua {
     component entry
 
-    package exasolrls {
+    package exasol.rls {
         component rls_adapter
         component metadata_reader
         component query_rewriter

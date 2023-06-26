@@ -1,10 +1,10 @@
 --- Main entry point of the Lua Virtual Schema adapter.
 -- It is responsible for creating and wiring up the main adapter objects.
 
-local RlsAdapter = require("exasolrls.RlsAdapter")
-local RlsAdapterProperties = require("exasolrls.RlsAdapterProperties")
-local MetadataReader = require("exasolrls.MetadataReader")
-local RequestDispatcher = require("exasolvs.RequestDispatcher")
+local RlsAdapter = require("exasol.rls.RlsAdapter")
+local RlsAdapterProperties = require("exasol.rls.RlsAdapterProperties")
+local MetadataReader = require("exasol.rls.MetadataReader")
+local RequestDispatcher = require("exasol.vscl.RequestDispatcher")
 
 --- Handle a Virtual Schema request.
 -- @param request_as_json JSON-encoded adapter request

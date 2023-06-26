@@ -2,13 +2,13 @@ package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
 local assert = require("luassert")
 local mockagne = require("mockagne")
-local adapter_capabilities = require("exasolrls.adapter_capabilities")
-local RlsAdapter = require("exasolrls.RlsAdapter")
-require("exasolrls.RlsAdapterProperties")
+local adapter_capabilities = require("exasol.rls.adapter_capabilities")
+local RlsAdapter = require("exasol.rls.RlsAdapter")
+require("exasol.rls.RlsAdapterProperties")
 local Reader = require("PomReader")
 
 local function get_project_base_path()
-    return debug.getinfo(1,"S").source:sub(2):gsub("[^/]*$", "") .. "../.."
+    return debug.getinfo(1,"S").source:sub(2):gsub("[^/]*$", "") .. "../../.."
 end
 
 local pom = Reader:new(get_project_base_path() .. "/pom.xml")
