@@ -495,7 +495,6 @@ To recap: data in an RLS-protected schema is publicly readable if
 
 ## Known Limitations
 
-* `SELECT *` is not yet supported due to an issue between the core database and the LUA Virtual Schemas in push-down requests (SPOT-10626)
 * RLS only works with Exasol as source and destination of the Virtual Schema.
 * Source Schema and Virtual Schema must be on the same database.
 * RLS Virtual Schema do not support JOIN capabilities.
