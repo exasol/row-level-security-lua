@@ -120,7 +120,6 @@ class AggregateFunctionsIT extends AbstractLuaVirtualSchemaIT {
         return allOf(subMatchers);
     }
 
-
     @Test
     void testListaggWithOrder() {
         final Schema sourceSchema = createSchema("LISTAGG_WITH_ORDER_SCHEMA");

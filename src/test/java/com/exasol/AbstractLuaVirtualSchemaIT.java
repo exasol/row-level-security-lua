@@ -172,7 +172,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             final String pushDownSql = result.getString("PUSHDOWN_SQL");
             assertThat(pushDownSql, matcher);
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to run push-down assertion query:" + exception.getMessage());
+            throw new AssertionError("Unable to run push-down assertion query:" + exception.getMessage(), exception);
         }
     }
 }
