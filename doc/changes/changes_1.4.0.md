@@ -1,4 +1,4 @@
-# Exasol Row Level Security (Lua) 1.4.0, released 2023-06-??
+# Exasol Row Level Security (Lua) 1.4.0, released 2023-06-27
 
 Code name: Aggregate Functions
 
