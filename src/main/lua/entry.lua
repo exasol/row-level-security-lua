@@ -2,8 +2,8 @@
 -- It is responsible for creating and wiring up the main adapter objects.
 
 local RlsAdapter = require("exasol.rls.RlsAdapter")
-local RlsAdapterProperties = require("exasol.rls.RlsAdapterProperties")
-local MetadataReader = require("exasol.rls.MetadataReader")
+local ExasolBaseAdapterProperties = require("exasol.evscl.ExasolBaseAdapterProperties")
+local MetadataReader = require("exasol.rls.RlsMetadataReader")
 local RequestDispatcher = require("exasol.vscl.RequestDispatcher")
 
 --- Handle a Virtual Schema request.
@@ -13,6 +13,6 @@ function adapter_call(request_as_json)
     local exasol_context = _G.exa
     local metadata_reader = MetadataReader:new(exasol_context)
     local adapter = RlsAdapter:new(metadata_reader)
-    local dispatcher = RequestDispatcher:new(adapter, RlsAdapterProperties)
+    local dispatcher = RequestDispatcher:new(adapter, ExasolBaseAdapterProperties)
     return dispatcher:adapter_call(request_as_json)
 end

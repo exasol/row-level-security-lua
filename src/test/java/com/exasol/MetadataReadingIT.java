@@ -165,6 +165,26 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
     }
 
     @Test
+    void testTablesStartingWithExaFilteredOut() throws SQLException {
+        final Schema sourceSchema = createSchema("SCHEMA_FOR_CONTROL_TABLE_FILTER");
+        sourceSchema.createTable("T1", "C1_1", "BOOLEAN");
+        sourceSchema.createTable("T2", "C2_1", "BOOLEAN");
+        sourceSchema.createTable("EXA_SOMETHING", "C1", "BOOLEAN");
+        sourceSchema.createTable("EXA_ANOTHER_THING", "C1", "BOOLEAN");
+        final VirtualSchema virtualSchema = createVirtualSchema(sourceSchema);
+        final String sql = "/*snapshot execution*/"
+                + " SELECT TABLE_NAME FROM SYS.EXA_ALL_TABLES WHERE TABLE_SCHEMA = ? ORDER BY TABLE_NAME";
+        try ( //
+              final Connection connection = EXASOL.createConnection(); //
+              final PreparedStatement statement = connection.prepareStatement(sql) //
+        ) {
+            statement.setString(1, virtualSchema.getName());
+            final ResultSet resultSet = statement.executeQuery();
+            assertThat(resultSet, table().row("T1").row("T2").matches());
+        }
+    }
+
+    @Test
     void testSwitchingSourceSchemaWithAlterVirtualSchema() throws SQLException {
         final String expectedText = "Hello";
         final Schema schemaA = createSchema("SCHEMA_SET_PROPS_A");

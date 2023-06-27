@@ -22,7 +22,8 @@ description = {
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 4.0.0"
+    "virtual-schema-common-lua = 4.0.0",
+    "exasol-virtual-schema-common-lua = 1.0.1"
 }
 
 build_dependencies = {
@@ -41,8 +42,8 @@ test = {
 }
 
 local package_items = {
-    "exasol.rls.adapter_capabilities", "exasol.rls.RlsAdapterProperties", "exasol.rls.RlsAdapter",
-    "exasol.rls.MetadataReader", "exasol.rls.TableProtectionReader", "exasol.rls.QueryRewriter",
+    "exasol.rls.adapter_capabilities", "exasol.rls.RlsAdapter",
+    "exasol.rls.RlsMetadataReader", "exasol.rls.TableProtectionReader", "exasol.rls.RlsQueryRewriter",
     "remotelog", "ExaError", "MessageExpander",
     -- from virtual-schema-common-lua"
     "exasol.vscl.AbstractVirtualSchemaAdapter", "exasol.vscl.AdapterProperties", "exasol.vscl.RequestDispatcher",
@@ -50,7 +51,11 @@ local package_items = {
     "exasol.vscl.queryrenderer.AbstractQueryAppender", "exasol.vscl.queryrenderer.AggregateFunctionAppender",
     "exasol.vscl.queryrenderer.ExpressionAppender", "exasol.vscl.queryrenderer.ImportAppender",
     "exasol.vscl.queryrenderer.ScalarFunctionAppender", "exasol.vscl.queryrenderer.SelectAppender",
-    "exasol.vscl.text", "exasol.vscl.validator"
+    "exasol.vscl.text", "exasol.vscl.validator",
+    -- from exasol-virtual-schema-common-lua
+    "exasol.evscl.AbstractMetadataReader", "exasol.evscl.AbstractQueryRewriter",
+    "exasol.evscl.ExasolBaseAdapterProperties", "exasol.evscl.LocalMetadataReader",
+    "exasol.evscl.LocalQueryRewriter"
 }
 
 local item_path_list = ""

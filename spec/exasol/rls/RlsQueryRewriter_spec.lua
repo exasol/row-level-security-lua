@@ -1,10 +1,12 @@
 package.path = "src/main/lua/?.lua;" .. package.path
 require("busted.runner")()
-local rewriter = require("exasol.rls.QueryRewriter")
+local RlsQueryRewriter = require("exasol.rls.RlsQueryRewriter")
 
 describe("Query rewriter", function()
+    local rewriter = RlsQueryRewriter:new();
+
     local function assert_rewrite(original_query, source_schema, adapter_cache, expected)
-        local rewritten_query = rewriter.rewrite(original_query, source_schema, adapter_cache)
+        local rewritten_query = rewriter:rewrite(original_query, source_schema, adapter_cache)
         assert.is(expected, rewritten_query)
     end
 
@@ -106,7 +108,7 @@ describe("Query rewriter", function()
                 from = {type = "table", name = "T1"}
             }
             assert.error_matches(function()
-                rewriter.rewrite(original_query, "S1", "T1:" .. protection)
+                rewriter:rewrite(original_query, "S1", "T1:" .. protection)
             end,
                     "Unsupported combination of protection methods on the same table 'S1'.'T1'", 1, true)
         end
@@ -114,7 +116,7 @@ describe("Query rewriter", function()
 
     it("raises an error if the query to be rewritten is nil.", function()
         assert.error_matches(function()
-            rewriter.rewrite(nil, nil, nil)
+            rewriter:rewrite(nil, nil, nil)
         end,
                 "Unable to rewrite query because it was <nil>.", 1, true)
     end)
@@ -122,7 +124,7 @@ describe("Query rewriter", function()
     it("raises an error if the query to be rewritten is not a SELECT", function()
         local original_query = {type = "insert"}
         assert.error_matches(function()
-            rewriter.rewrite(original_query)
+            rewriter:rewrite(original_query)
         end,
                 "Unable to rewrite push-down query of type 'insert'. Only 'select' is supported.", 1, true)
     end)
@@ -136,7 +138,7 @@ describe("Query rewriter", function()
             from = {type = "table", name = "T"}
         }
         assert.error_matches(function()
-            rewriter.rewrite(original_query, "S", "T:tgr")
+            rewriter:rewrite(original_query, "S", "T:tgr")
         end,
                 "Unsupported combination of protection methods on the same table 'S'.'T': 'tenant + group + role'",
                 1, true)

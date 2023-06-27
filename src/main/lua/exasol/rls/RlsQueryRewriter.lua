@@ -1,13 +1,27 @@
 --- This class rewrites the query, adding RLS protection if necessary.
--- @classmod QueryRewriter
-local QueryRewriter = {}
+-- @classmod RlsQueryRewriter
+local RlsQueryRewriter = { _NAME = "RlsQueryRewriter"}
+RlsQueryRewriter.__index = RlsQueryRewriter
 
 local QueryRenderer = require("exasol.vscl.QueryRenderer")
 local protection_reader = require("exasol.rls.TableProtectionReader")
 local log = require("remotelog")
 local ExaError = require("ExaError")
 
-local function validate(query)
+--- Create a new instance of a `QueryRewriter`.
+-- @return new instance
+function RlsQueryRewriter:new()
+    local instance = setmetatable({}, self)
+    instance:_init()
+    return instance
+end
+
+function RlsQueryRewriter:_init()
+    -- intentionally empty
+end
+
+
+function RlsQueryRewriter:_validate(query)
     if not query then
         ExaError.error("E-RLSL-QRW-1", "Unable to rewrite query because it was <nil>.")
     end
@@ -241,8 +255,8 @@ end
 --
 -- @return string containing the rewritten query
 --
-function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
-    validate(original_query)
+function RlsQueryRewriter:rewrite(original_query, source_schema_id, adapter_cache, involved_tables)
+    self:_validate(original_query)
     local query = original_query
     local table_id = query.from.name
     local protection = protection_reader.read(adapter_cache, table_id)
@@ -258,4 +272,4 @@ function QueryRewriter.rewrite(original_query, source_schema_id, adapter_cache, 
     return renderer:render()
 end
 
-return QueryRewriter
+return RlsQueryRewriter

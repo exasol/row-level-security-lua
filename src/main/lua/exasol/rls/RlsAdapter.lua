@@ -6,7 +6,7 @@ setmetatable(RlsAdapter, {__index = AbstractVirtualSchemaAdapter})
 local VERSION <const> = "1.4.0"
 
 local adapter_capabilities = require("exasol.rls.adapter_capabilities")
-local QueryRewriter = require("exasol.rls.QueryRewriter")
+local QueryRewriter = require("exasol.rls.RlsQueryRewriter")
 
 --- Create an `RlsAdapter`.
 -- @param metadata_reader metadata reader
@@ -78,7 +78,8 @@ end
 function RlsAdapter:push_down(request, properties)
     properties:validate()
     local adapter_cache = request.schemaMetadataInfo.adapterNotes
-    local rewritten_query = QueryRewriter.rewrite(request.pushdownRequest, properties:get_schema_name(),
+    local rewriter = QueryRewriter:new()
+    local rewritten_query = rewriter:rewrite(request.pushdownRequest, properties:get_schema_name(),
             adapter_cache, request.involvedTables)
     return {type = "pushdown", sql = rewritten_query}
 end
