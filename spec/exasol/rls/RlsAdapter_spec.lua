@@ -4,7 +4,6 @@ local assert = require("luassert")
 local mockagne = require("mockagne")
 local adapter_capabilities = require("exasol.rls.adapter_capabilities")
 local RlsAdapter = require("exasol.rls.RlsAdapter")
-require("exasol.rls.RlsAdapterProperties")
 local Reader = require("PomReader")
 
 local function get_project_base_path()
