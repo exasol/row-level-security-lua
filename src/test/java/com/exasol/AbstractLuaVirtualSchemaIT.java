@@ -3,6 +3,7 @@ package com.exasol;
 import static com.exasol.RlsTestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -163,5 +164,15 @@ abstract class AbstractLuaVirtualSchemaIT {
             final String expectedMessageFragment) {
         final SQLException exception = assertThrows(SQLException.class, () -> executeRlsQueryWithUser(sql, user));
         assertThat(exception.getMessage(), containsString(expectedMessageFragment));
+    }
+
+    protected void assertPushDown(final String sql, final User user, final Matcher<String> matcher) {
+        try (final ResultSet result = executeRlsQueryWithUser("EXPLAIN VIRTUAL " + sql, user)) {
+            result.next();
+            final String pushDownSql = result.getString("PUSHDOWN_SQL");
+            assertThat(pushDownSql, matcher);
+        } catch (final SQLException exception) {
+            throw new AssertionError("Unable to run push-down assertion query:" + exception.getMessage());
+        }
     }
 }
