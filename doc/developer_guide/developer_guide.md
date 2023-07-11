@@ -31,15 +31,7 @@ You need the packages for unit testing, mocking and JSON processing.
 Execute as `root` or modify to install in your home directory:
 
 ```bash
-sudo luarocks install LuaUnit
-sudo luarocks install Mockagne
-sudo luarocks install lua-cjson
-sudo luarocks install remotelog
-sudo luarocks install luacov
-sudo luarocks install luacov-coveralls
-sudo luarocks install luacheck
-sudo luarocks install exaerror
-sudo luarocks install amalg
+luarocks --local make
 ```
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.
@@ -66,29 +58,22 @@ This is quite fast since it skips the other Maven steps.
 
 ### Run Unit Tests From Terminal
 
-To run unit tests from terminal, you first need to install Lua:
+To run unit tests from terminal, you first need to install test dependencies (this will also run tests):
 
 ```bash
-sudo apt install lua5.1
-```
-
-Another important thing to do, you need to add the project's directories with lua files to LUA_PATH environment variable.
-We add two absolute paths, one to the `main` and another to the `test` folder: 
-
-```bash
-export LUA_PATH='/home/<absolute>/<path>/row-level-security-lua/src/main/lua/?.lua;/home/<absolute>/<path>/row-level-security-lua/src/test/lua/?.lua;'"$LUA_PATH"
+luarocks --local test
 ```
 
 After that you can try to run any test file:
 
 ```bash
-lua src/test/lua/exasolvs/test_query_renderer.lua 
+lua spec/build_preconditions_spec.lua
 ```
 
 If you want to run all unit tests including code coverage and static code analysis, issue the following command:
 
 ```bash
-tools/runtests.sh
+./tools/runtests.sh
 ```
 
 The test output contains summaries and you will find reports in the `luaunit-reports` and `luacov-reports` directories.

@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.4.0"
+local tag = "1.4.1"
 local project = "row-level-security-lua"
 local src = "src/main/lua"
 
@@ -66,7 +66,7 @@ end
 build = {
     type = "command",
     build_command = "cd " .. src .. " && amalg.lua "
-            .. "-o ../../../target/row-level-security-dist-" .. tag .. ".lua "
-            .. "-s entry.lua"
+            .. "--output=../../../target/row-level-security-dist-" .. tag .. ".lua "
+            .. "--script=entry.lua"
             .. item_path_list
 }

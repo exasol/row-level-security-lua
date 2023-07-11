@@ -81,10 +81,10 @@ function run_static_code_analysis {
 
 create_target_directories
 run_tests \
-&& collect_coverage_results \
-&& move_coverage_results \
-&& print_coverage_summary \
-&& run_static_code_analysis \
-|| exit "$exit_software"
+    && collect_coverage_results \
+    && move_coverage_results \
+    && print_coverage_summary \
+    && run_static_code_analysis \
+    || exit "$exit_software"
 
 exit "$exit_ok"
