@@ -4,6 +4,7 @@ import static com.exasol.RlsTestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +19,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundExceptio
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
+import com.exasol.containers.ExasolDockerImageReference;
 import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
@@ -178,5 +180,19 @@ abstract class AbstractLuaVirtualSchemaIT {
         } catch (final SQLException exception) {
             throw new AssertionError("Unable to run push-down assertion query:" + exception.getMessage(), exception);
         }
+    }
+
+    static void assumeExasol8OrHigher() {
+        assumeTrue(isExasol8OrHigher(), "is Exasol version 8 or higher");
+    }
+
+    static boolean isExasol8OrHigher() {
+        final ExasolDockerImageReference imageReference = EXASOL.getDockerImageReference();
+        return imageReference.hasMajor() && (imageReference.getMajor() >= 8);
+    }
+
+    static void assumeExasol7OrLower() {
+        final ExasolDockerImageReference imageReference = EXASOL.getDockerImageReference();
+        assumeTrue(imageReference.hasMajor() && (imageReference.getMajor() <= 7), "is Exasol version 7 or lower");
     }
 }
