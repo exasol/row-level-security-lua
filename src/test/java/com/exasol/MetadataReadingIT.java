@@ -14,8 +14,10 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import com.exasol.containers.ExasolDockerImageReference;
 import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.VirtualSchema;
+import com.exasol.matcher.ResultSetStructureMatcher;
 import com.exasol.matcher.ResultSetStructureMatcher.Builder;
 
 @Testcontainers
@@ -87,7 +89,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
     private void assertVirtualTableStructure(final Table table, final User user,
             final Matcher<ResultSet> tableMatcher) {
         assertRlsQueryWithUser("/*snapshot execution*/DESCRIBE " + getVirtualSchemaName(table.getParent().getName())
-                        + "." + table.getName(), user, tableMatcher);
+                + "." + table.getName(), user, tableMatcher);
     }
 
     private Matcher<ResultSet> expectRows(final String... strings) {
@@ -95,9 +97,28 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                 equalTo(0));
         final Builder builder = table();
         for (int i = 0; i < strings.length; i += 2) {
-            builder.row(strings[i], strings[i + 1], anything(), anything(), anything());
+            final String columnName = strings[i];
+            final String sqlType = strings[i + 1];
+            addExpectedRow(builder, columnName, sqlType);
+            // builder.row(strings[i], strings[i + 1], anything(), anything(), anything());
         }
         return builder.matches();
+    }
+
+    private static void addExpectedRow(final ResultSetStructureMatcher.Builder builder, final String columnName,
+            final String sqlType) {
+        if (isExasol8OrHigher()) {
+            builder.row(columnName, sqlType, anything("nullable"), anything("distribution_key"),
+                    anything("partition_key"), anything("zonemapped"));
+        } else {
+            builder.row(columnName, sqlType, anything("nullable"), anything("distribution_key"),
+                    anything("partition_key"));
+        }
+    }
+
+    static boolean isExasol8OrHigher() {
+        final ExasolDockerImageReference imageReference = EXASOL.getDockerImageReference();
+        return imageReference.hasMajor() && (imageReference.getMajor() >= 8);
     }
 
     @Test
@@ -175,8 +196,8 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
         final String sql = "/*snapshot execution*/"
                 + " SELECT TABLE_NAME FROM SYS.EXA_ALL_TABLES WHERE TABLE_SCHEMA = ? ORDER BY TABLE_NAME";
         try ( //
-              final Connection connection = EXASOL.createConnection(); //
-              final PreparedStatement statement = connection.prepareStatement(sql) //
+                final Connection connection = EXASOL.createConnection(); //
+                final PreparedStatement statement = connection.prepareStatement(sql) //
         ) {
             statement.setString(1, virtualSchema.getName());
             final ResultSet resultSet = statement.executeQuery();

@@ -3,7 +3,6 @@ package com.exasol;
 import static com.exasol.RlsTestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -162,8 +161,13 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     protected void assertRlsQueryThrowsExceptionWithMessageContaining(final String sql, final User user,
             final String expectedMessageFragment) {
+        assertRlsQueryThrowsExceptionWithMessageContaining(sql, user, containsString(expectedMessageFragment));
+    }
+
+    protected void assertRlsQueryThrowsExceptionWithMessageContaining(final String sql, final User user,
+            final Matcher<String> expectedMessageMatcher) {
         final SQLException exception = assertThrows(SQLException.class, () -> executeRlsQueryWithUser(sql, user));
-        assertThat(exception.getMessage(), containsString(expectedMessageFragment));
+        assertThat(exception.getMessage(), expectedMessageMatcher);
     }
 
     protected void assertPushDown(final String sql, final User user, final Matcher<String> matcher) {
