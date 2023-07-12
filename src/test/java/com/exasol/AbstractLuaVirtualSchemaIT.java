@@ -146,7 +146,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             final ResultSet result = executeRlsQueryWithUser(sql, user);
             assertThat(result, expected);
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to run assertion query.", exception);
+            throw new AssertionError("Unable to run assertion query: " + exception, exception);
         }
     }
 
@@ -157,7 +157,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             assertThat(timedResult.getResultSet(), expected);
             return timedResult.getDuration();
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to run assertion query.", exception);
+            throw new AssertionError("Unable to run assertion query: " + exception, exception);
         }
     }
 
