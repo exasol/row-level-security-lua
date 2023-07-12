@@ -31,15 +31,7 @@ You need the packages for unit testing, mocking and JSON processing.
 Execute as `root` or modify to install in your home directory:
 
 ```bash
-sudo luarocks install LuaUnit
-sudo luarocks install Mockagne
-sudo luarocks install lua-cjson
-sudo luarocks install remotelog
-sudo luarocks install luacov
-sudo luarocks install luacov-coveralls
-sudo luarocks install luacheck
-sudo luarocks install exaerror
-sudo luarocks install amalg
+luarocks --local make
 ```
 
 Most of those packages are only required for testing. While `cjson` is needed at runtime, it is prepackaged with Exasol, so no need to install it at runtime.
@@ -52,7 +44,7 @@ As most non-trivial pieces of software, `row-level-security-lua` is modularized.
 
 To make this process easier, the [Maven POM file](../../pom.xml) contains an execution that automates this step. Still it is necessary to add new modules by hand in the list of modules to be bundled in the POM.
 
-Note that the entry point `request_dispatcher.lua` is a regular Lua script that must be added to the bundle using the `-s` switch and its relative path. The remaining bundle elements are Lua modules and must be listed in dot-notation.
+Note that the entry point `entry.lua` is a regular Lua script that must be added to the bundle using the `-s` switch and its relative path. The remaining bundle elements are Lua modules and must be listed in dot-notation.
 
 To make a bundle via Maven run the following command:
 
@@ -66,32 +58,31 @@ This is quite fast since it skips the other Maven steps.
 
 ### Run Unit Tests From Terminal
 
-To run unit tests from terminal, you first need to install Lua:
+To run unit tests from terminal, you first need to install test dependencies (this will also run tests):
 
 ```bash
-sudo apt install lua5.1
+luarocks --local test
 ```
 
-Another important thing to do, you need to add the project's directories with lua files to LUA_PATH environment variable.
-We add two absolute paths, one to the `main` and another to the `test` folder: 
+After that you can to run an individual test file like this:
 
 ```bash
-export LUA_PATH='/home/<absolute>/<path>/row-level-security-lua/src/main/lua/?.lua;/home/<absolute>/<path>/row-level-security-lua/src/test/lua/?.lua;'"$LUA_PATH"
+lua spec/build_preconditions_spec.lua
 ```
 
-After that you can try to run any test file:
+To just execute all unit tests, run the following command:
 
 ```bash
-lua src/test/lua/exasolvs/test_query_renderer.lua 
+busted
 ```
 
 If you want to run all unit tests including code coverage and static code analysis, issue the following command:
 
 ```bash
-tools/runtests.sh
+./tools/runtests.sh
 ```
 
-The test output contains summaries and you will find reports in the `luaunit-reports` and `luacov-reports` directories.
+The test output contains summaries and you will find reports in the `target/luaunit-reports` and `target/luacov-reports` directories.
 
 ### Running the Unit Tests From Intellij IDEA
 
@@ -117,3 +108,7 @@ Now you can right-click any unit-test class and `Run...` or use hot keys `[CTRL]
 ### Running the Unit Tests From Eclipse IDE
 
 We recommend you install the [Lua Development Tools (LDT)](https://www.eclipse.org/ldt/) when working on this project using the Eclipse IDE. If you add the Lua nature to the project, you can set the paths `src/main/lua` and `src/test/lua` as source paths. This way you can directly run the unit test as Lua application (`[CTRL] + [F11]`) without further configuration.
+
+## Enable Debug Output
+
+To enable debug output for the virtual schema adapter during integration tests you can set [system properties defined by test-db-builder-java](https://github.com/exasol/test-db-builder-java/blob/main/doc/user_guide/user_guide.md#debug-output).

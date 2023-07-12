@@ -3,15 +3,16 @@ package com.exasol;
 import static com.exasol.RlsTestConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +20,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer.NoDriverFoundExceptio
 import org.testcontainers.junit.jupiter.Container;
 
 import com.exasol.containers.ExasolContainer;
+import com.exasol.containers.ExasolDockerImageReference;
 import com.exasol.dbbuilder.dialects.*;
 import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
@@ -59,6 +61,17 @@ abstract class AbstractLuaVirtualSchemaIT {
         scriptSchema = factory.createSchema("L");
     }
 
+    /**
+     * Creates a new virtual schema with the given source schema and properties.
+     * <p>
+     * Note: if you want to enable debug output, you can set <a href=
+     * "https://github.com/exasol/test-db-builder-java/blob/main/doc/user_guide/user_guide.md#debug-output">system
+     * properties defined by test-db-builder-java</a>.
+     * 
+     * @param sourceSchema the source schema for the new virtual schema
+     * @param properties   the properties for the new virtual schema
+     * @return the newly created virtual schema
+     */
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema, final Map<String, String> properties) {
         final String name = sourceSchema.getName();
         final AdapterScript adapterScript;
@@ -70,24 +83,8 @@ abstract class AbstractLuaVirtualSchemaIT {
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(addDebugProperties(properties)) //
+                .properties(properties) //
                 .build();
-    }
-
-    protected Map<String, String> addDebugProperties(final Map<String, String> properties) {
-        final String logHost = System.getProperty(LOG_HOST_PROPERTY);
-        if (logHost == null) {
-            return properties;
-        } else {
-            final int logPort = Integer
-                    .parseInt(System.getProperty(LOG_PORT_PROPERTY, Integer.toString(DEFAULT_LOG_PORT)));
-            final String debugAddress = logHost + ":" + logPort;
-            final Map<String, String> mergedProperties = new HashMap<>();
-            mergedProperties.put("DEBUG_ADDRESS", debugAddress);
-            mergedProperties.put("LOG_LEVEL", "TRACE");
-            mergedProperties.putAll(properties);
-            return mergedProperties;
-        }
     }
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
@@ -145,7 +142,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             final ResultSet result = executeRlsQueryWithUser(sql, user);
             assertThat(result, expected);
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to run assertion query.", exception);
+            throw new AssertionError("Unable to run assertion query: " + exception, exception);
         }
     }
 
@@ -156,14 +153,19 @@ abstract class AbstractLuaVirtualSchemaIT {
             assertThat(timedResult.getResultSet(), expected);
             return timedResult.getDuration();
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to run assertion query.", exception);
+            throw new AssertionError("Unable to run assertion query: " + exception, exception);
         }
     }
 
     protected void assertRlsQueryThrowsExceptionWithMessageContaining(final String sql, final User user,
             final String expectedMessageFragment) {
+        assertRlsQueryThrowsExceptionWithMessageContaining(sql, user, containsString(expectedMessageFragment));
+    }
+
+    protected void assertRlsQueryThrowsExceptionWithMessageContaining(final String sql, final User user,
+            final Matcher<String> expectedMessageMatcher) {
         final SQLException exception = assertThrows(SQLException.class, () -> executeRlsQueryWithUser(sql, user));
-        assertThat(exception.getMessage(), containsString(expectedMessageFragment));
+        assertThat(exception.getMessage(), expectedMessageMatcher);
     }
 
     protected void assertPushDown(final String sql, final User user, final Matcher<String> matcher) {
@@ -174,5 +176,19 @@ abstract class AbstractLuaVirtualSchemaIT {
         } catch (final SQLException exception) {
             throw new AssertionError("Unable to run push-down assertion query:" + exception.getMessage(), exception);
         }
+    }
+
+    static void assumeExasol8OrHigher() {
+        assumeTrue(isExasol8OrHigher(), "is Exasol version 8 or higher");
+    }
+
+    static boolean isExasol8OrHigher() {
+        final ExasolDockerImageReference imageReference = EXASOL.getDockerImageReference();
+        return imageReference.hasMajor() && (imageReference.getMajor() >= 8);
+    }
+
+    static void assumeExasol7OrLower() {
+        final ExasolDockerImageReference imageReference = EXASOL.getDockerImageReference();
+        assumeTrue(imageReference.hasMajor() && (imageReference.getMajor() <= 7), "is Exasol version 7 or lower");
     }
 }

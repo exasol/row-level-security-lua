@@ -8,19 +8,25 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build with Lua ${{ matrix.lua_version }} using Exasol ${{ matrix.docker_db_version }}
+    strategy:
+      fail-fast: true
+      matrix:
+        lua_version: [5.4]
+        docker_db_version: ["7.1.21", "8.18.1"]
+    runs-on: ubuntu-22.04
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.lua_version }}-${{ matrix.docker_db_version }}
       cancel-in-progress: true
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: "Install Lua"
-        uses: leafo/gh-actions-lua@v10
+      - name: Install Lua ${{ matrix.lua_version }}
+        uses: leafo/gh-actions-lua@v9.1.0
         with:
-          luaVersion: 5.4
+          luaVersion: ${{ matrix.lua_version }}
       - name: "Install LuaRocks"
         uses: leafo/gh-actions-luarocks@v4
         with:
@@ -40,6 +46,7 @@ jobs:
         run: |
           eval $(luarocks path)
           mvn --batch-mode clean verify \
+              -Dcom.exasol.dockerdb.image=${{ matrix.docker_db_version }} \
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
               -DtrimStackTrace=false
       - name: Publish Test Report

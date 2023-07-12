@@ -4,6 +4,8 @@ import static com.exasol.RlsTestConstants.ROLE_MASK_TYPE;
 import static com.exasol.RlsTestConstants.ROW_ROLES_COLUMN;
 import static com.exasol.basetypes.BitField64.bitsToLong;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
 
 import java.sql.*;
 
@@ -34,7 +36,13 @@ class RestrictedAccessIT extends AbstractLuaVirtualSchemaIT {
         final VirtualSchema virtualSchema = createVirtualSchema(schema);
         final User user = createUserWithVirtualSchemaAccess("USER_FOR_ACCESS_WITHOUT_MAPPING", virtualSchema);
         assertRlsQueryThrowsExceptionWithMessageContaining("SELECT C1 FROM " + virtualSchema.getName() + ".T", user,
-                "Error during compilation: object \"SCHEMA_FOR_ACCESS_WITHOUT_MAPPING\".\"EXA_RLS_USERS\" not found");
+                anyOf(
+                        // Exasol 7.1
+                        containsString(
+                                "Error during compilation: object \"SCHEMA_FOR_ACCESS_WITHOUT_MAPPING\".\"EXA_RLS_USERS\" not found"),
+                        // Exasol 8
+                        containsString(
+                                "Error during compilation: object SCHEMA_FOR_ACCESS_WITHOUT_MAPPING.EXA_RLS_USERS not found")));
     }
 
     @Test
