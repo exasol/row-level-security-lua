@@ -8,7 +8,8 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.sql.*;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
@@ -154,13 +155,16 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
 
     private static void addExpectedRow(final ResultSetStructureMatcher.Builder builder, final String columnName,
             final String sqlType) {
+        final List<Object> list = new ArrayList<>(List.of( //
+                columnName, //
+                sqlType, //
+                anything("nullable"), //
+                anything("distribution_key"), //
+                anything("partition_key")));
         if (isExasol8OrHigher()) {
-            builder.row(columnName, sqlType, anything("nullable"), anything("distribution_key"),
-                    anything("partition_key"), anything("zonemapped"));
-        } else {
-            builder.row(columnName, sqlType, anything("nullable"), anything("distribution_key"),
-                    anything("partition_key"));
+            list.add(anything("zonemapped"));
         }
+        builder.row(list.toArray());
     }
 
     @Test
