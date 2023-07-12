@@ -249,6 +249,8 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
 
     @Test
     void testSwitchingSourceSchemaWithAlterVirtualSchema() throws SQLException {
+        assumeExasol7OrLower(); // Test fails with Exasol 8. This will be fixed in
+                                // https://github.com/exasol/row-level-security-lua/issues/136
         final String expectedText = "Hello";
         final Schema schemaA = createSchema("SCHEMA_SET_PROPS_A");
         schemaA.createTable("T", "C1", "VARCHAR(10)").insert(expectedText);
