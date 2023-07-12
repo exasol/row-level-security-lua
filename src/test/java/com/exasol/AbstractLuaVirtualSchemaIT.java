@@ -11,7 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,6 +61,17 @@ abstract class AbstractLuaVirtualSchemaIT {
         scriptSchema = factory.createSchema("L");
     }
 
+    /**
+     * Creates a new virtual schema with the given source schema and properties.
+     * <p>
+     * Note: if you want to enable debug output, you can set <a href=
+     * "https://github.com/exasol/test-db-builder-java/blob/main/doc/user_guide/user_guide.md#debug-output">system
+     * properties defined by test-db-builder-java</a>.
+     * 
+     * @param sourceSchema the source schema for the new virtual schema
+     * @param properties   the properties for the new virtual schema
+     * @return the newly created virtual schema
+     */
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema, final Map<String, String> properties) {
         final String name = sourceSchema.getName();
         final AdapterScript adapterScript;
@@ -71,24 +83,8 @@ abstract class AbstractLuaVirtualSchemaIT {
         return factory.createVirtualSchemaBuilder(getVirtualSchemaName(name)) //
                 .adapterScript(adapterScript) //
                 .sourceSchema(sourceSchema) //
-                .properties(addDebugProperties(properties)) //
+                .properties(properties) //
                 .build();
-    }
-
-    protected Map<String, String> addDebugProperties(final Map<String, String> properties) {
-        final String logHost = System.getProperty(LOG_HOST_PROPERTY);
-        if (logHost == null) {
-            return properties;
-        } else {
-            final int logPort = Integer
-                    .parseInt(System.getProperty(LOG_PORT_PROPERTY, Integer.toString(DEFAULT_LOG_PORT)));
-            final String debugAddress = logHost + ":" + logPort;
-            final Map<String, String> mergedProperties = new HashMap<>();
-            mergedProperties.put("DEBUG_ADDRESS", debugAddress);
-            mergedProperties.put("LOG_LEVEL", "TRACE");
-            mergedProperties.putAll(properties);
-            return mergedProperties;
-        }
     }
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {

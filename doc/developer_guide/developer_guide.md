@@ -108,3 +108,7 @@ Now you can right-click any unit-test class and `Run...` or use hot keys `[CTRL]
 ### Running the Unit Tests From Eclipse IDE
 
 We recommend you install the [Lua Development Tools (LDT)](https://www.eclipse.org/ldt/) when working on this project using the Eclipse IDE. If you add the Lua nature to the project, you can set the paths `src/main/lua` and `src/test/lua` as source paths. This way you can directly run the unit test as Lua application (`[CTRL] + [F11]`) without further configuration.
+
+## Enable Debug Output
+
+To enable debug output for the virtual schema adapter during integration tests you can set [system properties defined by test-db-builder-java](https://github.com/exasol/test-db-builder-java/blob/main/doc/user_guide/user_guide.md#debug-output).
