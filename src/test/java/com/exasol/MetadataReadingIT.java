@@ -86,6 +86,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                 "VU", "VARCHAR(12) UTF8"));
     }
 
+    // Exasol 8 reports TIMESTAMP as "TIMESTAMP(3)"
     @Test
     void testDetermineColumnTypesExasol8() {
         assumeExasol8OrHigher();
@@ -126,8 +127,8 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
                 "I2", "INTERVAL YEAR(7) TO MONTH", //
                 "I3", "INTERVAL DAY(2) TO SECOND(3)", //
                 "I4", "INTERVAL DAY(4) TO SECOND(2)", //
-                "T1", "TIMESTAMP", //
-                "T2", "TIMESTAMP WITH LOCAL TIME ZONE", //
+                "T1", "TIMESTAMP(3)", //
+                "T2", "TIMESTAMP(3) WITH LOCAL TIME ZONE", //
                 "VA", "VARCHAR(123) ASCII", //
                 "VU", "VARCHAR(12) UTF8"));
     }
