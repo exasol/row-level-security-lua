@@ -22,8 +22,7 @@ description = {
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 4.0.0",
-    "exasol-virtual-schema-common-lua = 1.0.1"
+    "exasol-virtual-schema-common-lua = 1.0.2"
 }
 
 build_dependencies = {
