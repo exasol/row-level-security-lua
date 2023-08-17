@@ -393,7 +393,7 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
 
 Remember that RLS is an additional layer of access control _on top_ of the measures built into the core database. So in order to read columns in an RLS Virtual Schema, users first need to be allowed to access that schema.
 
-A word or warning before you start granting permissions. Make sure you grant only access to the RLS Virtual Schema to regular users and _not to the orignial_ schema. Otherwise, those users can simply bypass RLS protection by going to the source.
+A word of warning before you start granting permissions. Make sure you grant only access to the RLS Virtual Schema to regular users and _not to the orignial_ schema. Otherwise, those users can simply bypass RLS protection by going to the source.
 
 Here is an example for allowing `SELECT` statements to a user.
 
