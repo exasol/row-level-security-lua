@@ -49,7 +49,7 @@
 [1]: https://repo1.maven.org/maven2/com/exasol/exasol-jdbc/7.1.20/exasol-jdbc-7.1.20-license.txt
 [2]: https://github.com/exasol/exasol-testcontainers/
 [3]: https://github.com/exasol/exasol-testcontainers/blob/main/LICENSE
-[4]: https://testcontainers.org
+[4]: https://java.testcontainers.org
 [5]: http://opensource.org/licenses/MIT
 [6]: http://hamcrest.org/JavaHamcrest/
 [7]: http://opensource.org/licenses/BSD-3-Clause
