@@ -105,6 +105,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
+                    <!-- Build Lua Code -->
                     <execution>
                         <id>unit-test</id>
                         <phase>test</phase>
@@ -164,6 +165,59 @@
                                 <!-- SQL scripts -->
                                 <argument>${source.sql.scripts}/role_mask.sql</argument>
                             </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- Build extension -->
+                    <execution>
+                        <id>npm-ci</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>extension/</workingDirectory>
+                            <executable>npm</executable>
+                            <commandlineArgs>ci</commandlineArgs>
+                            <useMavenLogger>false</useMavenLogger>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-extension</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>extension/</workingDirectory>
+                            <executable>npm</executable>
+                            <commandlineArgs>run build</commandlineArgs>
+                            <useMavenLogger>false</useMavenLogger>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unit-test-extension</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>extension/</workingDirectory>
+                            <executable>npm</executable>
+                            <commandlineArgs>test</commandlineArgs>
+                            <useMavenLogger>false</useMavenLogger>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>lint-extension</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>extension/</workingDirectory>
+                            <executable>npm</executable>
+                            <commandlineArgs>run lint</commandlineArgs>
+                            <useMavenLogger>false</useMavenLogger>
                         </configuration>
                     </execution>
                 </executions>

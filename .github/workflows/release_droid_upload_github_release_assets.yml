@@ -38,6 +38,13 @@ jobs:
         run: |
           cd target
           find . -maxdepth 1 \( -name '*.lua' -o -name '*.sql' \) -exec bash -c 'sha256sum {} > {}.sha256' \;
+      - name: Generate sha256sum files for extension
+        run: cd extension/dist/ && sha256sum row-level-security-extension.js > row-level-security-extension.js.sha256
+      - name: Upload extension
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.inputs.upload_url }}
+          asset_path: extension/dist/row-level-security-extension.js*
       - name: Upload SQL scripts to the GitHub release draft
         uses: shogo82148/actions-upload-release-asset@v1
         with:
