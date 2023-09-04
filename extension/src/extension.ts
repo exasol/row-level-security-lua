@@ -1,52 +1,61 @@
-import { ExasolExtension, registerExtension } from "@exasol/extension-manager-interface";
-import { JavaBaseExtension, ScriptDefinition, convertBaseExtension, jarFileVersionExtractor } from "@exasol/extension-manager-interface/dist/base";
+import { Context, ExasolExtension, NotFoundError, registerExtension } from "@exasol/extension-manager-interface";
 import { EXTENSION_DESCRIPTION } from "./extension-description";
+import { install } from "./install";
+import { createInstanceParameters } from "./parameterDefinitions";
+import { uninstall } from "./uninstall";
+import { addInstance } from "./addInstance";
 
-/** Script definitions for the required scripts. */
-const SCRIPTS: ScriptDefinition[] = [
-    {
-        name: "IMPORT_PATH",
-        type: "SET",
-        args: "...",
-        scriptClass: "com.exasol.cloudetl.scriptclasses.FilesImportQueryGenerator"
-    },
-    {
-        name: "IMPORT_METADATA",
-        type: "SCALAR",
-        args: `filename VARCHAR(2000), partition_index VARCHAR(100), start_index DECIMAL(36, 0), end_index DECIMAL(36, 0)`,
-        scriptClass: "com.exasol.cloudetl.scriptclasses.FilesMetadataReader"
-    },
-    {
-        name: "IMPORT_FILES",
-        type: "SET",
-        args: "...",
-        scriptClass: "com.exasol.cloudetl.scriptclasses.FilesDataImporter"
-    },
-    {
-        name: "EXPORT_PATH",
-        type: "SET",
-        args: "...",
-        scriptClass: "com.exasol.cloudetl.scriptclasses.TableExportQueryGenerator"
-    },
-    {
-        name: "EXPORT_TABLE",
-        type: "SET",
-        args: "ROWS_AFFECTED INT",
-        scriptClass: "com.exasol.cloudetl.scriptclasses.TableDataExporter"
-    }
-]
+export type ExtendedContext = Context & {
+    version: string,
+    luaScriptContent: string
+}
 
-export function createExtension(): ExasolExtension {
-    const baseExtension: JavaBaseExtension = {
-        name: "Cloud Storage Extension",
-        description: "Access data formatted with Avro, Orc and Parquet on public cloud storage systems",
-        category: "cloud-storage-importer",
+function extendContext(context: Context): ExtendedContext {
+    return {
+        ...context,
         version: EXTENSION_DESCRIPTION.version,
-        file: { name: EXTENSION_DESCRIPTION.fileName, size: EXTENSION_DESCRIPTION.fileSizeBytes },
-        scripts: SCRIPTS,
-        scriptVersionExtractor: jarFileVersionExtractor(/exasol-cloud-storage-extension-(\d+\.\d+\.\d+).jar/)
+        luaScriptContent: EXTENSION_DESCRIPTION.content
     }
-    return convertBaseExtension(baseExtension)
+}
+export function createExtension(): ExasolExtension {
+    const baseExtension: ExasolExtension = {
+        name: "Row Level Security Lua",
+        description: "Lua implementation of Exasol's row-level-security",
+        category: "security",
+        bucketFsUploads: [],
+        installableVersions: [{ name: EXTENSION_DESCRIPTION.version, deprecated: false, latest: true }],
+        findInstallations(context, metadata) {
+            return []
+        },
+        install(context, versionToInstall) {
+            install(extendContext(context), versionToInstall)
+        },
+        uninstall(context, versionToUninstall) {
+            uninstall(extendContext(context), versionToUninstall)
+        },
+        upgrade(context) {
+            return { previousVersion: "", newVersion: "" }
+        },
+        findInstances(context, version) {
+            return []
+        },
+        getInstanceParameters(context, version) {
+            if (EXTENSION_DESCRIPTION.version !== version) {
+                throw new NotFoundError(`Version '${version}' not supported, can only use '${EXTENSION_DESCRIPTION.version}'.`)
+            }
+            return createInstanceParameters()
+        },
+        addInstance(context, version, params) {
+            return addInstance(extendContext(context), version, params);
+        },
+        deleteInstance(context, extensionVersion, instanceId) {
+
+        },
+        readInstanceParameterValues(context, extensionVersion, instanceId) {
+            return { values: [] }
+        },
+    }
+    return baseExtension
 }
 
 registerExtension(createExtension())
