@@ -380,6 +380,7 @@ CREATE OR REPLACE LUA ADAPTER SCRIPT RLS_SCHEMA.RLS_ADAPTER AS
 ;
 ```
 The first fixed part is a module loading preamble that is required with 7.1.0. Later versions will make this unnecessary, the user guide will be updated accordingly if an Exasol release is available that incorporates that module loading feature by default.
+
 ### Creating Virtual Schema
 
 ```sql
