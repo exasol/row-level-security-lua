@@ -105,6 +105,10 @@ class ExtensionIT {
                 .insert(2, "b").insert(3, "c");
         setup.client().createInstance(
                 List.of(param("virtualSchemaName", virtualSchemaName), param("SCHEMA_NAME", schema.getName())));
+        extracted(virtualSchemaName, table);
+    }
+
+    private void extracted(final String virtualSchemaName, final Table table) throws SQLException {
         assertResult("select * from " + virtualSchemaName + "." + table.getName() + " order by id",
                 table("INTEGER", "VARCHAR").row(1, "a").row(2, "b").row(3, "c").matches());
     }

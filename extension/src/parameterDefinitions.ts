@@ -1,18 +1,30 @@
-import { Parameter } from "@exasol/extension-manager-interface";
+import { Parameter, SelectOption } from "@exasol/extension-manager-interface";
 
-export type ScopedParameter = Parameter & { scope: "general" | "vs" }
-export type ScopedParameters = { [key: string]: ScopedParameter }
 
-const allParams: ScopedParameters = {
-    virtualSchemaName: { scope: "general", id: "virtualSchemaName", name: "Name of the new virtual schema", type: "string", required: true },
+const REMOTELOG_LUA_LOG_LEVELS: string[] = ["NONE", "FATAL", "ERROR", "WARN", "INFO", "CONFIG", "DEBUG", "TRACE"];
+const LOG_LEVEL_OPTIONS: SelectOption[] = REMOTELOG_LUA_LOG_LEVELS.map(level => { return { id: level, name: level } })
+
+interface AllParameters {
+    virtualSchemaName: Parameter
+    schemaName: Parameter
+    excludedCapabilities: Parameter
+    tableFilter: Parameter
+    debugAddress: Parameter
+    logLevel: Parameter
+}
+
+const allParams: AllParameters = {
+    virtualSchemaName: { id: "virtualSchemaName", name: "Name of the new virtual schema", type: "string", required: true },
 
     // Virtual Schema parameters
-    schemaName: { scope: "vs", id: "SCHEMA_NAME", name: "Name of the schema for which to apply row-level security", type: "string", required: true, multiline: false },
-    excludedCapabilities: { scope: "vs", id: "EXCLUDED_CAPABILITIES", name: "Comma-separated list of capabilities that should not be pushed-down, e.g. 'SELECTLIST_PROJECTION, ORDER_BY_COLUMN'", type: "string", required: false, multiline: false },
-    tableFilter: { scope: "vs", id: "TABLE_FILTER", name: "Comma-separated list of tables that should be added to the schema, e.g. 'ORDERS, ORDER_ITEMS, PRODUCTS'. If this is empty, all tables are added.", type: "string", required: false, multiline: false },
+    schemaName: { id: "SCHEMA_NAME", name: "Name of the schema for which to apply row-level security", type: "string", required: true, multiline: false },
+    excludedCapabilities: { id: "EXCLUDED_CAPABILITIES", name: "Comma-separated list of capabilities that should not be pushed-down, e.g. 'SELECTLIST_PROJECTION, ORDER_BY_COLUMN'", type: "string", required: false, multiline: false },
+    tableFilter: { id: "TABLE_FILTER", name: "Comma-separated list of tables that should be added to the schema, e.g. 'ORDERS, ORDER_ITEMS, PRODUCTS'. If this is empty, all tables are added.", type: "string", required: false, multiline: false },
+    debugAddress: { id: "DEBUG_ADDRESS", name: "Network address and port to which to send debug output, e.g. '192.168.179.38:3000'", type: "string", required: false, multiline: false },
+    logLevel: { id: "LOG_LEVEL", name: "Log level for debug output", type: "select", required: false, options: LOG_LEVEL_OPTIONS },
 };
 
-export function getAllParameterDefinitions(): ScopedParameters {
+export function getAllParameterDefinitions(): AllParameters {
     return allParams;
 }
 
@@ -22,5 +34,7 @@ export function createInstanceParameters(): Parameter[] {
         allParams.schemaName,
         allParams.excludedCapabilities,
         allParams.tableFilter,
+        allParams.debugAddress,
+        allParams.logLevel,
     ];
 }
