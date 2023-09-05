@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This generates file src/extension-description.ts which describes the Lua virtual schema adapter script.
+
 set -o errexit
 set -o nounset
 set -o pipefail

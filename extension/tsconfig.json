@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
@@ -10,6 +8,8 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
+    "noImplicitAny": true,
+    "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,

@@ -1,9 +1,8 @@
 import { Parameter, SelectOption } from "@exasol/extension-manager-interface";
 
-
-const REMOTELOG_LUA_LOG_LEVELS: string[] = ["NONE", "FATAL", "ERROR", "WARN", "INFO", "CONFIG", "DEBUG", "TRACE"];
-const LOG_LEVEL_OPTIONS: SelectOption[] = REMOTELOG_LUA_LOG_LEVELS.map(level => { return { id: level, name: level } })
-
+/**
+ * This describes all mandatory and optional parameters for creating an instance of this extension.
+ */
 interface AllParameters {
     virtualSchemaName: Parameter
     schemaName: Parameter
@@ -12,6 +11,9 @@ interface AllParameters {
     debugAddress: Parameter
     logLevel: Parameter
 }
+
+const REMOTELOG_LUA_LOG_LEVELS: string[] = ["NONE", "FATAL", "ERROR", "WARN", "INFO", "CONFIG", "DEBUG", "TRACE"];
+const LOG_LEVEL_OPTIONS: SelectOption[] = REMOTELOG_LUA_LOG_LEVELS.map(level => { return { id: level, name: level } })
 
 const allParams: AllParameters = {
     virtualSchemaName: { id: "virtualSchemaName", name: "Name of the new virtual schema", type: "string", required: true },
@@ -23,6 +25,7 @@ const allParams: AllParameters = {
     debugAddress: { id: "DEBUG_ADDRESS", name: "Network address and port to which to send debug output, e.g. '192.168.179.38:3000'", type: "string", required: false, multiline: false },
     logLevel: { id: "LOG_LEVEL", name: "Log level for debug output", type: "select", required: false, options: LOG_LEVEL_OPTIONS },
 };
+
 
 export function getAllParameterDefinitions(): AllParameters {
     return allParams;
