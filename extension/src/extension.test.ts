@@ -1,8 +1,11 @@
-import { ExaMetadata, Installation, PreconditionFailedError } from '@exasol/extension-manager-interface';
+import { ExaMetadata, Installation, NotFoundError, PreconditionFailedError } from '@exasol/extension-manager-interface';
+import { failureResult, successResult } from '@exasol/extension-manager-interface/dist/base/common';
 import { ExaScriptsRow } from '@exasol/extension-manager-interface/dist/exasolSchema';
 import { describe, expect, it } from '@jest/globals';
+import { ADAPTER_SCRIPT_NAME, extractVersion } from './common';
 import { createExtension } from "./extension";
 import { EXTENSION_DESCRIPTION } from './extension-description';
+import { buildCreateScriptCommand } from './install';
 import { createMockContext, getInstalledExtension, scriptWithVersion } from './test-utils';
 
 const currentVersion = EXTENSION_DESCRIPTION.version
@@ -14,6 +17,7 @@ describe("Row Level Security Lua", () => {
             const latestVersions = createExtension().installableVersions.filter(version => version.latest)
             expect(latestVersions).toHaveLength(1)
             expect(latestVersions[0].deprecated).toEqual(false)
+            expect(latestVersions[0].name).toEqual(currentVersion)
         })
     })
 
@@ -37,6 +41,28 @@ describe("Row Level Security Lua", () => {
         })
     })
 
+    describe("extractVersion()", () => {
+        it("extracts version from script", () => {
+            expect(extractVersion('CREATE LUA ADAPTER SCRIPT "RLS_ADAPTER" AS\n-- RLS Lua version version number\nmore content')).toStrictEqual(successResult("version number"))
+        })
+        it("extracts version from script with whitespace", () => {
+            expect(extractVersion('CREATE LUA ADAPTER SCRIPT "RLS_ADAPTER" AS\n  -- RLS Lua version version number  \n  more content')).toStrictEqual(successResult("version number"))
+        })
+        it("extracts version from script with dummy content", () => {
+            expect(extractVersion('dummy\n-- RLS Lua version version number\ndummy')).toStrictEqual(successResult("version number"))
+        })
+        it("extracts version from script with only version comment", () => {
+            expect(extractVersion('-- RLS Lua version version number')).toStrictEqual(successResult("version number"))
+        })
+        it("fails to extracts version from script", () => {
+            expect(extractVersion('invalid script')).toStrictEqual(failureResult("version not found in script text 'invalid script'"))
+        })
+        it("recognizes it's own version tag", () => {
+            const script = buildCreateScriptCommand("scriptName", "luaContent")
+            expect(extractVersion(script)).toStrictEqual(successResult(currentVersion))
+        })
+    })
+
     describe("findInstallations()", () => {
         function findInstallations(allScripts: ExaScriptsRow[]): Installation[] {
             const metadata: ExaMetadata = {
@@ -49,48 +75,22 @@ describe("Row Level Security Lua", () => {
             return installations
         }
 
-        function text(name: string, className: string, version: string): string {
-            return `CREATE ${name} ...
-        %scriptclass ${className};
-        %jar /buckets/bfsdefault/default/exasol-cloud-storage-extension-${version}.jar;`
-        }
-        function script({ schema = "schema", name = "name", inputType, resultType = "EMITS", type = "UDF", text = "", comment }: Partial<ExaScriptsRow>): ExaScriptsRow {
+        function script({ schema = "schema", name = "name", inputType, resultType, type = "ADAPTER", text = "", comment }: Partial<ExaScriptsRow>): ExaScriptsRow {
             return { schema, name, inputType, resultType, type, text, comment }
-        }
-        function setScript(name: string, className: string, version = EXTENSION_DESCRIPTION.version): ExaScriptsRow {
-            return script({ name, inputType: "SET", text: text(name, className, version) })
-        }
-        function scalarScript(name: string, className: string, version = EXTENSION_DESCRIPTION.version): ExaScriptsRow {
-            return script({ name, inputType: "SCALAR", text: text(name, className, version) })
         }
 
         it("returns empty list when no adapter script is available", () => {
             expect(findInstallations([])).toHaveLength(0)
         })
 
-        it("returns single item when all scripts are available", () => {
-            const scripts: ExaScriptsRow[] = [
-                setScript("EXPORT_PATH", "com.exasol.cloudetl.scriptclasses.TableExportQueryGenerator"),
-                setScript("EXPORT_TABLE", "com.exasol.cloudetl.scriptclasses.TableDataExporter"),
-                setScript("IMPORT_FILES", "com.exasol.cloudetl.scriptclasses.FilesDataImporter"),
-                scalarScript("IMPORT_METADATA", "com.exasol.cloudetl.scriptclasses.FilesMetadataReader"),
-                setScript("IMPORT_PATH", "com.exasol.cloudetl.scriptclasses.FilesImportQueryGenerator")
-            ]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "Cloud Storage Extension", version: EXTENSION_DESCRIPTION.version }])
+        it("returns single item when script is available", () => {
+            const scripts: ExaScriptsRow[] = [script({ name: "RLS_ADAPTER", text: "-- RLS Lua version version" })]
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "schema.RLS_ADAPTER", version: "version" }])
         })
 
-        it("fails for inconsistent version", () => {
-            const scripts: ExaScriptsRow[] = [
-                setScript("EXPORT_PATH", "com.exasol.cloudetl.scriptclasses.TableExportQueryGenerator"),
-                setScript("EXPORT_TABLE", "com.exasol.cloudetl.scriptclasses.TableDataExporter"),
-                setScript("IMPORT_FILES", "com.exasol.cloudetl.scriptclasses.FilesDataImporter"),
-                scalarScript("IMPORT_METADATA", "com.exasol.cloudetl.scriptclasses.FilesMetadataReader", "0.0.0"),
-                setScript("IMPORT_PATH", "com.exasol.cloudetl.scriptclasses.FilesImportQueryGenerator")
-            ]
-            expect(() => findInstallations(scripts)).toThrowError(new PreconditionFailedError(`Not all scripts use the same version. Found 2 different versions: '${currentVersion}, 0.0.0'`))
-        })
-
-        describe("returns expected installations", () => {
+        it("returns unknown version for invalid script", () => {
+            const scripts: ExaScriptsRow[] = [script({ name: "RLS_ADAPTER", text: "invalid" })]
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "schema.RLS_ADAPTER", version: "(unknown)" }])
         })
     })
 
@@ -99,24 +99,16 @@ describe("Row Level Security Lua", () => {
             const context = createMockContext();
             createExtension().install(context, EXTENSION_DESCRIPTION.version);
             const executeCalls = context.mocks.sqlExecute.mock.calls
-            expect(executeCalls.length).toBe(10)
+            expect(executeCalls.length).toBe(2)
 
-            const expectedScriptNames = ["IMPORT_PATH", "IMPORT_METADATA", "IMPORT_FILES", "EXPORT_PATH", "EXPORT_TABLE"]
+            const createScriptCommand = executeCalls[0][0]
+            const createCommentCommand = executeCalls[1][0]
 
-            const createScriptStatements = executeCalls.slice(0, 5).map(args => args[0])
-            const createCommentStatements = executeCalls.slice(5, 10).map(args => args[0])
-
-            expect(createScriptStatements).toHaveLength(5)
-            expect(createCommentStatements).toHaveLength(5)
-
-            const expectedComment = `Created by Extension Manager for Cloud Storage Extension ${EXTENSION_DESCRIPTION.version}`
-            for (let i = 0; i < expectedScriptNames.length; i++) {
-                const name = expectedScriptNames[i];
-                expect(createScriptStatements[i]).toContain(`CREATE OR REPLACE JAVA`)
-                expect(createScriptStatements[i]).toContain(`SCRIPT "ext-schema"."${name}"`)
-                expect(createScriptStatements[i]).toContain(`%scriptclass com.exasol.cloudetl.scriptclasses.`)
-                expect(createCommentStatements[i]).toEqual(`COMMENT ON SCRIPT "ext-schema"."${name}" IS '${expectedComment}'`)
-            }
+            expect(createScriptCommand).toContain(`CREATE OR REPLACE LUA ADAPTER SCRIPT \"ext-schema\".\"RLS_ADAPTER\" AS
+-- RLS Lua version 1.5.0
+table.insert(package.searchers,`)
+            const expectedComment = `Created by Extension Manager for Row Level Security Lua ${EXTENSION_DESCRIPTION.version}`
+            expect(createCommentCommand).toEqual(`COMMENT ON SCRIPT "ext-schema"."${ADAPTER_SCRIPT_NAME}" IS '${expectedComment}'`)
         })
         it("fails for wrong version", () => {
             expect(() => { createExtension().install(createMockContext(), "wrongVersion") })
@@ -144,11 +136,8 @@ describe("Row Level Security Lua", () => {
             context.mocks.sqlQuery.mockReturnValue({ columns: [], rows: [[1]] });
             createExtension().uninstall(context, EXTENSION_DESCRIPTION.version)
             const calls = context.mocks.sqlExecute.mock.calls
-            const expectedScriptNames = ["IMPORT_PATH", "IMPORT_METADATA", "IMPORT_FILES", "EXPORT_PATH", "EXPORT_TABLE"]
-            expect(calls.length).toEqual(expectedScriptNames.length)
-            for (let i = 0; i < expectedScriptNames.length; i++) {
-                expect(calls[i]).toEqual([`DROP SCRIPT "ext-schema"."${expectedScriptNames[i]}"`])
-            }
+            expect(calls.length).toEqual(1)
+            expect(calls[0]).toEqual([`DROP ADAPTER SCRIPT "ext-schema"."${ADAPTER_SCRIPT_NAME}"`])
         })
         it("fails for wrong version", () => {
             expect(() => { createExtension().uninstall(createMockContext(), "wrongVersion") })
@@ -156,11 +145,20 @@ describe("Row Level Security Lua", () => {
         })
     })
 
-
     describe("getInstanceParameters()", () => {
-        it("is not supported", () => {
-            expect(() => { createExtension().getInstanceParameters(createMockContext(), "version") })
-                .toThrow("Creating instances not supported")
+        it("fails for wrong version", () => {
+            expect(() => { createExtension().getInstanceParameters(createMockContext(), "wrongVersion") })
+                .toThrowError(new NotFoundError(`Version 'wrongVersion' not supported, can only use '${EXTENSION_DESCRIPTION.version}'.`))
+        })
+        it("returns expected parameters", () => {
+            const actual = createExtension().getInstanceParameters(createMockContext(), EXTENSION_DESCRIPTION.version)
+            expect(actual).toHaveLength(6)
+            expect(actual[0]).toStrictEqual({
+                id: "virtualSchemaName", name: "Name of the new virtual schema", required: true, type: "string"
+            })
+            expect(actual[1]).toStrictEqual({
+                id: "SCHEMA_NAME", name: "Name of the schema for which to apply row-level security", required: true, type: "string"
+            })
         })
     })
 

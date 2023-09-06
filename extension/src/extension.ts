@@ -1,9 +1,10 @@
 import { Context, ExasolExtension, NotFoundError, registerExtension } from "@exasol/extension-manager-interface";
+import { addInstance } from "./addInstance";
 import { EXTENSION_DESCRIPTION } from "./extension-description";
+import { findInstallations } from "./findInstallations";
 import { install } from "./install";
 import { createInstanceParameters } from "./parameterDefinitions";
 import { uninstall } from "./uninstall";
-import { addInstance } from "./addInstance";
 
 export type ExtendedContext = Context & {
     version: string,
@@ -25,7 +26,7 @@ export function createExtension(): ExasolExtension {
         bucketFsUploads: [],
         installableVersions: [{ name: EXTENSION_DESCRIPTION.version, deprecated: false, latest: true }],
         findInstallations(context, metadata) {
-            return []
+            return findInstallations(extendContext(context), metadata.allScripts.rows)
         },
         install(context, versionToInstall) {
             install(extendContext(context), versionToInstall)
