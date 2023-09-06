@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -45,6 +46,7 @@ class ExtensionIT {
     @BeforeAll
     static void setup() throws FileNotFoundException, BucketAccessException, TimeoutException {
         exasolTestSetup = new ExasolTestSetupFactory(Path.of("no-such-file")).getTestSetup();
+        assumePythonUdfSupported();
         setup = ExtensionManagerSetup.create(exasolTestSetup, ExtensionBuilder.createDefaultNpmBuilder(
                 EXTENSION_SOURCE_DIR, EXTENSION_SOURCE_DIR.resolve("dist").resolve(EXTENSION_ID)));
     }
@@ -53,6 +55,22 @@ class ExtensionIT {
     void setupTest() throws SQLException {
         connection = exasolTestSetup.createConnection();
         dbObjectFactory = new ExasolObjectFactory(exasolTestSetup.createConnection());
+    }
+
+    static void assumePythonUdfSupported() {
+        final String dbVersion = readDbVersion();
+        assumeFalse("8.22.0".equals(dbVersion), "Assume DB version != 8.22.0, actual: " + dbVersion);
+    }
+
+    private static String readDbVersion() {
+        try (Statement stmt = exasolTestSetup.createConnection().createStatement()) {
+            final ResultSet result = stmt
+                    .executeQuery("select PARAM_VALUE from SYS.EXA_METADATA WHERE PARAM_NAME='databaseProductVersion'");
+            result.next();
+            return result.getString(1);
+        } catch (final SQLException exception) {
+            throw new AssertionError("Failed to read database version", exception);
+        }
     }
 
     @AfterAll
