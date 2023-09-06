@@ -1,5 +1,5 @@
-import { Instance, NotFoundError, Parameter, ParameterValues } from "@exasol/extension-manager-interface";
-import { ADAPTER_SCRIPT_NAME, convertSchemaNameToInstanceId } from "./common";
+import { BadRequestError, Instance, NotFoundError, Parameter, ParameterValues } from "@exasol/extension-manager-interface";
+import { ADAPTER_SCRIPT_NAME, EXTENSION_NAME, convertSchemaNameToInstanceId } from "./common";
 import { ExtendedContext } from "./extension";
 import { getAllParameterDefinitions } from "./parameterDefinitions";
 
@@ -19,7 +19,7 @@ export function addInstance(context: ExtendedContext, version: string, paramValu
     const config = buildVirtualSchemaConfig(paramValues)
     const createVirtualSchemaStmt = createVirtualSchemaStatement(context.extensionSchemaName, config);
     context.sqlClient.execute(createVirtualSchemaStmt);
-    const comment = `Created by extension manager for row-level-security-lua ${escapeSingleQuotes(config.virtualSchemaName)} (version ${context.version})`;
+    const comment = `Created by Extension Manager for ${EXTENSION_NAME} version ${context.version}`;
     context.sqlClient.execute(`COMMENT ON SCHEMA "${config.virtualSchemaName}" IS '${comment}'`);
     return { id: convertSchemaNameToInstanceId(config.virtualSchemaName), name: config.virtualSchemaName }
 }
@@ -41,7 +41,7 @@ function getParameterValue(paramValues: ParameterValues, definition: Parameter):
     if (value) {
         return value
     }
-    throw new Error(`Missing parameter "${definition.id}"`)
+    throw new BadRequestError(`Missing parameter "${definition.id}"`)
 }
 
 function getOptionalParameterValue(paramValues: ParameterValues, definition: Parameter): string | undefined {
@@ -58,7 +58,7 @@ function createVirtualSchemaStatement(adapterSchema: string, config: VirtualSche
     if (config.excludedCapabilities) {
         stmt += ` EXCLUDED_CAPABILITIES='${config.excludedCapabilities}'`
     }
-    if (config.excludedCapabilities) {
+    if (config.tableFilter) {
         stmt += ` TABLE_FILTER='${config.tableFilter}'`
     }
     if (config.debugAddress) {
@@ -68,8 +68,4 @@ function createVirtualSchemaStatement(adapterSchema: string, config: VirtualSche
         stmt += ` LOG_LEVEL='${config.logLevel}'`
     }
     return stmt;
-}
-
-function escapeSingleQuotes(value: string): string {
-    return value.replace(/'/g, "''")
 }

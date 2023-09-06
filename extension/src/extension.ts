@@ -1,10 +1,14 @@
 import { Context, ExasolExtension, NotFoundError, registerExtension } from "@exasol/extension-manager-interface";
 import { addInstance } from "./addInstance";
+import { EXTENSION_NAME } from "./common";
+import { deleteInstance } from "./deleteInstance";
 import { EXTENSION_DESCRIPTION } from "./extension-description";
 import { findInstallations } from "./findInstallations";
+import { findInstances } from "./findInstances";
 import { install } from "./install";
 import { createInstanceParameters } from "./parameterDefinitions";
 import { uninstall } from "./uninstall";
+import { upgrade } from "./upgrade";
 
 export type ExtendedContext = Context & {
     version: string,
@@ -20,7 +24,7 @@ function extendContext(context: Context): ExtendedContext {
 }
 export function createExtension(): ExasolExtension {
     const baseExtension: ExasolExtension = {
-        name: "Row Level Security Lua",
+        name: EXTENSION_NAME,
         description: "Lua implementation of Exasol's row-level-security",
         category: "security",
         bucketFsUploads: [],
@@ -35,10 +39,10 @@ export function createExtension(): ExasolExtension {
             uninstall(extendContext(context), versionToUninstall)
         },
         upgrade(context) {
-            return { previousVersion: "", newVersion: "" }
+            return upgrade(extendContext(context))
         },
-        findInstances(context, version) {
-            return []
+        findInstances(context, _version) {
+            return findInstances(extendContext(context))
         },
         getInstanceParameters(context, version) {
             if (EXTENSION_DESCRIPTION.version !== version) {
@@ -49,11 +53,11 @@ export function createExtension(): ExasolExtension {
         addInstance(context, version, params) {
             return addInstance(extendContext(context), version, params);
         },
-        deleteInstance(context, extensionVersion, instanceId) {
-
+        deleteInstance(context, version, instanceId) {
+            deleteInstance(extendContext(context), version, instanceId)
         },
-        readInstanceParameterValues(context, extensionVersion, instanceId) {
-            return { values: [] }
+        readInstanceParameterValues(_context, _version, _instanceId) {
+            throw new NotFoundError("Reading instance parameter values not supported")
         },
     }
     return baseExtension

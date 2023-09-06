@@ -36,6 +36,7 @@ class ExtensionIT {
     private static final String EXTENSION_ID = "row-level-security-extension.js";
     private static final int EXPECTED_PARAMETER_COUNT = 6;
     private static final String PROJECT_VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
+    private static final String BASE_SCHEMA_NAME = "BASE_SCHEMA";
     private static ExasolTestSetup exasolTestSetup;
     private static ExtensionManagerSetup setup;
     private Connection connection;
@@ -64,6 +65,7 @@ class ExtensionIT {
 
     @AfterEach
     void cleanup() throws SQLException {
+        connection.createStatement().execute("drop schema if exists " + BASE_SCHEMA_NAME + " cascade");
         connection.close();
         setup.cleanup();
     }
@@ -164,8 +166,8 @@ class ExtensionIT {
     @Test
     void installExtensions() {
         setup.client().install();
-        assertThat(setup.client().getInstallations(),
-                contains(new InstallationsResponseInstallation().name(EXTENSION_ID).version(PROJECT_VERSION)));
+        assertThat(setup.client().getInstallations(), contains(
+                new InstallationsResponseInstallation().name("EXA_EXTENSIONS.RLS_ADAPTER").version(PROJECT_VERSION)));
     }
 
     @Test
@@ -202,8 +204,7 @@ class ExtensionIT {
     @Test
     void upgradeFailsWhenNotInstalled() {
         setup.client().assertRequestFails(() -> setup.client().upgrade(),
-                "extension is not installed, the following scripts are missing: S3_FILES_ADAPTER, IMPORT_FROM_S3_DOCUMENT_FILES",
-                404);
+                "Adapter script 'RLS_ADAPTER' is not installed", 412);
     }
 
     @Test
@@ -213,6 +214,7 @@ class ExtensionIT {
                 "Extension is already installed in latest version " + PROJECT_VERSION, 412);
     }
 
+    @Disabled("No previous version exists for upgrading")
     @Test
     void upgradeFromPreviousVersion() throws InterruptedException, BucketAccessException, TimeoutException,
             FileNotFoundException, URISyntaxException {
@@ -228,7 +230,8 @@ class ExtensionIT {
     }
 
     private PreviousExtensionVersion createPreviousVersion() {
-        return setup.previousVersionManager().newVersion().currentVersion(PROJECT_VERSION) //
+        return setup.previousVersionManager().newVersion() //
+                .currentVersion(PROJECT_VERSION) //
                 .previousVersion(PREVIOUS_VERSION) //
                 .extensionFileName(EXTENSION_ID) //
                 .project("row-level-security-lua") //
@@ -252,6 +255,35 @@ class ExtensionIT {
         verifyVirtualTableContainsData(virtualTableName);
     }
 
+    @Test
+    void findInstance_notInstalled() {
+        assertThat(setup.client().listInstances("ignoredVersion"), emptyIterable());
+    }
+
+    @Test
+    void findInstance_noInstance() {
+        setup.client().install();
+        assertThat(setup.client().listInstances("ignoredVersion"), emptyIterable());
+    }
+
+    @Test
+    void findInstance() {
+        setup.client().install();
+        createVirtualSchema();
+        assertThat(setup.client().listInstances("ignoredVersion"),
+                contains(new Instance().id("RLS_SCHEMA").name("RLS_SCHEMA")));
+    }
+
+    @Test
+    void deleteInstance() {
+        setup.client().install();
+        createVirtualSchema();
+        setup.exasolMetadata().assertVirtualSchema(
+                table().row("RLS_SCHEMA", "SYS", "EXA_EXTENSIONS.RLS_ADAPTER", not(emptyOrNullString())).matches());
+        setup.client().deleteInstance(PROJECT_VERSION, "RLS_SCHEMA");
+        setup.exasolMetadata().assertNoVirtualSchema();
+    }
+
     private String createVirtualSchema() {
         return createVirtualSchema(EXTENSION_ID, PROJECT_VERSION);
     }
@@ -264,7 +296,7 @@ class ExtensionIT {
     }
 
     private Table createBaseTable() {
-        final ExasolSchema baseSchema = this.dbObjectFactory.createSchema("BASE_SCHEMA");
+        final ExasolSchema baseSchema = this.dbObjectFactory.createSchema(BASE_SCHEMA_NAME);
         return baseSchema.createTable("TAB", "ID", "SMALLINT", "NAME", "varchar(10)").insert(1, "a").insert(2, "b")
                 .insert(3, "c");
     }
@@ -299,7 +331,7 @@ class ExtensionIT {
     }
 
     private void assertScriptsExist() {
-        final String comment = "Created by Extension Manager for Row Level Security Lua " + PROJECT_VERSION;
+        final String comment = "Created by Extension Manager for Row Level Security Lua version " + PROJECT_VERSION;
         setup.exasolMetadata()
                 .assertScript(table()
                         .row("RLS_ADAPTER", "ADAPTER", null, null,

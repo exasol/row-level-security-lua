@@ -201,7 +201,7 @@
                         <configuration>
                             <workingDirectory>extension/</workingDirectory>
                             <executable>npm</executable>
-                            <commandlineArgs>test</commandlineArgs>
+                            <commandlineArgs>run test</commandlineArgs>
                             <useMavenLogger>false</useMavenLogger>
                         </configuration>
                     </execution>

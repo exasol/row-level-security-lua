@@ -1,12 +1,12 @@
-import { ExaMetadata, Installation, NotFoundError, PreconditionFailedError } from '@exasol/extension-manager-interface';
+import { BadRequestError, ExaMetadata, Installation, Instance, NotFoundError, ParameterValue, PreconditionFailedError, Row } from '@exasol/extension-manager-interface';
 import { failureResult, successResult } from '@exasol/extension-manager-interface/dist/base/common';
 import { ExaScriptsRow } from '@exasol/extension-manager-interface/dist/exasolSchema';
 import { describe, expect, it } from '@jest/globals';
-import { ADAPTER_SCRIPT_NAME, extractVersion } from './common';
+import { ADAPTER_SCRIPT_NAME, EXTENSION_NAME, extractVersion } from './common';
 import { createExtension } from "./extension";
 import { EXTENSION_DESCRIPTION } from './extension-description';
 import { buildCreateScriptCommand } from './install';
-import { createMockContext, getInstalledExtension, scriptWithVersion } from './test-utils';
+import { createMockContext, getInstalledExtension, script } from './test-utils';
 
 const currentVersion = EXTENSION_DESCRIPTION.version
 
@@ -107,7 +107,7 @@ describe("Row Level Security Lua", () => {
             expect(createScriptCommand).toContain(`CREATE OR REPLACE LUA ADAPTER SCRIPT \"ext-schema\".\"RLS_ADAPTER\" AS
 -- RLS Lua version 1.5.0
 table.insert(package.searchers,`)
-            const expectedComment = `Created by Extension Manager for Row Level Security Lua ${EXTENSION_DESCRIPTION.version}`
+            const expectedComment = `Created by Extension Manager for Row Level Security Lua version ${EXTENSION_DESCRIPTION.version}`
             expect(createCommentCommand).toEqual(`COMMENT ON SCRIPT "ext-schema"."${ADAPTER_SCRIPT_NAME}" IS '${expectedComment}'`)
         })
         it("fails for wrong version", () => {
@@ -163,74 +163,153 @@ table.insert(package.searchers,`)
     })
 
     describe("addInstance()", () => {
-        it("is not supported", () => {
-            expect(() => { createExtension().addInstance(createMockContext(), "version", { values: [] }) })
-                .toThrow("Creating instances not supported")
+        it("fails for missing schema name", () => {
+            expect(() => createExtension().addInstance(createMockContext(), currentVersion, { values: [] }))
+                .toThrowError(new BadRequestError(`Missing parameter "virtualSchemaName"`))
+        })
+        it("fails for missing base schema name", () => {
+            expect(() => createExtension().addInstance(createMockContext(), currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }] }))
+                .toThrowError(new BadRequestError(`Missing parameter "SCHEMA_NAME"`))
+        })
+
+        it("executes expected statements", () => {
+            const context = createMockContext();
+            const parameters = [{ name: "virtualSchemaName", value: "NEW_RLS_VS" }, { name: "SCHEMA_NAME", value: "baseSchema" }]
+            const instance = createExtension().addInstance(context, currentVersion, { values: parameters });
+            expect(instance.name).toBe("NEW_RLS_VS")
+            const calls = context.mocks.sqlExecute.mock.calls
+            expect(calls.length).toBe(2)
+
+            expect(calls[0]).toEqual([`CREATE VIRTUAL SCHEMA "NEW_RLS_VS" USING "ext-schema"."RLS_ADAPTER" WITH SCHEMA_NAME = 'baseSchema'`])
+            const comment = `Created by Extension Manager for ${EXTENSION_NAME} version ${currentVersion}`
+            expect(calls[1]).toEqual([`COMMENT ON SCHEMA "NEW_RLS_VS" IS '${comment}'`])
+        })
+
+        describe("uses optional parameters", () => {
+            const tests: { name: string, params: ParameterValue[], expectedScript: string }[] = [
+                { name: "no optional param", params: [], expectedScript: "" },
+                { name: "excluded capabilities", params: [{ name: "EXCLUDED_CAPABILITIES", value: "cap1, cap2" }], expectedScript: " EXCLUDED_CAPABILITIES='cap1, cap2'" },
+                { name: "table filter", params: [{ name: "TABLE_FILTER", value: "tab1, tab2" }], expectedScript: " TABLE_FILTER='tab1, tab2'" },
+                { name: "quoted table filter", params: [{ name: "TABLE_FILTER", value: `"tab1", tab2` }], expectedScript: ` TABLE_FILTER='"tab1", tab2'` },
+                { name: "debug address", params: [{ name: "DEBUG_ADDRESS", value: "123.45.6.78:3000" }], expectedScript: " DEBUG_ADDRESS='123.45.6.78:3000'" },
+                { name: "log level", params: [{ name: "LOG_LEVEL", value: "TRACE" }], expectedScript: " LOG_LEVEL='TRACE'" },
+                {
+                    name: "all optional params", params: [{ name: "EXCLUDED_CAPABILITIES", value: "cap1, cap2" }, { name: "TABLE_FILTER", value: "tab1, tab2" },
+                    { name: "DEBUG_ADDRESS", value: "123.45.6.78:3000" }, { name: "LOG_LEVEL", value: "TRACE" }],
+                    expectedScript: " EXCLUDED_CAPABILITIES='cap1, cap2' TABLE_FILTER='tab1, tab2' DEBUG_ADDRESS='123.45.6.78:3000' LOG_LEVEL='TRACE'"
+                },
+            ]
+            tests.forEach(test => it(test.name, () => {
+                const context = createMockContext();
+                const parameters = [{ name: "virtualSchemaName", value: "NEW_RLS_VS" }, { name: "SCHEMA_NAME", value: "baseSchema" }]
+                test.params.forEach(p => parameters.push(p))
+                const instance = createExtension().addInstance(context, currentVersion, { values: parameters });
+                expect(instance.name).toBe("NEW_RLS_VS")
+                const calls = context.mocks.sqlExecute.mock.calls
+                expect(calls.length).toBe(2)
+                expect(calls[0]).toEqual([`CREATE VIRTUAL SCHEMA "NEW_RLS_VS" USING "ext-schema"."RLS_ADAPTER" WITH SCHEMA_NAME = 'baseSchema'` + test.expectedScript])
+            }))
+        })
+
+        it("returns id and name", () => {
+            const context = createMockContext();
+            const parameters = [{ name: "virtualSchemaName", value: "NEW_RLS_VS" }, { name: "SCHEMA_NAME", value: "baseSchema" }]
+            const instance = createExtension().addInstance(context, currentVersion, { values: parameters });
+            expect(instance).toStrictEqual({ id: "NEW_RLS_VS", name: "NEW_RLS_VS" })
+        })
+
+        it("fails for wrong version", () => {
+            expect(() => { createExtension().addInstance(createMockContext(), "wrongVersion", { values: [] }) })
+                .toThrow(`Version 'wrongVersion' not supported, can only use '${currentVersion}'.`)
         })
     })
 
     describe("findInstances()", () => {
-        it("is not supported", () => {
-            expect(() => { createExtension().findInstances(createMockContext(), "version") })
-                .toThrow("Finding instances not supported")
+        function findInstances(rows: Row[]): Instance[] {
+            const context = createMockContext();
+            context.mocks.sqlQuery.mockReturnValue({ columns: [], rows });
+            return createExtension().findInstances(context, "version")
+        }
+        it("returns empty list for empty metadata", () => {
+            expect(findInstances([])).toEqual([])
+        })
+        it("returns single instance", () => {
+            expect(findInstances([["rls_vs"]]))
+                .toEqual([{ id: "rls_vs", name: "rls_vs" }])
+        })
+        it("returns multiple instance", () => {
+            expect(findInstances([["vs1"], ["vs2"], ["vs3"]]))
+                .toEqual([{ id: "vs1", name: "vs1" }, { id: "vs2", name: "vs2" }, { id: "vs3", name: "vs3" }])
+        })
+        it("filters by schema and script name", () => {
+            const context = createMockContext();
+            context.mocks.sqlQuery.mockReturnValue({ columns: [], rows: [] });
+            createExtension().findInstances(context, "version")
+            const queryCalls = context.mocks.sqlQuery.mock.calls
+            expect(queryCalls.length).toEqual(1)
+            expect(queryCalls[0]).toEqual(["SELECT SCHEMA_NAME FROM SYS.EXA_ALL_VIRTUAL_SCHEMAS WHERE ADAPTER_SCRIPT = ?||'.'||?  ORDER BY SCHEMA_NAME", "ext-schema", "RLS_ADAPTER"])
         })
     })
 
     describe("deleteInstance()", () => {
-        it("is not supported", () => {
-            expect(() => { createExtension().deleteInstance(createMockContext(), "version", "instId") })
-                .toThrow("Deleting instances not supported")
+        describe("deleteInstance()", () => {
+            it("drops connection and virtual schema", () => {
+                const context = createMockContext();
+                createExtension().deleteInstance(context, currentVersion, "instId")
+                const executeCalls = context.mocks.sqlExecute.mock.calls
+                expect(executeCalls.length).toEqual(1)
+                expect(executeCalls[0]).toEqual([`DROP VIRTUAL SCHEMA IF EXISTS "instId" CASCADE`])
+            })
+            it("fails for wrong version", () => {
+                expect(() => { createExtension().deleteInstance(createMockContext(), "wrongVersion", "instId") })
+                    .toThrow(`Version 'wrongVersion' not supported, can only use '${currentVersion}'.`)
+            })
         })
     })
 
     describe("readInstanceParameterValues()", () => {
         it("is not supported", () => {
             expect(() => { createExtension().readInstanceParameterValues(createMockContext(), "version", "instId") })
-                .toThrow("Reading instance parameter values not supported")
+                .toThrowError(new NotFoundError("Reading instance parameter values not supported"))
         })
     })
 
 
     describe("upgrade()", () => {
-        const version = "1.2.3"
-        const importPath = scriptWithVersion("IMPORT_PATH", version)
-        const importMetadata = scriptWithVersion("IMPORT_METADATA", version)
-        const importFiles = scriptWithVersion("IMPORT_FILES", version)
-        const exportPath = scriptWithVersion("EXPORT_PATH", version)
-        const exportTable = scriptWithVersion("EXPORT_TABLE", version)
-        const allScripts = [importPath, importMetadata, importFiles, exportPath, exportTable]
 
-        describe("validateInstalledScripts()", () => {
-            it("success", () => {
+        function scriptWithVersion(name: string, version: string): ExaScriptsRow {
+            return script({ name, text: "-- RLS Lua version " + version })
+        }
+
+        const version = "1.2.3"
+        const adapterScript = scriptWithVersion("RLS_ADAPTER", version)
+
+        it("success", () => {
+            const context = createMockContext()
+            context.mocks.simulateScripts([adapterScript])
+            expect(createExtension().upgrade(context)).toStrictEqual({ previousVersion: version, newVersion: currentVersion })
+            const executeCalls = context.mocks.sqlExecute.mock.calls
+            expect(executeCalls.length).toBe(2)
+        })
+        describe("failure", () => {
+            const tests: { name: string; scripts: ExaScriptsRow[], expectedMessage: string }[] = [
+                { name: "no script", scripts: [], expectedMessage: "Adapter script 'RLS_ADAPTER' is not installed" },
+                {
+                    name: "invalid version", scripts: [script({ name: "RLS_ADAPTER", text: "invalid script" })],
+                    expectedMessage: `Failed to extract version from adapter script schema.RLS_ADAPTER: version not found in script text 'invalid script'`
+                },
+                {
+                    name: "version already up-to-date", scripts: [scriptWithVersion("RLS_ADAPTER", currentVersion)],
+                    expectedMessage: `Extension is already installed in latest version ${currentVersion}`
+                },
+            ]
+            tests.forEach(test => it(test.name, () => {
                 const context = createMockContext()
-                context.mocks.simulateScripts(allScripts)
-                expect(createExtension().upgrade(context)).toStrictEqual({
-                    previousVersion: version, newVersion: currentVersion
-                })
+                context.mocks.simulateScripts(test.scripts)
+                expect(() => createExtension().upgrade(context)).toThrowError(new PreconditionFailedError(test.expectedMessage))
                 const executeCalls = context.mocks.sqlExecute.mock.calls
-                expect(executeCalls.length).toBe(10)
-            })
-            describe("failure", () => {
-                const tests: { name: string; scripts: ExaScriptsRow[], expectedMessage: string }[] = [
-                    { name: "no script", scripts: [], expectedMessage: "Not all required scripts are installed: Validation failed: Script 'IMPORT_PATH' is missing, Script 'IMPORT_METADATA' is missing, Script 'IMPORT_FILES' is missing, Script 'EXPORT_PATH' is missing, Script 'EXPORT_TABLE' is missing" },
-                    { name: "one missing script", scripts: [importPath, importMetadata, importFiles, exportPath], expectedMessage: "Not all required scripts are installed: Validation failed: Script 'EXPORT_TABLE' is missing" },
-                    { name: "inconsistent versions", scripts: [importPath, importMetadata, importFiles, exportPath, scriptWithVersion("EXPORT_TABLE", "1.2.4")], expectedMessage: "Failed to validate script versions: Not all scripts use the same version. Found 2 different versions: '1.2.3, 1.2.4'" },
-                    {
-                        name: "version already up-to-date", scripts: [
-                            scriptWithVersion("IMPORT_PATH", currentVersion), scriptWithVersion("IMPORT_METADATA", currentVersion),
-                            scriptWithVersion("IMPORT_FILES", currentVersion), scriptWithVersion("EXPORT_PATH", currentVersion), scriptWithVersion("EXPORT_TABLE", currentVersion)
-                        ],
-                        expectedMessage: `Extension is already installed in latest version ${currentVersion}`
-                    },
-                ]
-                tests.forEach(test => it(test.name, () => {
-                    const context = createMockContext()
-                    context.mocks.simulateScripts(test.scripts)
-                    expect(() => createExtension().upgrade(context)).toThrowError(new PreconditionFailedError(test.expectedMessage))
-                    const executeCalls = context.mocks.sqlExecute.mock.calls
-                    expect(executeCalls.length).toBe(0)
-                }))
-            })
+                expect(executeCalls.length).toBe(0)
+            }))
         })
     })
 })

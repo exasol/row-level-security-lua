@@ -2,7 +2,7 @@ import { Result, failureResult, successResult } from "@exasol/extension-manager-
 import { EXTENSION_DESCRIPTION } from "./extension-description";
 
 export const ADAPTER_SCRIPT_NAME = "RLS_ADAPTER"
-
+export const EXTENSION_NAME = "Row Level Security Lua"
 
 function identity(arg: string): string {
     return arg;
