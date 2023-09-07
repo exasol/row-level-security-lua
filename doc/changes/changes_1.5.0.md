@@ -1,4 +1,4 @@
-# Exasol Row Level Security (Lua) 1.5.0, released 2023-??-??
+# Exasol Row Level Security (Lua) 1.5.0, released 2023-09-07
 
 Code name: Add Extension
 

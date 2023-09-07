@@ -296,8 +296,6 @@ class ExtensionIT {
     void deleteInstance() {
         setup.client().install();
         createVirtualSchema();
-        setup.exasolMetadata().assertVirtualSchema(
-                table().row("RLS_SCHEMA", "SYS", "EXA_EXTENSIONS.RLS_ADAPTER", not(emptyOrNullString())).matches());
         setup.client().deleteInstance(PROJECT_VERSION, "RLS_SCHEMA");
         setup.exasolMetadata().assertNoVirtualSchema();
     }
@@ -329,6 +327,12 @@ class ExtensionIT {
         final String instanceName = setup.client().createInstance(List.of(param("virtualSchemaName", virtualSchemaName),
                 param("SCHEMA_NAME", baseTable.getParent().getName())));
         assertThat(instanceName, equalTo(virtualSchemaName));
+        verifyVirtualSchemaExists(virtualSchemaName);
+    }
+
+    private void verifyVirtualSchemaExists(final String virtualSchemaName) {
+        setup.exasolMetadata().assertVirtualSchema(table()
+                .row(virtualSchemaName, "SYS", "EXA_EXTENSIONS.RLS_ADAPTER", not(emptyOrNullString())).matches());
     }
 
     private void verifyVirtualTableContainsData(final String tableName) {
