@@ -155,13 +155,13 @@ In case you want to use role-based security, add a column called `EXA_ROW_ROLES 
 For our example we will create very simple order item list as shown below.
 
 ```sql
-CREATE OR REPLACE TABLE MY_SCHEMA.ORDER_ITEM 
-(  
-    ORDER_ID DECIMAL(18,0),  
-    CUSTOMER VARCHAR(50),  
-    PRODUCT VARCHAR(100),  
+CREATE OR REPLACE TABLE MY_SCHEMA.ORDER_ITEM
+(
+    ORDER_ID DECIMAL(18,0),
+    CUSTOMER VARCHAR(50),
+    PRODUCT VARCHAR(100),
     QUANTITY DECIMAL(18,0),
-    EXA_ROW_ROLES DECIMAL(20,0)  
+    EXA_ROW_ROLES DECIMAL(20,0)
 );
 ```
 
@@ -188,7 +188,7 @@ INSERT INTO MY_SCHEMA.ORDER_ITEM VALUES
 
 An example of updating the table using `ROLES_MASK` function:
 
-```sql 
+```sql
 UPDATE ORDER_ITEM
 SET EXA_ROW_ROLES = (SELECT MY_SCHEMA.ROLES_MASK(ROLE_ID) FROM MY_SCHEMA.EXA_ROLES_MAPPING WHERE ROLE_NAME IN ('Sales', 'Development'))
 WHERE customer IN ('John Smith', 'Jane Doe');
@@ -240,7 +240,7 @@ Delete roles using `DELETE_RLS_ROLE(role_name)` script. The script removes the r
 
 Example:
 
-```sql 
+```sql
 EXECUTE SCRIPT DELETE_RLS_ROLE('Sales');
 ```
 
@@ -253,7 +253,7 @@ If you want to use tenant security, you must add an additional column `EXA_ROW_T
 Example:
 
 ```sql
-CREATE OR REPLACE TABLE MY_SCHEMA.ORDER_ITEM_WITH_TENANT 
+CREATE OR REPLACE TABLE MY_SCHEMA.ORDER_ITEM_WITH_TENANT
 (
     ORDER_ID DECIMAL(18,0),
     CUSTOMER VARCHAR(50),
@@ -318,13 +318,13 @@ In case you want to use group-based security, add a column called `EXA_ROW_GROUP
 For our example we will create very simple order item list as shown below.
 
 ```sql
-CREATE OR REPLACE TABLE MY_SCHEMA.ORDER_ITEM_GROUP 
-(  
-    ORDER_ID DECIMAL(18,0),  
-    CUSTOMER VARCHAR(50),  
-    PRODUCT VARCHAR(100),  
+CREATE OR REPLACE TABLE MY_SCHEMA.ORDER_ITEM_GROUP
+(
+    ORDER_ID DECIMAL(18,0),
+    CUSTOMER VARCHAR(50),
+    PRODUCT VARCHAR(100),
     QUANTITY DECIMAL(18,0),
-    EXA_ROW_GROUP VARCHAR(128)  
+    EXA_ROW_GROUP VARCHAR(128)
 );
 ```
 
@@ -374,12 +374,13 @@ CREATE OR REPLACE LUA ADAPTER SCRIPT RLS_SCHEMA.RLS_ADAPTER AS
             end
         end
     )
-    
+
     <copy the whole content of row-level-security-dist-<version>.lua here>
 /
 ;
 ```
 The first fixed part is a module loading preamble that is required with 7.1.0. Later versions will make this unnecessary, the user guide will be updated accordingly if an Exasol release is available that incorporates that module loading feature by default.
+
 ### Creating Virtual Schema
 
 ```sql
@@ -393,7 +394,7 @@ CREATE VIRTUAL SCHEMA RLS_VIRTUAL_SCHEMA
 
 Remember that RLS is an additional layer of access control _on top_ of the measures built into the core database. So in order to read columns in an RLS Virtual Schema, users first need to be allowed to access that schema.
 
-A word or warning before you start granting permissions. Make sure you grant only access to the RLS Virtual Schema to regular users and _not to the orignial_ schema. Otherwise, those users can simply bypass RLS protection by going to the source.
+A word of warning before you start granting permissions. Make sure you grant only access to the RLS Virtual Schema to regular users and _not to the orignial_ schema. Otherwise, those users can simply bypass RLS protection by going to the source.
 
 Here is an example for allowing `SELECT` statements to a user.
 
