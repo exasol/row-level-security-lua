@@ -12,7 +12,7 @@ export function uninstall(context: ExtendedContext, versionToUninstall: string) 
         return result.rows.length > 0
     }
 
-    if (extensionSchemaExists()) { // Drop commands fail when schema does not exist.
+    if (extensionSchemaExists()) { // Drop command fails when schema does not exist.
         context.sqlClient.execute(`DROP ADAPTER SCRIPT "${context.extensionSchemaName}"."${ADAPTER_SCRIPT_NAME}"`)
     }
 }
