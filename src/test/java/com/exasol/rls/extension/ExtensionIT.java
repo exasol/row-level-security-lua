@@ -32,7 +32,7 @@ import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 class ExtensionIT {
-    private static final String PREVIOUS_VERSION = "2.6.2";
+    private static final String PREVIOUS_VERSION = "1.5.0";
     private static final Path EXTENSION_SOURCE_DIR = Paths.get("extension").toAbsolutePath();
     private static final String EXTENSION_ID = "row-level-security-extension.js";
     private static final int EXPECTED_PARAMETER_COUNT = 6;
@@ -166,15 +166,18 @@ class ExtensionIT {
     void getExtensionDetailsSuccess() {
         final ExtensionDetailsResponse extensionDetails = setup.client().getExtensionDetails(PROJECT_VERSION);
         final List<ParamDefinition> parameters = extensionDetails.getParameterDefinitions();
-        final ParamDefinition param1 = new ParamDefinition().id("virtualSchemaName")
-                .name("Name of the new virtual schema").definition(Map.of("id", "virtualSchemaName", "name",
-                        "Name of the new virtual schema", "required", true, "type", "string"));
+        final ParamDefinition param1 = paramDef("virtualSchemaName", "Name of the new virtual schema");
         assertAll(() -> assertThat(extensionDetails.getId(), equalTo(EXTENSION_ID)),
                 () -> assertThat(extensionDetails.getVersion(), equalTo(PROJECT_VERSION)),
                 () -> assertThat(parameters, hasSize(EXPECTED_PARAMETER_COUNT)),
                 () -> assertThat(parameters.get(0), equalTo(param1)));
     }
-
+private ParamDefinition paramDef(String id, String name, ) {
+    return new ParamDefinition() //
+	.id(id) //
+	.name(name) //
+	.definition(Map.of( "id", id, "name", name, "required", true, "type", "string" ));
+}
     @Test
     void installWrongVersionFails() {
         setup.client().assertRequestFails(() -> setup.client().install("0.0.0"),
@@ -232,7 +235,7 @@ class ExtensionIT {
                 "Extension is already installed in latest version " + PROJECT_VERSION, 412);
     }
 
-    @Disabled("No previous version exists for upgrading")
+    @Disabled("This is the initial version of RLS_LUA, there is no previous version to be upgraded")
     @Test
     void upgradeFromPreviousVersion() throws InterruptedException, BucketAccessException, TimeoutException,
             FileNotFoundException, URISyntaxException {
