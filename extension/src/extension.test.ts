@@ -75,10 +75,6 @@ describe("Row Level Security Lua", () => {
             return installations
         }
 
-        function script({ schema = "schema", name = "name", inputType, resultType, type = "ADAPTER", text = "", comment }: Partial<ExaScriptsRow>): ExaScriptsRow {
-            return { schema, name, inputType, resultType, type, text, comment }
-        }
-
         it("returns empty list when no adapter script is available", () => {
             expect(findInstallations([])).toHaveLength(0)
         })
@@ -97,7 +93,7 @@ describe("Row Level Security Lua", () => {
     describe("install()", () => {
         it("executes expected statements", () => {
             const context = createMockContext();
-            createExtension().install(context, EXTENSION_DESCRIPTION.version);
+            createExtension().install(context, currentVersion);
             const executeCalls = context.mocks.sqlExecute.mock.calls
             expect(executeCalls.length).toBe(2)
 
@@ -105,14 +101,14 @@ describe("Row Level Security Lua", () => {
             const createCommentCommand = executeCalls[1][0]
 
             expect(createScriptCommand).toContain(`CREATE OR REPLACE LUA ADAPTER SCRIPT \"ext-schema\".\"RLS_ADAPTER\" AS
--- RLS Lua version 1.5.0
+-- RLS Lua version ${currentVersion}
 table.insert(package.searchers,`)
-            const expectedComment = `Created by Extension Manager for Row Level Security Lua version ${EXTENSION_DESCRIPTION.version}`
+            const expectedComment = `Created by Extension Manager for Row Level Security Lua version ${currentVersion}`
             expect(createCommentCommand).toEqual(`COMMENT ON SCRIPT "ext-schema"."${ADAPTER_SCRIPT_NAME}" IS '${expectedComment}'`)
         })
         it("fails for wrong version", () => {
             expect(() => { createExtension().install(createMockContext(), "wrongVersion") })
-                .toThrow(`Installing version 'wrongVersion' not supported, try '${EXTENSION_DESCRIPTION.version}'.`)
+                .toThrow(`Installing version 'wrongVersion' not supported, try '${currentVersion}'.`)
         })
     })
 
@@ -120,7 +116,7 @@ table.insert(package.searchers,`)
         it("executes query to check if schema exists", () => {
             const context = createMockContext()
             context.mocks.sqlQuery.mockReturnValue({ columns: [], rows: [] });
-            createExtension().uninstall(context, EXTENSION_DESCRIPTION.version)
+            createExtension().uninstall(context, currentVersion)
             const calls = context.mocks.sqlQuery.mock.calls
             expect(calls.length).toEqual(1)
             expect(calls[0]).toEqual(["SELECT 1 FROM SYS.EXA_ALL_SCHEMAS WHERE SCHEMA_NAME=?", "ext-schema"])
@@ -128,30 +124,30 @@ table.insert(package.searchers,`)
         it("skips drop statements when schema does not exist", () => {
             const context = createMockContext()
             context.mocks.sqlQuery.mockReturnValue({ columns: [], rows: [] });
-            createExtension().uninstall(context, EXTENSION_DESCRIPTION.version)
+            createExtension().uninstall(context, currentVersion)
             expect(context.mocks.sqlExecute.mock.calls.length).toEqual(0)
         })
         it("executes expected statements", () => {
             const context = createMockContext()
             context.mocks.sqlQuery.mockReturnValue({ columns: [], rows: [[1]] });
-            createExtension().uninstall(context, EXTENSION_DESCRIPTION.version)
+            createExtension().uninstall(context, currentVersion)
             const calls = context.mocks.sqlExecute.mock.calls
             expect(calls.length).toEqual(1)
             expect(calls[0]).toEqual([`DROP ADAPTER SCRIPT "ext-schema"."${ADAPTER_SCRIPT_NAME}"`])
         })
         it("fails for wrong version", () => {
             expect(() => { createExtension().uninstall(createMockContext(), "wrongVersion") })
-                .toThrow(`Uninstalling version 'wrongVersion' not supported, try '${EXTENSION_DESCRIPTION.version}'.`)
+                .toThrow(`Uninstalling version 'wrongVersion' not supported, try '${currentVersion}'.`)
         })
     })
 
     describe("getInstanceParameters()", () => {
         it("fails for wrong version", () => {
             expect(() => { createExtension().getInstanceParameters(createMockContext(), "wrongVersion") })
-                .toThrowError(new NotFoundError(`Version 'wrongVersion' not supported, can only use '${EXTENSION_DESCRIPTION.version}'.`))
+                .toThrowError(new NotFoundError(`Version 'wrongVersion' not supported, can only use '${currentVersion}'.`))
         })
         it("returns expected parameters", () => {
-            const actual = createExtension().getInstanceParameters(createMockContext(), EXTENSION_DESCRIPTION.version)
+            const actual = createExtension().getInstanceParameters(createMockContext(), currentVersion)
             expect(actual).toHaveLength(6)
             expect(actual[0]).toStrictEqual({
                 id: "virtualSchemaName", name: "Name of the new virtual schema", required: true, type: "string"

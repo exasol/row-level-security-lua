@@ -117,20 +117,16 @@ class ExtensionIT {
     void listInstallations_findsMatchingScripts() {
         createAdapter("RLS_ADAPTER");
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        assertAll(() -> assertThat(installations, hasSize(1)), //
-                () -> assertThat(installations.get(0).getName(),
-                        equalTo(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER")),
-                () -> assertThat(installations.get(0).getVersion(), equalTo("dummy.version")));
+        assertThat(installations, contains(new InstallationsResponseInstallation()
+                .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version("dummy.version")));
     }
 
     @Test
     void listInstallations_findsOwnInstallation() {
         setup.client().install();
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        assertAll(() -> assertThat(installations, hasSize(1)), //
-                () -> assertThat(installations.get(0).getName(),
-                        equalTo(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER")),
-                () -> assertThat(installations.get(0).getVersion(), equalTo(PROJECT_VERSION)));
+        assertThat(installations, contains(new InstallationsResponseInstallation()
+                .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version(PROJECT_VERSION)));
     }
 
     @Test
@@ -172,12 +168,14 @@ class ExtensionIT {
                 () -> assertThat(parameters, hasSize(EXPECTED_PARAMETER_COUNT)),
                 () -> assertThat(parameters.get(0), equalTo(param1)));
     }
-private ParamDefinition paramDef(String id, String name, ) {
-    return new ParamDefinition() //
-	.id(id) //
-	.name(name) //
-	.definition(Map.of( "id", id, "name", name, "required", true, "type", "string" ));
-}
+
+    private ParamDefinition paramDef(final String id, final String name) {
+        return new ParamDefinition() //
+                .id(id) //
+                .name(name) //
+                .definition(Map.of("id", id, "name", name, "required", true, "type", "string"));
+    }
+
     @Test
     void installWrongVersionFails() {
         setup.client().assertRequestFails(() -> setup.client().install("0.0.0"),
@@ -242,7 +240,7 @@ private ParamDefinition paramDef(String id, String name, ) {
         final PreviousExtensionVersion previousVersion = createPreviousVersion();
         previousVersion.prepare();
         previousVersion.install();
-        final String virtualTable = createVirtualSchema(previousVersion.getExtensionId(), PREVIOUS_VERSION);
+        final String virtualTable = createInstance(previousVersion.getExtensionId(), PREVIOUS_VERSION);
         verifyVirtualTableContainsData(virtualTable);
         assertInstalledVersion("EXA_EXTENSIONS.RLS_ADAPTER", PREVIOUS_VERSION);
         previousVersion.upgrade();
@@ -270,9 +268,9 @@ private ParamDefinition paramDef(String id, String name, ) {
     }
 
     @Test
-    void createInstance() {
+    void createInstance_success() {
         setup.client().install();
-        final String virtualTableName = createVirtualSchema();
+        final String virtualTableName = createInstance();
         verifyVirtualTableContainsData(virtualTableName);
     }
 
@@ -290,7 +288,7 @@ private ParamDefinition paramDef(String id, String name, ) {
     @Test
     void findInstance() {
         setup.client().install();
-        createVirtualSchema();
+        createInstance();
         assertThat(setup.client().listInstances("ignoredVersion"),
                 contains(new Instance().id("RLS_SCHEMA").name("RLS_SCHEMA")));
     }
@@ -298,16 +296,16 @@ private ParamDefinition paramDef(String id, String name, ) {
     @Test
     void deleteInstance() {
         setup.client().install();
-        createVirtualSchema();
+        createInstance();
         setup.client().deleteInstance(PROJECT_VERSION, "RLS_SCHEMA");
         setup.exasolMetadata().assertNoVirtualSchema();
     }
 
-    private String createVirtualSchema() {
-        return createVirtualSchema(EXTENSION_ID, PROJECT_VERSION);
+    private String createInstance() {
+        return createInstance(EXTENSION_ID, PROJECT_VERSION);
     }
 
-    private String createVirtualSchema(final String extensionId, final String extensionVersion) {
+    private String createInstance(final String extensionId, final String extensionVersion) {
         final String virtualSchemaName = "RLS_SCHEMA";
         final Table baseTable = createBaseTable();
         createInstance(virtualSchemaName, baseTable);

@@ -25,11 +25,9 @@ const luaModuleLoadingPreamble = `table.insert(package.searchers,
 )`;
 
 export function buildCreateScriptCommand(qualifiedScriptName: string, luaScriptContent: string) {
-    const createScriptCommand = `CREATE OR REPLACE LUA ADAPTER SCRIPT ${qualifiedScriptName} AS
+    return `CREATE OR REPLACE LUA ADAPTER SCRIPT ${qualifiedScriptName} AS
 ${getScriptVersionComment()}
 ${luaModuleLoadingPreamble}
 ${luaScriptContent}
 /`;
-    return createScriptCommand;
 }
-

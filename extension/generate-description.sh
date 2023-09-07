@@ -15,7 +15,7 @@ readonly all_built_files=("$target_dir"/row-level-security-dist-*.lua)
 readonly file_count=${#all_built_files[@]}
 
 if [ "$file_count" -ne 1 ]; then
-    echo "ERROR: Expected exactly one jar but found $file_count in $target_dir: ${all_built_files[*]}"
+    echo "ERROR: Expected exactly one lua file but found $file_count in $target_dir: ${all_built_files[*]}"
     exit 1
 fi
 
