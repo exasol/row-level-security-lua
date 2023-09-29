@@ -14,7 +14,7 @@ jobs:
       matrix:
         lua_version: [5.4]
         docker_db_version: ["7.1.23", "8.22.0"]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04 # UDFs fail with "VM error: Internal error: VM crashed" on ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.lua_version }}-${{ matrix.docker_db_version }}
       cancel-in-progress: true
