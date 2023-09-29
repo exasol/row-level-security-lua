@@ -233,7 +233,6 @@ class ExtensionIT {
                 "Extension is already installed in latest version " + PROJECT_VERSION, 412);
     }
 
-    @Disabled("This is the initial version of RLS_LUA, there is no previous version to be upgraded")
     @Test
     void upgradeFromPreviousVersion() throws InterruptedException, BucketAccessException, TimeoutException,
             FileNotFoundException, URISyntaxException {
