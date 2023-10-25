@@ -64,6 +64,7 @@ describe("RlsAdapter", function()
     it("raises an error if the SCHEMA parameter is missing when trying to create a Virtual Schema", function()
         properties_stub.validate = function() error("validation failed") end
         local request = {schemaMetadataInfo = {name = "V"}}
-        assert.error_matches(function() adapter:create_virtual_schema(request, properties_stub) end, "validation failed")
+        assert.error_matches(function() adapter:create_virtual_schema(request, properties_stub) end,
+                "validation failed")
     end)
 end)
