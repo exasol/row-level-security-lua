@@ -100,16 +100,20 @@ class ExtensionIT {
     void listInstallations_findsMatchingScripts() {
         createAdapter("RLS_ADAPTER");
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        assertThat(installations, contains(new InstallationsResponseInstallation()
-                .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version("dummy.version")));
+        assertThat(installations,
+                contains(new InstallationsResponseInstallation()
+                        .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version("dummy.version")
+                        .id(EXTENSION_ID)));
     }
 
     @Test
     void listInstallations_findsOwnInstallation() {
         setup.client().install();
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        assertThat(installations, contains(new InstallationsResponseInstallation()
-                .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version(PROJECT_VERSION)));
+        assertThat(installations,
+                contains(new InstallationsResponseInstallation()
+                        .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version(PROJECT_VERSION)
+                        .id(EXTENSION_ID)));
     }
 
     @Test
@@ -168,8 +172,8 @@ class ExtensionIT {
     @Test
     void installExtensions() {
         setup.client().install();
-        assertThat(setup.client().getInstallations(), contains(
-                new InstallationsResponseInstallation().name("EXA_EXTENSIONS.RLS_ADAPTER").version(PROJECT_VERSION)));
+        assertThat(setup.client().getInstallations(), contains(new InstallationsResponseInstallation()
+                .name("EXA_EXTENSIONS.RLS_ADAPTER").version(PROJECT_VERSION).id(EXTENSION_ID)));
     }
 
     @Test
@@ -240,7 +244,7 @@ class ExtensionIT {
     }
 
     private void assertInstalledVersion(final String expectedName, final String expectedVersion,
-                                        final PreviousExtensionVersion previousVersion) {
+            final PreviousExtensionVersion previousVersion) {
         // The extension is installed twice (previous and current version), so each one returns one installation.
         assertThat(setup.client().getInstallations(),
                 containsInAnyOrder(
@@ -291,7 +295,7 @@ class ExtensionIT {
     private String createInstance(final String extensionId, final String extensionVersion) {
         final String virtualSchemaName = "RLS_SCHEMA";
         final Table baseTable = createBaseTable();
-        createInstance(virtualSchemaName, baseTable);
+        createInstance(extensionId, extensionVersion, virtualSchemaName, baseTable);
         return virtualSchemaName + "." + baseTable.getName();
     }
 
@@ -301,22 +305,18 @@ class ExtensionIT {
                 .insert(3, "c");
     }
 
-    private void createInstance(final String virtualSchemaName, final Table baseTable) {
-        createInstance(EXTENSION_ID, PROJECT_VERSION, virtualSchemaName, baseTable);
-    }
-
     private void createInstance(final String extensionId, final String extensionVersion, final String virtualSchemaName,
             final Table baseTable) {
         setup.addVirtualSchemaToCleanupQueue(virtualSchemaName);
-        final String instanceName = setup.client().createInstance(List.of(param("virtualSchemaName", virtualSchemaName),
-                param("SCHEMA_NAME", baseTable.getParent().getName())));
+        final String instanceName = setup.client().createInstance(extensionId, extensionVersion, List.of(
+                param("virtualSchemaName", virtualSchemaName), param("SCHEMA_NAME", baseTable.getParent().getName())));
         assertThat(instanceName, equalTo(virtualSchemaName));
         verifyVirtualSchemaExists(virtualSchemaName);
     }
 
     private void verifyVirtualSchemaExists(final String virtualSchemaName) {
         setup.exasolMetadata().assertVirtualSchema(table()
-                .row(virtualSchemaName, "SYS", "EXA_EXTENSIONS.RLS_ADAPTER", not(emptyOrNullString())).matches());
+                .row(virtualSchemaName, "SYS", "EXA_EXTENSIONS", "RLS_ADAPTER", not(emptyOrNullString())).matches());
     }
 
     private void verifyVirtualTableContainsData(final String tableName) {
