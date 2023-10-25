@@ -40,11 +40,6 @@
 | [Build Helper Maven Plugin][43]                         | [The MIT License][44]                                          |
 | [error-code-crawler-maven-plugin][45]                   | [MIT License][46]                                              |
 | [Reproducible Build Maven Plugin][47]                   | [Apache 2.0][30]                                               |
-| [Maven Clean Plugin][48]                                | [The Apache Software License, Version 2.0][30]                 |
-| [Maven Resources Plugin][49]                            | [The Apache Software License, Version 2.0][30]                 |
-| [Maven Install Plugin][50]                              | [The Apache Software License, Version 2.0][30]                 |
-| [Maven Deploy Plugin][51]                               | [The Apache Software License, Version 2.0][30]                 |
-| [Maven Site Plugin 3][52]                               | [The Apache Software License, Version 2.0][30]                 |
 
 [0]: http://www.exasol.com
 [1]: https://repo1.maven.org/maven2/com/exasol/exasol-jdbc/7.1.20/exasol-jdbc-7.1.20-license.txt
@@ -94,8 +89,3 @@
 [45]: https://github.com/exasol/error-code-crawler-maven-plugin/
 [46]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
 [47]: http://zlika.github.io/reproducible-build-maven-plugin
-[48]: http://maven.apache.org/plugins/maven-clean-plugin/
-[49]: http://maven.apache.org/plugins/maven-resources-plugin/
-[50]: http://maven.apache.org/plugins/maven-install-plugin/
-[51]: http://maven.apache.org/plugins/maven-deploy-plugin/
-[52]: http://maven.apache.org/plugins/maven-site-plugin/

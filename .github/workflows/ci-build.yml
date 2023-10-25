@@ -13,7 +13,7 @@ jobs:
       fail-fast: true
       matrix:
         lua_version: [5.4]
-        docker_db_version: ["7.1.22", "8.22.0"]
+        docker_db_version: ["7.1.23", "8.23.0"]
     runs-on: ubuntu-22.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.lua_version }}-${{ matrix.docker_db_version }}

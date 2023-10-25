@@ -46,7 +46,7 @@ class ExtensionIT {
     @BeforeAll
     static void setup() throws FileNotFoundException, BucketAccessException, TimeoutException {
         exasolTestSetup = new ExasolTestSetupFactory(Path.of("no-such-file")).getTestSetup();
-        assumePythonUdfSupported();
+        ExasolVersionCheck.assumeExasolVersion8(exasolTestSetup);
         setup = ExtensionManagerSetup.create(exasolTestSetup, ExtensionBuilder.createDefaultNpmBuilder(
                 EXTENSION_SOURCE_DIR, EXTENSION_SOURCE_DIR.resolve("dist").resolve(EXTENSION_ID)));
     }
@@ -57,10 +57,6 @@ class ExtensionIT {
         dbObjectFactory = new ExasolObjectFactory(exasolTestSetup.createConnection());
     }
 
-    static void assumePythonUdfSupported() {
-        final String dbVersion = readDbVersion();
-        assumeFalse("8.22.0".equals(dbVersion), "Assume DB version != 8.22.0, actual: " + dbVersion);
-    }
 
     private static String readDbVersion() {
         try (Statement stmt = exasolTestSetup.createConnection().createStatement()) {
@@ -233,7 +229,6 @@ class ExtensionIT {
                 "Extension is already installed in latest version " + PROJECT_VERSION, 412);
     }
 
-    @Disabled("This is the initial version of RLS_LUA, there is no previous version to be upgraded")
     @Test
     void upgradeFromPreviousVersion() throws InterruptedException, BucketAccessException, TimeoutException,
             FileNotFoundException, URISyntaxException {
