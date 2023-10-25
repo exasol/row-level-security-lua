@@ -100,7 +100,7 @@ describe("Row Level Security Lua", () => {
             const createScriptCommand = executeCalls[0][0]
             const createCommentCommand = executeCalls[1][0]
 
-            expect(createScriptCommand).toContain(`CREATE OR REPLACE LUA ADAPTER SCRIPT \"ext-schema\".\"RLS_ADAPTER\" AS
+            expect(createScriptCommand).toContain(`CREATE OR REPLACE LUA ADAPTER SCRIPT "ext-schema"."RLS_ADAPTER" AS
 -- RLS Lua version ${currentVersion}
 table.insert(package.searchers,`)
             const expectedComment = `Created by Extension Manager for Row Level Security Lua version ${currentVersion}`
@@ -243,7 +243,7 @@ table.insert(package.searchers,`)
             createExtension().findInstances(context, "version")
             const queryCalls = context.mocks.sqlQuery.mock.calls
             expect(queryCalls.length).toEqual(1)
-            expect(queryCalls[0]).toEqual(["SELECT SCHEMA_NAME FROM SYS.EXA_ALL_VIRTUAL_SCHEMAS WHERE ADAPTER_SCRIPT = ?||'.'||?  ORDER BY SCHEMA_NAME", "ext-schema", "RLS_ADAPTER"])
+            expect(queryCalls[0]).toEqual(["SELECT SCHEMA_NAME FROM SYS.EXA_ALL_VIRTUAL_SCHEMAS WHERE ADAPTER_SCRIPT_SCHEMA = ? AND ADAPTER_SCRIPT_NAME = ?  ORDER BY SCHEMA_NAME", "ext-schema", "RLS_ADAPTER"])
         })
     })
 

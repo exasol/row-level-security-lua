@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -44,9 +43,9 @@ class ExtensionIT {
     private ExasolObjectFactory dbObjectFactory;
 
     @BeforeAll
-    static void setup() throws FileNotFoundException, BucketAccessException, TimeoutException {
+    static void setup() {
         exasolTestSetup = new ExasolTestSetupFactory(Path.of("no-such-file")).getTestSetup();
-        assumePythonUdfSupported();
+        ExasolVersionCheck.assumeExasolVersion8(exasolTestSetup);
         setup = ExtensionManagerSetup.create(exasolTestSetup, ExtensionBuilder.createDefaultNpmBuilder(
                 EXTENSION_SOURCE_DIR, EXTENSION_SOURCE_DIR.resolve("dist").resolve(EXTENSION_ID)));
     }
@@ -55,22 +54,6 @@ class ExtensionIT {
     void setupTest() throws SQLException {
         connection = exasolTestSetup.createConnection();
         dbObjectFactory = new ExasolObjectFactory(exasolTestSetup.createConnection());
-    }
-
-    static void assumePythonUdfSupported() {
-        final String dbVersion = readDbVersion();
-        assumeFalse("8.22.0".equals(dbVersion), "Assume DB version != 8.22.0, actual: " + dbVersion);
-    }
-
-    private static String readDbVersion() {
-        try (Statement stmt = exasolTestSetup.createConnection().createStatement()) {
-            final ResultSet result = stmt
-                    .executeQuery("select PARAM_VALUE from SYS.EXA_METADATA WHERE PARAM_NAME='databaseProductVersion'");
-            result.next();
-            return result.getString(1);
-        } catch (final SQLException exception) {
-            throw new AssertionError("Failed to read database version", exception);
-        }
     }
 
     @AfterAll
@@ -117,16 +100,20 @@ class ExtensionIT {
     void listInstallations_findsMatchingScripts() {
         createAdapter("RLS_ADAPTER");
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        assertThat(installations, contains(new InstallationsResponseInstallation()
-                .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version("dummy.version")));
+        assertThat(installations,
+                contains(new InstallationsResponseInstallation()
+                        .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version("dummy.version")
+                        .id(EXTENSION_ID)));
     }
 
     @Test
     void listInstallations_findsOwnInstallation() {
         setup.client().install();
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        assertThat(installations, contains(new InstallationsResponseInstallation()
-                .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version(PROJECT_VERSION)));
+        assertThat(installations,
+                contains(new InstallationsResponseInstallation()
+                        .name(ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".RLS_ADAPTER").version(PROJECT_VERSION)
+                        .id(EXTENSION_ID)));
     }
 
     @Test
@@ -185,8 +172,8 @@ class ExtensionIT {
     @Test
     void installExtensions() {
         setup.client().install();
-        assertThat(setup.client().getInstallations(), contains(
-                new InstallationsResponseInstallation().name("EXA_EXTENSIONS.RLS_ADAPTER").version(PROJECT_VERSION)));
+        assertThat(setup.client().getInstallations(), contains(new InstallationsResponseInstallation()
+                .name("EXA_EXTENSIONS.RLS_ADAPTER").version(PROJECT_VERSION).id(EXTENSION_ID)));
     }
 
     @Test
@@ -213,7 +200,7 @@ class ExtensionIT {
     @Test
     void uninstall_removesAdapters() {
         setup.client().install();
-        assertAll(() -> assertScriptsExist(), //
+        assertAll(this::assertScriptsExist, //
                 () -> assertThat(setup.client().getInstallations(), hasSize(1)));
         setup.client().uninstall(PROJECT_VERSION);
         assertAll(() -> assertThat(setup.client().getInstallations(), is(empty())),
@@ -233,7 +220,6 @@ class ExtensionIT {
                 "Extension is already installed in latest version " + PROJECT_VERSION, 412);
     }
 
-    @Disabled("This is the initial version of RLS_LUA, there is no previous version to be upgraded")
     @Test
     void upgradeFromPreviousVersion() throws InterruptedException, BucketAccessException, TimeoutException,
             FileNotFoundException, URISyntaxException {
@@ -242,9 +228,9 @@ class ExtensionIT {
         previousVersion.install();
         final String virtualTable = createInstance(previousVersion.getExtensionId(), PREVIOUS_VERSION);
         verifyVirtualTableContainsData(virtualTable);
-        assertInstalledVersion("EXA_EXTENSIONS.RLS_ADAPTER", PREVIOUS_VERSION);
+        assertInstalledVersion("EXA_EXTENSIONS.RLS_ADAPTER", PREVIOUS_VERSION, previousVersion);
         previousVersion.upgrade();
-        assertInstalledVersion("EXA_EXTENSIONS.RLS_ADAPTER", PROJECT_VERSION);
+        assertInstalledVersion("EXA_EXTENSIONS.RLS_ADAPTER", PROJECT_VERSION, previousVersion);
         verifyVirtualTableContainsData(virtualTable);
     }
 
@@ -257,14 +243,15 @@ class ExtensionIT {
                 .build();
     }
 
-    private void assertInstalledVersion(final String expectedName, final String expectedVersion) {
-        final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
-        final InstallationsResponseInstallation expectedInstallation = new InstallationsResponseInstallation()
-                .name(expectedName).version(expectedVersion);
-        // The extension is installed twice (previous and current version), so each one returns the same installation.
-        assertAll(() -> assertThat(installations, hasSize(2)),
-                () -> assertThat(installations.get(0), equalTo(expectedInstallation)),
-                () -> assertThat(installations.get(1), equalTo(expectedInstallation)));
+    private void assertInstalledVersion(final String expectedName, final String expectedVersion,
+            final PreviousExtensionVersion previousVersion) {
+        // The extension is installed twice (previous and current version), so each one returns one installation.
+        assertThat(setup.client().getInstallations(),
+                containsInAnyOrder(
+                        new InstallationsResponseInstallation().name(expectedName).version(expectedVersion)
+                                .id(EXTENSION_ID), //
+                        new InstallationsResponseInstallation().name(expectedName).version(expectedVersion)
+                                .id(previousVersion.getExtensionId())));
     }
 
     @Test
@@ -308,7 +295,7 @@ class ExtensionIT {
     private String createInstance(final String extensionId, final String extensionVersion) {
         final String virtualSchemaName = "RLS_SCHEMA";
         final Table baseTable = createBaseTable();
-        createInstance(virtualSchemaName, baseTable);
+        createInstance(extensionId, extensionVersion, virtualSchemaName, baseTable);
         return virtualSchemaName + "." + baseTable.getName();
     }
 
@@ -318,22 +305,18 @@ class ExtensionIT {
                 .insert(3, "c");
     }
 
-    private void createInstance(final String virtualSchemaName, final Table baseTable) {
-        createInstance(EXTENSION_ID, PROJECT_VERSION, virtualSchemaName, baseTable);
-    }
-
     private void createInstance(final String extensionId, final String extensionVersion, final String virtualSchemaName,
             final Table baseTable) {
         setup.addVirtualSchemaToCleanupQueue(virtualSchemaName);
-        final String instanceName = setup.client().createInstance(List.of(param("virtualSchemaName", virtualSchemaName),
-                param("SCHEMA_NAME", baseTable.getParent().getName())));
+        final String instanceName = setup.client().createInstance(extensionId, extensionVersion, List.of(
+                param("virtualSchemaName", virtualSchemaName), param("SCHEMA_NAME", baseTable.getParent().getName())));
         assertThat(instanceName, equalTo(virtualSchemaName));
         verifyVirtualSchemaExists(virtualSchemaName);
     }
 
     private void verifyVirtualSchemaExists(final String virtualSchemaName) {
         setup.exasolMetadata().assertVirtualSchema(table()
-                .row(virtualSchemaName, "SYS", "EXA_EXTENSIONS.RLS_ADAPTER", not(emptyOrNullString())).matches());
+                .row(virtualSchemaName, "SYS", "EXA_EXTENSIONS", "RLS_ADAPTER", not(emptyOrNullString())).matches());
     }
 
     private void verifyVirtualTableContainsData(final String tableName) {
