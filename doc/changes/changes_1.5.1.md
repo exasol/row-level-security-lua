@@ -4,7 +4,7 @@ Code name: Fix CVE-2023-42503
 
 ## Summary
 
-In this release we updated the test dependency `exasol-testcontainers` to version 6.6.2 in order to update the transitive dependency `org.apache.commons:commons-compress` 1.24.0. This fixes CVE-2023-42505.
+In this release we updated the test dependency `exasol-testcontainers` to version 6.6.2 in order to update the transitive dependency `org.apache.commons:commons-compress` to 1.24.0. This fixes CVE-2023-42505.
 
 ## Features
 
