@@ -1,13 +1,16 @@
 # Exasol Row Level Security (Lua) 1.5.1, released 2023-10-25
 
-Code name: Fix CVE-2023-42503
+Code name: Fix CVE-2023-42503 and source schema switching
 
 ## Summary
 
 In this release we updated the test dependency `exasol-testcontainers` to version 6.6.2 in order to update the transitive dependency `org.apache.commons:commons-compress` to 1.24.0. This fixes CVE-2023-42505.
 
+We also fixed a bug that prevented users from switching the source schema with `ALTER VIRTUAL SCHEMA ... SET SCHEMA_NAME=`.
+
 ## Features
 
+* #136: Fixed source schema switching
 * #140: Updated test dependency to fix CVE-2023-42505
 
 ## Dependency Updates
