@@ -46,6 +46,7 @@ abstract class AbstractLuaVirtualSchemaIT {
             + "        end\n" //
             + "    end\n" //
             + ")\n\n";
+    public static final String DEFAULT_LOG_PORT = "3000";
     protected static Connection connection;
     protected static ExasolObjectFactory factory;
     private static ExasolSchema scriptSchema;
@@ -85,7 +86,17 @@ abstract class AbstractLuaVirtualSchemaIT {
     }
 
     protected VirtualSchema createVirtualSchema(final Schema sourceSchema) {
-        return createVirtualSchema(sourceSchema, Collections.emptyMap());
+        return createVirtualSchema(sourceSchema, getDebugProperties());
+    }
+
+    private Map<String, String> getDebugProperties() {
+        final String debugHost = System.getProperty("com.exasol.log.host");
+        if(debugHost == null)
+            return Collections.emptyMap();
+        else {
+            final String debugAddress = debugHost + ":" + System.getProperty("com.exasol.log.port", DEFAULT_LOG_PORT);
+            return Map.of("DEBUG_ADDRESS", debugAddress, "LOG_LEVEL", "TRACE");
+        }
     }
 
     protected AdapterScript createAdapterScript(final String prefix) throws IOException {
