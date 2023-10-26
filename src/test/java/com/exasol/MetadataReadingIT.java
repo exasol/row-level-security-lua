@@ -197,6 +197,30 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
     }
 
     @Test
+    void testChangeSourceSchema() {
+        final Schema sourceSchemaBefore = createSchema("SCHEMA_SWITCH");
+        final Table tableBefore = sourceSchemaBefore.createTable("T_BEFORE", "I", "DECIMAL(18,0)");
+        final Schema sourceSchemaAfter = createSchema("SCHEMA_AFTER_SWITCH");
+        final Table tableAfter = sourceSchemaAfter.createTable("T_AFTER", "D", "DATE");
+        final VirtualSchema virtualSchema = createVirtualSchema(sourceSchemaBefore);
+        final User user = createUserWithVirtualSchemaAccess("USER_FOR_SCHEMA_SWITCH", virtualSchema);
+        assertVirtualTableStructure(tableBefore, user, expectRows("I", "DECIMAL(18,0)"));
+        replaceSourceSchema(virtualSchema, sourceSchemaAfter);
+        assertRlsQueryWithUser("/*snapshot execution*/DESCRIBE SCHEMA_SWITCH_RLS.T_AFTER", user,
+                expectRows("D", "DATE"));
+    }
+
+    private void replaceSourceSchema(final VirtualSchema virtualSchema, final Schema sourceSchema) {
+        final String sql = "ALTER VIRTUAL SCHEMA " + virtualSchema.getFullyQualifiedName() + " SET SCHEMA_NAME='" +
+                sourceSchema.getName() + "'";
+        try {
+            execute(sql);
+        } catch (final SQLException exception) {
+            throw new AssertionError("Unable to replace source schema using query '" + sql + "'", exception);
+        }
+    }
+
+    @Test
     void testProtectTableAfterRefresh() throws SQLException {
         final Schema sourceSchema = createSchema("SCHEMA_FOR_PROTECT_AFTER_REFRESH");
         final Table originalTable = sourceSchema.createTable("T", "C1", "BOOLEAN").insert(true).insert(false);

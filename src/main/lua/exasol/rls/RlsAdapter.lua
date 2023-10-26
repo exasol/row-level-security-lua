@@ -1,3 +1,5 @@
+local log = require("remotelog")
+
 -- Derive from AbstractVirtualSchemaAdapter
 local RlsAdapter = {}
 RlsAdapter.__index = RlsAdapter
@@ -63,12 +65,19 @@ function RlsAdapter:refresh(request, properties)
 end
 
 --- Alter the schema properties.
+-- This request provides two sets of user-defined properties. The old ones (i.e. the ones that where set before this
+-- request) and the properties that the user changed.
 -- @param request virtual schema request
--- @param properties user-defined properties
+-- @param old_properties old user-defined properties
+-- @param new_properties new user-defined properties
 -- @return response containing the metadata for the virtual schema like table and column structure
-function RlsAdapter:set_properties(request, properties)
-    properties:validate()
-    return {type = "setProperties", schemaMetadata = self:_handle_schema_scanning_request(request, properties)}
+function RlsAdapter:set_properties(request, old_properties, new_properties)
+    log.debug("Old properties " .. tostring(old_properties))
+    log.debug("New properties " .. tostring(new_properties))
+    local merged_properties = old_properties:merge(new_properties)
+    log.debug("Merged properties " .. tostring(merged_properties))
+    merged_properties:validate()
+    return {type = "setProperties", schemaMetadata = self:_handle_schema_scanning_request(request, merged_properties)}
 end
 
 --- Rewrite a pushed down query.
