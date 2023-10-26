@@ -216,7 +216,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
         try {
             execute(sql);
         } catch (final SQLException exception) {
-            throw new AssertionError("Unable to replace source schemaa using query '" + sql + "'", exception);
+            throw new AssertionError("Unable to replace source schema using query '" + sql + "'", exception);
         }
     }
 

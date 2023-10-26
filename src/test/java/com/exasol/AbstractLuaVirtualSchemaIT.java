@@ -91,9 +91,9 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     private Map<String, String> getDebugProperties() {
         final String debugHost = System.getProperty("com.exasol.log.host");
-        if(debugHost == null)
+        if(debugHost == null) {
             return Collections.emptyMap();
-        else {
+        } else {
             final String debugAddress = debugHost + ":" + System.getProperty("com.exasol.log.port", DEFAULT_LOG_PORT);
             return Map.of("DEBUG_ADDRESS", debugAddress, "LOG_LEVEL", "TRACE");
         }
