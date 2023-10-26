@@ -1,4 +1,4 @@
-# Exasol Row Level Security (Lua) 1.5.1, released 2023-10-25
+# Exasol Row Level Security (Lua) 1.5.1, released 2023-10-26
 
 Code name: Fix CVE-2023-42503 and source schema switching
 
