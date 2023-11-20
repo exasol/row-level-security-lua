@@ -20,6 +20,10 @@ dependency-reduced-pom.xml
 .project
 .classpath
 .settings/org.eclipse.jdt.apt.core.prefs
+.settings/org.eclipse.core.resources.prefs
+.settings/org.eclipse.jdt.launching.prefs
+.settings/org.eclipse.m2e.core.prefs
+.settings/org.moreunit.core.prefs
 pom.xml.versionsBackup
 ~*
 *.lock
