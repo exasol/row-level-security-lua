@@ -3,9 +3,10 @@ local log = require("remotelog")
 -- Derive from AbstractVirtualSchemaAdapter
 local RlsAdapter = {}
 RlsAdapter.__index = RlsAdapter
-local AbstractVirtualSchemaAdapter = require("exasol.vscl.AbstractVirtualSchemaAdapter")
+local AbstractVirtualSchemaAdapter = require(
+                                         "exasol.vscl.AbstractVirtualSchemaAdapter")
 setmetatable(RlsAdapter, {__index = AbstractVirtualSchemaAdapter})
-local VERSION<const> = "1.5.1"
+local VERSION<const> = "1.5.2"
 
 local adapter_capabilities = require("exasol.rls.adapter_capabilities")
 local QueryRewriter = require("exasol.rls.RlsQueryRewriter")
@@ -26,15 +27,11 @@ end
 
 --- Get the version number of the Virtual Schema adapter.
 -- @return Virtual Schema adapter version
-function RlsAdapter:get_version()
-    return VERSION
-end
+function RlsAdapter:get_version() return VERSION end
 
 --- Get the name of the Virtual Schema adapter.
 -- @return Virtual Schema adapter name
-function RlsAdapter:get_name()
-    return "Row-level Security adapter (Lua)"
-end
+function RlsAdapter:get_name() return "Row-level Security adapter (Lua)" end
 
 --- Create a virtual schema.
 -- @param request virtual schema request
@@ -61,7 +58,11 @@ end
 -- @return response containing the metadata for the virtual schema like table and column structure
 function RlsAdapter:refresh(request, properties)
     properties:validate()
-    return {type = "refresh", schemaMetadata = self:_handle_schema_scanning_request(request, properties)}
+    return {
+        type = "refresh",
+        schemaMetadata = self:_handle_schema_scanning_request(request,
+                                                              properties)
+    }
 end
 
 --- Alter the schema properties.
@@ -77,7 +78,11 @@ function RlsAdapter:set_properties(request, old_properties, new_properties)
     local merged_properties = old_properties:merge(new_properties)
     log.debug("Merged properties " .. tostring(merged_properties))
     merged_properties:validate()
-    return {type = "setProperties", schemaMetadata = self:_handle_schema_scanning_request(request, merged_properties)}
+    return {
+        type = "setProperties",
+        schemaMetadata = self:_handle_schema_scanning_request(request,
+                                                              merged_properties)
+    }
 end
 
 --- Rewrite a pushed down query.
@@ -88,13 +93,13 @@ function RlsAdapter:push_down(request, properties)
     properties:validate()
     local adapter_cache = request.schemaMetadataInfo.adapterNotes
     local rewriter = QueryRewriter:new()
-    local rewritten_query = rewriter:rewrite(request.pushdownRequest, properties:get_schema_name(),
-            adapter_cache, request.involvedTables)
+    local rewritten_query = rewriter:rewrite(request.pushdownRequest,
+                                             properties:get_schema_name(),
+                                             adapter_cache,
+                                             request.involvedTables)
     return {type = "pushdown", sql = rewritten_query}
 end
 
-function RlsAdapter:_define_capabilities()
-    return adapter_capabilities
-end
+function RlsAdapter:_define_capabilities() return adapter_capabilities end
 
 return RlsAdapter

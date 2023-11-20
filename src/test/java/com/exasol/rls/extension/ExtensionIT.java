@@ -31,7 +31,7 @@ import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 class ExtensionIT {
-    private static final String PREVIOUS_VERSION = "1.5.0";
+    private static final String PREVIOUS_VERSION = "1.5.1";
     private static final Path EXTENSION_SOURCE_DIR = Paths.get("extension").toAbsolutePath();
     private static final String EXTENSION_ID = "row-level-security-extension.js";
     private static final int EXPECTED_PARAMETER_COUNT = 6;
