@@ -1,6 +1,0 @@
-eclipse.preferences.version=1
-org.moreunit.core.anyLanguage.active=true
-org.moreunit.core.anyLanguage.fileWordSeparator=_
-org.moreunit.core.anyLanguage.srcFolderPathTemplate=${srcProject}/src/main/lua/(**)
-org.moreunit.core.anyLanguage.testFileNameTemplate=test_${srcFile}
-org.moreunit.core.anyLanguage.testFolderPathTemplate=${srcProject}/src/test/lua/\\1
