@@ -1,12 +1,14 @@
-# Exasol Row Level Security (Lua) 1.5.2, released 2023-??-??
+# Exasol Row Level Security (Lua) 1.5.2, released 2023-11-20
 
-Code name:
+Code name: Fix CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`
 
 ## Summary
 
-## Features
+This release fixes vulnerability CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`.
 
-* ISSUE_NUMBER: description
+## Security
+
+* #144: Fixed CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`
 
 ## Dependency Updates
 
