@@ -181,7 +181,7 @@ class ExtensionIT {
         final ExtensionManagerClient client = setup.client();
         client.install();
         client.assertRequestFails(() -> client.createInstance(List.of()), startsWith(
-                "invalid parameters: Failed to validate parameter 'Name of the new virtual schema': This is a required parameter."),
+                "invalid parameters: Failed to validate parameter 'Name of the new virtual schema' (virtualSchemaName): This is a required parameter."),
                 equalTo(400));
     }
 
