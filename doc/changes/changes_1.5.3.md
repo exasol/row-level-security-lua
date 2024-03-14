@@ -21,13 +21,13 @@ Loop with Unreachable Exit Condition ('Infinite Loop') vulnerability in Apache C
 Allocation of Resources Without Limits or Throttling vulnerability in Apache Commons Compress.This issue affects Apache Commons Compress: from 1.21 before 1.26.
 
 ## References
-- 
+
 - https://ossindex.sonatype.org/vulnerability/CVE-2024-26308?component-type=maven&component-name=org.apache.commons%2Fcommons-compress&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
 - http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2024-26308
 - https://lists.apache.org/thread/ch5yo2d21p7vlqrhll9b17otbyq4npfg
 - https://www.openwall.com/lists/oss-security/2024/02/19/2
 
-## Features
+## Security
 
 * #146: Fixed CVE-2024-25710 by updating test dependency
 * #147: Fixed CVE-2024-26308 by updating test dependency
