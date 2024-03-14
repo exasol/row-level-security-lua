@@ -5,9 +5,16 @@ sources:
       - integration_tests
 linkReplacements:
   - "LICENSE-exasol-jdbc.txt|https://docs.exasol.com/db/latest/connect_exasol/drivers/jdbc.htm"
+build:
+  runnerOs: ubuntu-22.04
+  exasolDbVersions:
+    - "8.24.0"
+    - "7.1.25"
 excludes:
   - "E-PK-CORE-17: Missing required file: '.github/workflows/ci-build-next-java.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/ci-build.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_prepare_original_checksum.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_print_quick_checksum.yml'"
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_upload_github_release_assets.yml'"
+  # Latest project keeper does not support custom artifacts
+  - "W-PK-CORE-153: Project-keeper version 4.1.0 is outdated. Please update project-keeper to latest version 4.2.0."
