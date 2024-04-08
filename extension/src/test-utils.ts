@@ -6,7 +6,6 @@ import * as jestMock from "jest-mock";
 const EXTENSION_SCHEMA_NAME = "ext-schema"
 
 export function getInstalledExtension(): any {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return (global as any).installedExtension
 }
 

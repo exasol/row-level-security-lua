@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.5.3"
+local tag = "1.5.4"
 local project = "row-level-security-lua"
 local src = "src/main/lua"
 
