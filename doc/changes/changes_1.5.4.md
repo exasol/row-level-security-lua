@@ -1,12 +1,14 @@
-# Row Level Security lua 1.5.4, released 2024-??-??
+# Row Level Security lua 1.5.4, released 2024-04-09
 
-Code name:
+Code name: Fix CVE-2024-29025 in io.netty:netty-codec-http:jar:4.1.107.Final:test
 
 ## Summary
 
-## Features
+This release fixes CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.107.Final:test`.
 
-* ISSUE_NUMBER: description
+## Security
+
+* #149: Fixed CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.107.Final:test`
 
 ## Dependency Updates
 
