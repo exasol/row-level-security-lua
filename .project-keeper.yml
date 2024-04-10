@@ -16,6 +16,7 @@ linkReplacements:
   - "LICENSE-exasol-jdbc.txt|https://docs.exasol.com/db/latest/connect_exasol/drivers/jdbc.htm"
 build:
   runnerOs: ubuntu-22.04
+  freeDiskSpace: true
   exasolDbVersions:
     - "8.24.0"
     - "7.1.26"
@@ -80,3 +81,4 @@ build:
 excludes:
   # Project is written in Lua, no need to test with Java 17
   - "E-PK-CORE-17: Missing required file: '.github/workflows/ci-build-next-java.yml'"
+  - "E-PK-CORE-17: Missing required file: 'release_config.yml'"

@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Free Disk Space
         id: free-disk-space
-        if: ${{ false }}
+        if: ${{ true }}
         run: |
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /usr/share/dotnet
