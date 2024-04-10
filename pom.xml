@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>row-level-security-lua</artifactId>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <url>https://github.com/exasol/row-level-security-lua/</url>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-jdbc</artifactId>
-            <version>24.0.0</version>
+            <version>24.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.8</version>
+            <version>0.5.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -88,7 +88,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.1.0</version>
+                <version>4.3.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -96,6 +96,16 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-path</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -295,20 +305,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <groupId>org.sonatype.ossindex.maven</groupId>
-                <artifactId>ossindex-maven-plugin</artifactId>
-                <configuration>
-                    <excludeVulnerabilityIds>
-                        <!-- Transitive dependency fr.turri:aXMLRPC used by com.exasol:bucketfs-java. CVE-2020-36641 is reported to
-                        be fixed in aXMLRPC 1.12.1. We use version 1.13.0, so this is a false positive. -->
-                        <exclude>CVE-2020-36641</exclude>
-                        <!-- Transitive dependency io.netty:netty-handler used by software.amazon.awssdk:*.
-                        Vulnerability still present in latest version 4.1.97.Final. We assume that the AWS SDK's usage of netty is not affected. -->
-                        <exclude>CVE-2023-4586</exclude>
-                    </excludeVulnerabilityIds>
-                </configuration>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -344,7 +340,7 @@
     <parent>
         <artifactId>row-level-security-lua-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.5.3</version>
+        <version>1.5.4</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>

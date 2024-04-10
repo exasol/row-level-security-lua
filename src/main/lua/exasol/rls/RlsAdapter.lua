@@ -6,7 +6,7 @@ RlsAdapter.__index = RlsAdapter
 local AbstractVirtualSchemaAdapter = require(
                                          "exasol.vscl.AbstractVirtualSchemaAdapter")
 setmetatable(RlsAdapter, {__index = AbstractVirtualSchemaAdapter})
-local VERSION<const> = "1.5.3"
+local VERSION<const> = "1.5.4"
 
 local adapter_capabilities = require("exasol.rls.adapter_capabilities")
 local QueryRewriter = require("exasol.rls.RlsQueryRewriter")

@@ -3,18 +3,80 @@ sources:
     path: pom.xml
     modules:
       - integration_tests
+    artifacts:
+      - target/administration-sql-scripts-${version}.sql
+      - target/row-level-security-dist-${version}.lua
+  - type: npm
+    path: extension/package.json
+    artifacts:
+      - dist/row-level-security-extension.js
+version:
+  fromSource: pom.xml
 linkReplacements:
   - "LICENSE-exasol-jdbc.txt|https://docs.exasol.com/db/latest/connect_exasol/drivers/jdbc.htm"
 build:
   runnerOs: ubuntu-22.04
   exasolDbVersions:
     - "8.24.0"
-    - "7.1.25"
+    - "7.1.26"
+  workflows:
+    - name: ci-build.yml
+      stepCustomizations:
+        - action: INSERT_AFTER
+          stepId: setup-java
+          content:
+            name: Install Lua
+            id: install-lua
+            uses: leafo/gh-actions-lua@v10
+            with:
+              luaVersion: 5.4
+        - action: INSERT_AFTER
+          stepId: install-lua
+          content:
+            name: Install LuaRocks
+            id: install-luarocks
+            uses: leafo/gh-actions-luarocks@v4
+            with:
+              luaRocksVersion: "3.11.0"
+        - action: INSERT_AFTER
+          stepId: install-luarocks
+          content:
+            name: Install Lua dependencies
+            id: install-lua-dependencies
+            run: luarocks --local install *.rockspec --deps-only
+        - action: INSERT_AFTER
+          stepId: build-pk-verify
+          content:
+            name: Archive code coverage results
+            uses: actions/upload-artifact@v4
+            with:
+              name: luacov.report.out
+              path: target/luacov-reports/luacov.report.out
+              if-no-files-found: error
+    - name: release.yml
+      stepCustomizations:
+        - action: INSERT_AFTER
+          stepId: setup-jdks
+          content:
+            name: Install Lua
+            id: install-lua
+            uses: leafo/gh-actions-lua@v10
+            with:
+              luaVersion: 5.4
+        - action: INSERT_AFTER
+          stepId: install-lua
+          content:
+            name: Install LuaRocks
+            id: install-luarocks
+            uses: leafo/gh-actions-luarocks@v4
+            with:
+              luaRocksVersion: "3.11.0"
+        - action: INSERT_AFTER
+          stepId: install-luarocks
+          content:
+            name: Install Lua dependencies
+            id: install-lua-dependencies
+            run: luarocks --local install *.rockspec --deps-only
 excludes:
+  # Project is written in Lua, no need to test with Java 17
   - "E-PK-CORE-17: Missing required file: '.github/workflows/ci-build-next-java.yml'"
-  - "E-PK-CORE-18: Outdated content: '.github/workflows/ci-build.yml'"
-  - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_prepare_original_checksum.yml'"
-  - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_print_quick_checksum.yml'"
-  - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_upload_github_release_assets.yml'"
-  # Latest project keeper does not support custom artifacts
-  - "W-PK-CORE-153: Project-keeper version 4.1.0 is outdated. Please update project-keeper to latest version 4.2.0."
