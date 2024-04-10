@@ -33,7 +33,7 @@ This release fixes CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.107.Fina
 * Updated `eslint:^8.54.0` to `^8.57.0`
 * Updated `ts-jest:^29.1.1` to `^29.1.2`
 * Added `@types/jest:^29.5.12`
-* Added `typescript-eslint:^7.5.0`
+* Added `typescript-eslint:^7.6.0`
 * Updated `typescript:^5.2.2` to `^5.4.4`
 * Updated `ts-node:^10.9.1` to `^10.9.2`
 * Updated `esbuild:^0.19.6` to `^0.20.2`
