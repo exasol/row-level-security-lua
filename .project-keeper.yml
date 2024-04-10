@@ -49,11 +49,19 @@ build:
           stepId: build-pk-verify
           content:
             name: Archive code coverage results
+            id: archive-luacov-report
             uses: actions/upload-artifact@v4
             with:
               name: luacov.report.out
               path: target/luacov-reports/luacov.report.out
               if-no-files-found: error
+        - action: REPLACE
+          stepId: sonar-analysis
+          content:
+            name: Skip SonarCloud analysis
+            id: sonar-analysis
+            run: echo "SonarCloud analysis is skipped because the project is written in Lua."
+
     - name: release.yml
       stepCustomizations:
         - action: INSERT_AFTER
@@ -78,6 +86,7 @@ build:
             name: Install Lua dependencies
             id: install-lua-dependencies
             run: luarocks --local install *.rockspec --deps-only
+
 excludes:
   # Project is written in Lua, no need to test with Java 17
   - "E-PK-CORE-17: Missing required file: '.github/workflows/ci-build-next-java.yml'"

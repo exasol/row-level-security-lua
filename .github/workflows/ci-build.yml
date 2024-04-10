@@ -96,24 +96,18 @@ jobs:
           EXASOL_DB_VERSION: '${{ matrix.exasol_db_version }}'
         }
       - name: Archive code coverage results
+        id: archive-luacov-report
         uses: actions/upload-artifact@v4
         with: {
           name: luacov.report.out,
           path: target/luacov-reports/luacov.report.out,
           if-no-files-found: error
         }
-      - name: Sonar analysis
-        id: sonar-analysis
-        if: ${{ env.SONAR_TOKEN != null && matrix.exasol_db_version == env.DEFAULT_EXASOL_DB_VERSION }}
-        run: |
-          mvn --batch-mode org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              -DtrimStackTrace=false \
-              -Dsonar.token=$SONAR_TOKEN
-        env: {
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
-          SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
-        }
+      - {
+        name: Skip SonarCloud analysis,
+        id: sonar-analysis,
+        run: echo "SonarCloud analysis is skipped because the project is written in Lua."
+      }
       - name: Verify Release Artifacts
         id: verify-release-artifacts
         run: "print_message() {\n    local -r message=$1\n    echo \"$message\"\n    echo \"$message\" >> \"$GITHUB_STEP_SUMMARY\"\n}\n\nprint_message \"### Release Artifacts\"\n\nIFS=$'\\n' artifacts_array=($ARTIFACTS)\nmissing_files=()\nfor file in \"${artifacts_array[@]}\";\ndo  \n    echo \"Checking if file $file exists...\"\n    if ! [[ -f \"$file\" ]]; then\n        print_message \"* ⚠️ \\`$file\\` does not exist ⚠️\"\n        echo \"Content of directory $(dirname \"$file\"):\"\n        ls \"$(dirname \"$file\")\"\n        missing_files+=(\"$file\")\n    else\n        print_message \"* \\`$file\\` ✅\" \n    fi\ndone\nprint_message \"\"\nnumber_of_missing_files=${#missing_files[@]}\nif [[ $number_of_missing_files -gt 0 ]]; then\n    print_message \"⚠️ $number_of_missing_files release artifact(s) missing ⚠️\"\n    exit 1\nfi\n"
