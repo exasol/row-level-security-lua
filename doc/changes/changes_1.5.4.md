@@ -17,6 +17,7 @@ This release fixes CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.107.Fina
 #### Test Dependency Updates
 
 * Updated `com.exasol:exasol-jdbc:24.0.0` to `24.1.0`
+* Updated `com.exasol:extension-manager-integration-test-java:0.5.8` to `0.5.9`
 
 #### Plugin Dependency Updates
 

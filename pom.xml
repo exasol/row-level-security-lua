@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.8</version>
+            <version>0.5.9</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -304,20 +304,6 @@
                         <version>1.2024.3</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.ossindex.maven</groupId>
-                <artifactId>ossindex-maven-plugin</artifactId>
-                <configuration>
-                    <excludeVulnerabilityIds>
-                        <!-- Transitive dependency fr.turri:aXMLRPC used by com.exasol:bucketfs-java. CVE-2020-36641 is reported to
-                        be fixed in aXMLRPC 1.12.1. We use version 1.13.0, so this is a false positive. -->
-                        <exclude>CVE-2020-36641</exclude>
-                        <!-- Transitive dependency io.netty:netty-handler used by software.amazon.awssdk:*.
-                        Vulnerability still present in latest version 4.1.97.Final. We assume that the AWS SDK's usage of netty is not affected. -->
-                        <exclude>CVE-2023-4586</exclude>
-                    </excludeVulnerabilityIds>
-                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
