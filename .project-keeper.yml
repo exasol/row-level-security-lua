@@ -61,6 +61,13 @@ build:
             name: Skip SonarCloud analysis
             id: sonar-analysis
             run: echo "SonarCloud analysis is skipped because the project is written in Lua."
+        # Generate dummy error code reports. Error code crawler does not support Lua projects yet.
+        - action: INSERT_AFTER
+          stepId: build-pk-verify
+          content:
+            name: Generate dummy error code report
+            id: generate-dummy-error-code-report
+            run: echo '{"$schema":"https://schemas.exasol.com/error_code_report-1.0.0.json","errorCodes":[]}' > target/error_code_report.json
 
     - name: release.yml
       stepCustomizations:
@@ -86,6 +93,13 @@ build:
             name: Install Lua dependencies
             id: install-lua-dependencies
             run: luarocks --local install *.rockspec --deps-only
+        # Generate dummy error code reports. Error code crawler does not support Lua projects yet.
+        - action: INSERT_AFTER
+          stepId: build
+          content:
+            name: Generate dummy error code report
+            id: generate-dummy-error-code-report
+            run: echo '{"$schema":"https://schemas.exasol.com/error_code_report-1.0.0.json","errorCodes":[]}' > target/error_code_report.json
 
 excludes:
   # Project is written in Lua, no need to test with Java 17
