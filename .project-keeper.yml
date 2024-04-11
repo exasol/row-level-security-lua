@@ -52,7 +52,7 @@ build:
             id: archive-luacov-report
             uses: actions/upload-artifact@v4
             with:
-              name: luacov.report.out
+              name: luacov.report.out-exasol-${{ matrix.exasol_db_version }}
               path: target/luacov-reports/luacov.report.out
               if-no-files-found: error
         - action: REPLACE
