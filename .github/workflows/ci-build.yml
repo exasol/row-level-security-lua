@@ -95,11 +95,16 @@ jobs:
         env: {
           EXASOL_DB_VERSION: '${{ matrix.exasol_db_version }}'
         }
+      - {
+        name: Generate dummy error code report,
+        id: generate-dummy-error-code-report,
+        run: 'echo ''{"$schema":"https://schemas.exasol.com/error_code_report-1.0.0.json","errorCodes":[]}'' > target/error_code_report.json'
+      }
       - name: Archive code coverage results
         id: archive-luacov-report
         uses: actions/upload-artifact@v4
         with: {
-          name: luacov.report.out,
+          name: 'luacov.report.out-exasol-${{ matrix.exasol_db_version }}',
           path: target/luacov-reports/luacov.report.out,
           if-no-files-found: error
         }
