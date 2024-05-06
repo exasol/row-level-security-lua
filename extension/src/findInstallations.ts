@@ -7,11 +7,10 @@ export function findInstallations(context: ExtendedContext, scripts: ExaScriptsR
     if (!adapterScript) {
         return []
     }
-    const name = `${adapterScript.schema}.${adapterScript.name}`
     const versionResult = extractVersion(adapterScript.text)
     if (versionResult.type === "failure") {
         console.warn(versionResult.message)
     }
     const version = versionResult.type === "success" ? versionResult.result : "(unknown)"
-    return [{ name, version }];
+    return [{ name: "Row Level Security Lua", version }];
 }

@@ -75,6 +75,6 @@ function createVirtualSchemaStatement(adapterSchema: string, config: VirtualSche
 function verifySchemaDoesNotExist(context: ExtendedContext, virtualSchemaName: string) {
     const existingSchema = findInstances(context).filter(instance => instance.id === virtualSchemaName);
     if (existingSchema.length > 0) {
-        throw new BadRequestError(`Schema "${virtualSchemaName}" already exists`)
+        throw new BadRequestError(`Virtual Schema '${virtualSchemaName}' already exists`)
     }
 }

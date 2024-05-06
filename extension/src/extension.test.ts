@@ -81,12 +81,12 @@ describe("Row Level Security Lua", () => {
 
         it("returns single item when script is available", () => {
             const scripts: ExaScriptsRow[] = [script({ name: "RLS_ADAPTER", text: "-- RLS Lua version version" })]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "schema.RLS_ADAPTER", version: "version" }])
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "Row Level Security Lua", version: "version" }])
         })
 
         it("returns unknown version for invalid script", () => {
             const scripts: ExaScriptsRow[] = [script({ name: "RLS_ADAPTER", text: "invalid" })]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "schema.RLS_ADAPTER", version: "(unknown)" }])
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "Row Level Security Lua", version: "(unknown)" }])
         })
     })
 
@@ -150,7 +150,11 @@ table.insert(package.searchers,`)
             const actual = createExtension().getInstanceParameters(createMockContext(), currentVersion)
             expect(actual).toHaveLength(6)
             expect(actual[0]).toStrictEqual({
-                id: "virtualSchemaName", name: "Name of the new virtual schema", required: true, type: "string"
+                id: "virtualSchemaName",
+                name: "Virtual Schema name",
+                placeholder: "MY_VIRTUAL_SCHEMA",
+                regex: "[a-zA-Z_]+", required: true, type: "string",
+                "description": "Name for the new virtual schema",
             })
             expect(actual[1]).toStrictEqual({
                 id: "SCHEMA_NAME", name: "Name of the schema for which to apply row-level security", required: true, type: "string"
@@ -182,7 +186,7 @@ table.insert(package.searchers,`)
 
         it("fails for existing instance", () => {
             expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["new_vs"]]))
-                .toThrowError(new BadRequestError(`Schema "new_vs" already exists`))
+                .toThrowError(new BadRequestError(`Virtual Schema 'new_vs' already exists`))
         })
 
         it("succeeds for existing instance with other name", () => {
@@ -308,7 +312,7 @@ table.insert(package.searchers,`)
         })
         describe("failure", () => {
             const tests: { name: string; scripts: ExaScriptsRow[], expectedMessage: string }[] = [
-                { name: "no script", scripts: [], expectedMessage: "Adapter script 'RLS_ADAPTER' is not installed" },
+                { name: "no script", scripts: [], expectedMessage: "Not all required scripts are installed: Validation failed: Script 'RLS_ADAPTER' is missing" },
                 {
                     name: "invalid version", scripts: [script({ name: "RLS_ADAPTER", text: "invalid script" })],
                     expectedMessage: `Failed to extract version from adapter script schema.RLS_ADAPTER: version not found in script text 'invalid script'`

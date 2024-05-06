@@ -16,7 +16,7 @@ const REMOTELOG_LUA_LOG_LEVELS: string[] = ["NONE", "FATAL", "ERROR", "WARN", "I
 const LOG_LEVEL_OPTIONS: SelectOption[] = REMOTELOG_LUA_LOG_LEVELS.map(level => { return { id: level, name: level } })
 
 const allParams: AllParameters = {
-    virtualSchemaName: { id: "virtualSchemaName", name: "Name of the new virtual schema", type: "string", required: true },
+    virtualSchemaName: { id: "virtualSchemaName", name: "Virtual Schema name", type: "string", required: true, regex: "[a-zA-Z_]+", description: "Name for the new virtual schema", placeholder: "MY_VIRTUAL_SCHEMA" },
 
     // Virtual Schema parameters
     schemaName: { id: "SCHEMA_NAME", name: "Name of the schema for which to apply row-level security", type: "string", required: true },
