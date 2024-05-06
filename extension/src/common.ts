@@ -11,7 +11,7 @@ function identity(arg: string): string {
 export const convertInstanceIdToSchemaName = identity
 export const convertSchemaNameToInstanceId = identity
 
-const versionCommentRegexp = new RegExp("^\\s*-- RLS Lua version (.*?)\\s*$", "m")
+const versionCommentRegexp = /^\s*-- RLS Lua version (.*?)\s*$/m
 export function extractVersion(scriptText: string): Result<string> {
     const match = versionCommentRegexp.exec(scriptText)
     if (!match) {
