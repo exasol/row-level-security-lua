@@ -12,14 +12,12 @@ sources:
       - dist/row-level-security-extension.js
 version:
   fromSource: pom.xml
-linkReplacements:
-  - "LICENSE-exasol-jdbc.txt|https://docs.exasol.com/db/latest/connect_exasol/drivers/jdbc.htm"
 build:
   runnerOs: ubuntu-22.04
   freeDiskSpace: true
   exasolDbVersions:
-    - "8.27.0"
-    - "7.1.26"
+    - 8.26.0
+    - 7.1.26
   workflows:
     - name: ci-build.yml
       stepCustomizations:
