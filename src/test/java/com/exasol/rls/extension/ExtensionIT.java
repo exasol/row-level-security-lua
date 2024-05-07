@@ -161,27 +161,6 @@ class ExtensionIT extends AbstractVirtualSchemaExtensionIT {
      */
     @Test
     @Override
-    public void createTwoInstancesDifferentCase() {
-        getSetup().client().install();
-        createInstance("my_VS");
-        createInstance("MY_vs");
-        assertAll(() -> getSetup().exasolMetadata().assertConnection(table("VARCHAR", "VARCHAR").matches()),
-                () -> getSetup().exasolMetadata()
-                        .assertVirtualSchema(table()
-                                .row("MY_vs", "SYS", EXTENSION_SCHEMA, not(emptyOrNullString()), emptyOrNullString())
-                                .row("my_VS", "SYS", EXTENSION_SCHEMA, not(emptyOrNullString()), emptyOrNullString())
-                                .matches()),
-                () -> assertThat(getSetup().client().listInstances(), allOf(hasSize(2), equalTo(
-                        List.of(new Instance().id("MY_vs").name("MY_vs"), new Instance().id("my_VS").name("my_VS"))))));
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Extension does not create a CONNECTION.
-     */
-    @Test
-    @Override
     public void createInstanceCreatesDbObjects() {
         getSetup().client().install();
         final String name = "my_virtual_SCHEMA";
@@ -212,7 +191,8 @@ class ExtensionIT extends AbstractVirtualSchemaExtensionIT {
     }
 
     /*
-     * Previous version has a different name.
+     * Previous version has a different name {@code EXA_EXTENSIONS.RLS_ADAPTER}. This can be deleted once the extension
+     * is released.
      */
     @Override
     protected void assertInstalledVersion(final String expectedVersion,

@@ -184,14 +184,23 @@ table.insert(package.searchers,`)
                 .toThrowError(new BadRequestError(`Missing parameter "SCHEMA_NAME"`))
         })
 
-        it("fails for existing instance", () => {
-            expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["new_vs"]]))
-                .toThrowError(new BadRequestError(`Virtual Schema 'new_vs' already exists`))
-        })
-
-        it("succeeds for existing instance with other name", () => {
-            expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["other_vs"]]))
-                .not.toThrow()
+        describe("checks for existing virtual schema", () => {
+            it("existing schema with same name", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["new_vs"]]))
+                    .toThrowError(new BadRequestError(`Virtual Schema 'new_vs' already exists`))
+            })
+            it("existing schema with same case-insensitive name", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["NEW_vs"]]))
+                    .toThrowError(new BadRequestError(`Virtual Schema 'NEW_vs' already exists`))
+            })
+            it("no existing schema", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, []))
+                    .not.toThrow()
+            })
+            it("existing schema with other name", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["other_vs"]]))
+                    .not.toThrow()
+            })
         })
 
         it("executes expected statements", () => {

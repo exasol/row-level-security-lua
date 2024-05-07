@@ -72,9 +72,17 @@ function createVirtualSchemaStatement(adapterSchema: string, config: VirtualSche
     return stmt;
 }
 
+/**
+ * Check if a virtual schema with the given name already exists. This is case-insensitive
+ * because other virtual schemas that use `CONNECTION`s are case-insensitive and this
+ * schema should behave the same way, even if it does not use a connection.
+ * @param context extension context
+ * @param virtualSchemaName name of the virtual schema to check
+ */
 function verifySchemaDoesNotExist(context: ExtendedContext, virtualSchemaName: string) {
-    const existingSchema = findInstances(context).filter(instance => instance.id === virtualSchemaName);
+    const existingSchema = findInstances(context)
+        .filter(instance => instance.id.toUpperCase() === virtualSchemaName.toUpperCase());
     if (existingSchema.length > 0) {
-        throw new BadRequestError(`Virtual Schema '${virtualSchemaName}' already exists`)
+        throw new BadRequestError(`Virtual Schema '${existingSchema[0].name}' already exists`)
     }
 }
