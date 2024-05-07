@@ -185,19 +185,19 @@ table.insert(package.searchers,`)
         })
 
         describe("checks for existing virtual schema", () => {
-            it("existing schema with same name", () => {
+            it("throws error when existing schema has the same name", () => {
                 expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["new_vs"]]))
                     .toThrowError(new BadRequestError(`Virtual Schema 'new_vs' already exists`))
             })
-            it("existing schema with same case-insensitive name", () => {
+            it("throws error when existing schema has the same case-insensitive name", () => {
                 expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["NEW_vs"]]))
                     .toThrowError(new BadRequestError(`Virtual Schema 'NEW_vs' already exists`))
             })
-            it("no existing schema", () => {
+            it("does not throw error when no schema exists", () => {
                 expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, []))
                     .not.toThrow()
             })
-            it("existing schema with other name", () => {
+            it("does not throw error when existing schema has a different name", () => {
                 expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["other_vs"]]))
                     .not.toThrow()
             })
