@@ -31,8 +31,6 @@ abstract class AbstractLuaVirtualSchemaIT {
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
             new ExasolContainer<>(DOCKER_DB) //
-                    .withRequiredServices() //
-                    .withExposedPorts(8563) //
                     .withReuse(true);
     private static final String EXASOL_LUA_MODULE_LOADER_WORKAROUND = "table.insert(" //
             + "package.searchers" //
@@ -91,7 +89,7 @@ abstract class AbstractLuaVirtualSchemaIT {
 
     private Map<String, String> getDebugProperties() {
         final String debugHost = System.getProperty("com.exasol.log.host");
-        if(debugHost == null) {
+        if (debugHost == null) {
             return Collections.emptyMap();
         } else {
             final String debugAddress = debugHost + ":" + System.getProperty("com.exasol.log.port", DEFAULT_LOG_PORT);
