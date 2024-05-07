@@ -1,12 +1,14 @@
-# Row Level Security lua 1.5.5, released 2024-??-??
+# Row Level Security lua 1.5.5, released 2024-05-07
 
-Code name:
+Code name: Improve error handling for extension
 
 ## Summary
 
-## Features
+This release improves error handling when creating a new Virtual Schema using the extension: the extension now checks if a schema with the same name exists and returns a helpful error message. This check is case-insensitive to be consistent with other virtual schemas.
 
-* ISSUE_NUMBER: description
+## Bugfix
+
+* #155: Improved error handling for creating Virtual Schema using the extension
 
 ## Dependency Updates
 
