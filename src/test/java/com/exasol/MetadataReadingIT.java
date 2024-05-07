@@ -201,7 +201,7 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
         final Schema sourceSchemaBefore = createSchema("SCHEMA_SWITCH");
         final Table tableBefore = sourceSchemaBefore.createTable("T_BEFORE", "I", "DECIMAL(18,0)");
         final Schema sourceSchemaAfter = createSchema("SCHEMA_AFTER_SWITCH");
-        final Table tableAfter = sourceSchemaAfter.createTable("T_AFTER", "D", "DATE");
+        sourceSchemaAfter.createTable("T_AFTER", "D", "DATE");
         final VirtualSchema virtualSchema = createVirtualSchema(sourceSchemaBefore);
         final User user = createUserWithVirtualSchemaAccess("USER_FOR_SCHEMA_SWITCH", virtualSchema);
         assertVirtualTableStructure(tableBefore, user, expectRows("I", "DECIMAL(18,0)"));
@@ -211,8 +211,8 @@ class MetadataReadingIT extends AbstractLuaVirtualSchemaIT {
     }
 
     private void replaceSourceSchema(final VirtualSchema virtualSchema, final Schema sourceSchema) {
-        final String sql = "ALTER VIRTUAL SCHEMA " + virtualSchema.getFullyQualifiedName() + " SET SCHEMA_NAME='" +
-                sourceSchema.getName() + "'";
+        final String sql = "ALTER VIRTUAL SCHEMA " + virtualSchema.getFullyQualifiedName() + " SET SCHEMA_NAME='"
+                + sourceSchema.getName() + "'";
         try {
             execute(sql);
         } catch (final SQLException exception) {

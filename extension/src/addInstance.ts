@@ -1,6 +1,7 @@
 import { BadRequestError, Instance, NotFoundError, Parameter, ParameterValues } from "@exasol/extension-manager-interface";
 import { ADAPTER_SCRIPT_NAME, EXTENSION_NAME, convertSchemaNameToInstanceId } from "./common";
 import { ExtendedContext } from "./extension";
+import { findInstances } from "./findInstances";
 import { getAllParameterDefinitions } from "./parameterDefinitions";
 
 interface VirtualSchemaConfig {
@@ -17,6 +18,7 @@ export function addInstance(context: ExtendedContext, version: string, paramValu
         throw new NotFoundError(`Version '${version}' not supported, can only use '${context.version}'.`)
     }
     const config = buildVirtualSchemaConfig(paramValues)
+    verifySchemaDoesNotExist(context, config.virtualSchemaName)
     const createVirtualSchemaStmt = createVirtualSchemaStatement(context.extensionSchemaName, config);
     context.sqlClient.execute(createVirtualSchemaStmt);
     const comment = `Created by Extension Manager for ${EXTENSION_NAME} version ${context.version}`;
@@ -68,4 +70,19 @@ function createVirtualSchemaStatement(adapterSchema: string, config: VirtualSche
         stmt += ` LOG_LEVEL='${config.logLevel}'`
     }
     return stmt;
+}
+
+/**
+ * Check if a virtual schema with the given name already exists. This is case-insensitive
+ * because other virtual schemas that use `CONNECTION`s are case-insensitive and this
+ * schema should behave the same way, even if it does not use a connection.
+ * @param context extension context
+ * @param virtualSchemaName name of the virtual schema to check
+ */
+function verifySchemaDoesNotExist(context: ExtendedContext, virtualSchemaName: string) {
+    const existingSchema = findInstances(context)
+        .filter(instance => instance.id.toUpperCase() === virtualSchemaName.toUpperCase());
+    if (existingSchema.length > 0) {
+        throw new BadRequestError(`Virtual Schema '${existingSchema[0].name}' already exists`)
+    }
 }

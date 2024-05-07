@@ -101,4 +101,4 @@
 [46]: https://maven.apache.org/plugins/maven-jar-plugin/
 [47]: https://github.com/Huluvu424242/plantuml-maven-plugin
 [48]: https://www.apache.org/licenses/LICENSE-2.0
-[49]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.4.1.tgz
+[49]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.4.2.tgz

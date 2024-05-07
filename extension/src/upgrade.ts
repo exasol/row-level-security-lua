@@ -13,7 +13,7 @@ export function upgrade(context: ExtendedContext): UpgradeResult {
 function getAdapterVersion(context: ExtendedContext): string {
     const adapterScript = context.metadata.getScriptByName(ADAPTER_SCRIPT_NAME)
     if (!adapterScript) {
-        throw new PreconditionFailedError(`Adapter script '${ADAPTER_SCRIPT_NAME}' is not installed`)
+        throw new PreconditionFailedError(`Not all required scripts are installed: Validation failed: Script '${ADAPTER_SCRIPT_NAME}' is missing`)
     }
     const version = extractVersion(adapterScript.text)
     if (version.type === "failure") {

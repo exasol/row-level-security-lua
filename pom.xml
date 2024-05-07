@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>row-level-security-lua</artifactId>
-    <version>1.5.4</version>
+    <version>1.5.5</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <url>https://github.com/exasol/row-level-security-lua/</url>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>7.0.1</version>
+            <version>7.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.12</version>
+            <version>2.0.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.9</version>
+            <version>0.5.11</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -340,7 +340,7 @@
     <parent>
         <artifactId>row-level-security-lua-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.5.4</version>
+        <version>1.5.5</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>

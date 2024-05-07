@@ -1,4 +1,4 @@
-import { BadRequestError, ExaMetadata, Installation, Instance, NotFoundError, ParameterValue, PreconditionFailedError, Row } from '@exasol/extension-manager-interface';
+import { BadRequestError, ExaMetadata, Installation, Instance, NotFoundError, ParameterValue, ParameterValues, PreconditionFailedError, Row } from '@exasol/extension-manager-interface';
 import { failureResult, successResult } from '@exasol/extension-manager-interface/dist/base/common';
 import { ExaScriptsRow } from '@exasol/extension-manager-interface/dist/exasolSchema';
 import { describe, expect, it } from '@jest/globals';
@@ -6,7 +6,7 @@ import { ADAPTER_SCRIPT_NAME, EXTENSION_NAME, extractVersion } from './common';
 import { createExtension } from "./extension";
 import { EXTENSION_DESCRIPTION } from './extension-description';
 import { buildCreateScriptCommand } from './install';
-import { createMockContext, getInstalledExtension, script } from './test-utils';
+import { ContextMock, createMockContext, getInstalledExtension, script } from './test-utils';
 
 const currentVersion = EXTENSION_DESCRIPTION.version
 
@@ -81,12 +81,12 @@ describe("Row Level Security Lua", () => {
 
         it("returns single item when script is available", () => {
             const scripts: ExaScriptsRow[] = [script({ name: "RLS_ADAPTER", text: "-- RLS Lua version version" })]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "schema.RLS_ADAPTER", version: "version" }])
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "Row Level Security Lua", version: "version" }])
         })
 
         it("returns unknown version for invalid script", () => {
             const scripts: ExaScriptsRow[] = [script({ name: "RLS_ADAPTER", text: "invalid" })]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "schema.RLS_ADAPTER", version: "(unknown)" }])
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "Row Level Security Lua", version: "(unknown)" }])
         })
     })
 
@@ -150,7 +150,11 @@ table.insert(package.searchers,`)
             const actual = createExtension().getInstanceParameters(createMockContext(), currentVersion)
             expect(actual).toHaveLength(6)
             expect(actual[0]).toStrictEqual({
-                id: "virtualSchemaName", name: "Name of the new virtual schema", required: true, type: "string"
+                id: "virtualSchemaName",
+                name: "Virtual Schema name",
+                placeholder: "MY_VIRTUAL_SCHEMA",
+                regex: "[a-zA-Z_]+", required: true, type: "string",
+                "description": "Name for the new virtual schema",
             })
             expect(actual[1]).toStrictEqual({
                 id: "SCHEMA_NAME", name: "Name of the schema for which to apply row-level security", required: true, type: "string"
@@ -159,21 +163,51 @@ table.insert(package.searchers,`)
     })
 
     describe("addInstance()", () => {
+        let contextMock: ContextMock
+        function addInstance(version: string, params: ParameterValues): Instance {
+            return addInstanceSimulateExistingVs(version, params, [])
+        }
+
+        function addInstanceSimulateExistingVs(version: string, params: ParameterValues, sqlQueryRows: Row[]): Instance {
+            contextMock = createMockContext();
+            contextMock.mocks.sqlQuery.mockReturnValue({ columns: [], rows: sqlQueryRows });
+            return createExtension().addInstance(contextMock, version, params)
+        }
+
         it("fails for missing schema name", () => {
-            expect(() => createExtension().addInstance(createMockContext(), currentVersion, { values: [] }))
+            expect(() => addInstance(currentVersion, { values: [] }))
                 .toThrowError(new BadRequestError(`Missing parameter "virtualSchemaName"`))
         })
+
         it("fails for missing base schema name", () => {
-            expect(() => createExtension().addInstance(createMockContext(), currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }] }))
+            expect(() => addInstance(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }] }))
                 .toThrowError(new BadRequestError(`Missing parameter "SCHEMA_NAME"`))
         })
 
+        describe("checks for existing virtual schema", () => {
+            it("throws error when existing schema has the same name", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["new_vs"]]))
+                    .toThrowError(new BadRequestError(`Virtual Schema 'new_vs' already exists`))
+            })
+            it("throws error when existing schema has the same case-insensitive name", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["NEW_vs"]]))
+                    .toThrowError(new BadRequestError(`Virtual Schema 'NEW_vs' already exists`))
+            })
+            it("does not throw error when no schema exists", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, []))
+                    .not.toThrow()
+            })
+            it("does not throw error when existing schema has a different name", () => {
+                expect(() => addInstanceSimulateExistingVs(currentVersion, { values: [{ name: "virtualSchemaName", value: "new_vs" }, { name: "SCHEMA_NAME", value: "baseSchema" }] }, [["other_vs"]]))
+                    .not.toThrow()
+            })
+        })
+
         it("executes expected statements", () => {
-            const context = createMockContext();
             const parameters = [{ name: "virtualSchemaName", value: "NEW_RLS_VS" }, { name: "SCHEMA_NAME", value: "baseSchema" }]
-            const instance = createExtension().addInstance(context, currentVersion, { values: parameters });
+            const instance = addInstance(currentVersion, { values: parameters });
             expect(instance.name).toBe("NEW_RLS_VS")
-            const calls = context.mocks.sqlExecute.mock.calls
+            const calls = contextMock.mocks.sqlExecute.mock.calls
             expect(calls.length).toBe(2)
 
             expect(calls[0]).toEqual([`CREATE VIRTUAL SCHEMA "NEW_RLS_VS" USING "ext-schema"."RLS_ADAPTER" WITH SCHEMA_NAME = 'baseSchema'`])
@@ -196,26 +230,24 @@ table.insert(package.searchers,`)
                 },
             ]
             tests.forEach(test => it(test.name, () => {
-                const context = createMockContext();
                 const parameters = [{ name: "virtualSchemaName", value: "NEW_RLS_VS" }, { name: "SCHEMA_NAME", value: "baseSchema" }]
                 test.params.forEach(p => parameters.push(p))
-                const instance = createExtension().addInstance(context, currentVersion, { values: parameters });
+                const instance = addInstance(currentVersion, { values: parameters });
                 expect(instance.name).toBe("NEW_RLS_VS")
-                const calls = context.mocks.sqlExecute.mock.calls
+                const calls = contextMock.mocks.sqlExecute.mock.calls
                 expect(calls.length).toBe(2)
                 expect(calls[0]).toEqual([`CREATE VIRTUAL SCHEMA "NEW_RLS_VS" USING "ext-schema"."RLS_ADAPTER" WITH SCHEMA_NAME = 'baseSchema'` + test.expectedScript])
             }))
         })
 
         it("returns id and name", () => {
-            const context = createMockContext();
             const parameters = [{ name: "virtualSchemaName", value: "NEW_RLS_VS" }, { name: "SCHEMA_NAME", value: "baseSchema" }]
-            const instance = createExtension().addInstance(context, currentVersion, { values: parameters });
+            const instance = addInstance(currentVersion, { values: parameters });
             expect(instance).toStrictEqual({ id: "NEW_RLS_VS", name: "NEW_RLS_VS" })
         })
 
         it("fails for wrong version", () => {
-            expect(() => { createExtension().addInstance(createMockContext(), "wrongVersion", { values: [] }) })
+            expect(() => { addInstance("wrongVersion", { values: [] }) })
                 .toThrow(`Version 'wrongVersion' not supported, can only use '${currentVersion}'.`)
         })
     })
@@ -289,7 +321,7 @@ table.insert(package.searchers,`)
         })
         describe("failure", () => {
             const tests: { name: string; scripts: ExaScriptsRow[], expectedMessage: string }[] = [
-                { name: "no script", scripts: [], expectedMessage: "Adapter script 'RLS_ADAPTER' is not installed" },
+                { name: "no script", scripts: [], expectedMessage: "Not all required scripts are installed: Validation failed: Script 'RLS_ADAPTER' is missing" },
                 {
                     name: "invalid version", scripts: [script({ name: "RLS_ADAPTER", text: "invalid script" })],
                     expectedMessage: `Failed to extract version from adapter script schema.RLS_ADAPTER: version not found in script text 'invalid script'`
@@ -309,4 +341,3 @@ table.insert(package.searchers,`)
         })
     })
 })
-
