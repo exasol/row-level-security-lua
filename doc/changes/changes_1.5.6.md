@@ -14,6 +14,7 @@ Code name:
 
 #### Test Dependency Updates
 
+* Added `com.exasol:exasol-test-setup-abstraction-java:2.1.4`
 * Updated `org.testcontainers:junit-jupiter:1.19.7` to `1.19.8`
 
 #### Plugin Dependency Updates
