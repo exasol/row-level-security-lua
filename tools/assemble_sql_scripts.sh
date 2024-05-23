@@ -32,7 +32,7 @@ else
             append ""
         else
             echo "SQL script to be added to bundle not found: $script"
-            exit -1; 
+            exit 1; 
         fi
     done
 fi

@@ -24,7 +24,7 @@
 | Dependency                                              | License                                                        |
 | ------------------------------------------------------- | -------------------------------------------------------------- |
 | [SonarQube Scanner for Maven][20]                       | [GNU LGPL 3][21]                                               |
-| [Apache Maven Toolchains Plugin][22]                    | [Apache License, Version 2.0][23]                              |
+| [Apache Maven Toolchains Plugin][22]                    | [Apache-2.0][23]                                               |
 | [Project Keeper Maven plugin][24]                       | [The MIT License][25]                                          |
 | [Apache Maven Compiler Plugin][26]                      | [Apache-2.0][23]                                               |
 | [Apache Maven Enforcer Plugin][27]                      | [Apache-2.0][23]                                               |
