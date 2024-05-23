@@ -88,6 +88,15 @@
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
             <version>2.1.4</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                     <!-- Avoid exception running integration tests caused by wrong XML parser (xerces:xercesImpl) beeing loaded:
+                             java.lang.IllegalArgumentException: Property 'http://javax.xml.XMLConstants/property/accessExternalDTD' is not recognized.
+                                at org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.setAttribute(Unknown Source) -->
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <build>
