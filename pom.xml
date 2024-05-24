@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>row-level-security-lua</artifactId>
-    <version>1.5.5</version>
+    <version>1.5.6</version>
     <name>Exasol Row Level Security (Lua)</name>
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <url>https://github.com/exasol/row-level-security-lua/</url>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.7</version>
+            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -82,13 +82,29 @@
             <version>0.5.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <!-- Explicityl upgrade transitive dependency of extension-manager-integration-test-java to fix SSH connection to Exasol >= 8.27.0 -->
+            <groupId>com.exasol</groupId>
+            <artifactId>exasol-test-setup-abstraction-java</artifactId>
+            <version>2.1.4</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                     <!-- Avoid exception running integration tests caused by wrong XML parser (xerces:xercesImpl) beeing loaded:
+                             java.lang.IllegalArgumentException: Property 'http://javax.xml.XMLConstants/property/accessExternalDTD' is not recognized.
+                                at org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.setAttribute(Unknown Source) -->
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.0</version>
+                <version>4.3.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -340,7 +356,7 @@
     <parent>
         <artifactId>row-level-security-lua-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.5.5</version>
+        <version>1.5.6</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
