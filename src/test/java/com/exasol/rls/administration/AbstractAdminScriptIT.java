@@ -1,6 +1,6 @@
 package com.exasol.rls.administration;
 
-import static com.exasol.RlsTestConstants.DOCKER_DB_VERSION;
+import static com.exasol.RlsTestConstants.DEFAULT_DOCKER_IMAGE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,7 +43,7 @@ public abstract class AbstractAdminScriptIT {
     private static Connection connection = null;
 
     @Container
-    static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = new ExasolContainer<>(DOCKER_DB_VERSION)
+    static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = new ExasolContainer<>(DEFAULT_DOCKER_IMAGE)
             .withReuse(true);
 
     protected static void initialize(final ExasolContainer<? extends ExasolContainer<?>> container,

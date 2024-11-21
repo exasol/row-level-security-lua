@@ -12,7 +12,7 @@ public final class RlsTestConstants {
     public static final String ROLE_MASK_TYPE = "DECIMAL(20,0)";
     public static final String IDENTIFIER_TYPE = "VARCHAR(128)";
 
-    public static final String DOCKER_DB_VERSION = "8.32.0";
+    public static final String DEFAULT_DOCKER_IMAGE = "8.32.0";
 
     private RlsTestConstants() {
         // prevent instantiation
