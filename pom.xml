@@ -90,7 +90,7 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                     <!-- Avoid exception running integration tests caused by wrong XML parser (xerces:xercesImpl) beeing loaded:
+                    <!-- Avoid exception running integration tests caused by wrong XML parser (xerces:xercesImpl) beeing loaded:
                              java.lang.IllegalArgumentException: Property 'http://javax.xml.XMLConstants/property/accessExternalDTD' is not recognized.
                                 at org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.setAttribute(Unknown Source) -->
                     <groupId>xerces</groupId>
@@ -104,7 +104,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.1</version>
+                <version>4.4.0</version>
                 <executions>
                     <execution>
                         <goals>
