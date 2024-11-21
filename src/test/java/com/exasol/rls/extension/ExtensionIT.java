@@ -1,5 +1,6 @@
 package com.exasol.rls.extension;
 
+import static com.exasol.RlsTestConstants.DOCKER_DB_VERSION;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -42,7 +43,7 @@ class ExtensionIT extends AbstractVirtualSchemaExtensionIT {
     @BeforeAll
     static void setup() {
         if (System.getProperty("com.exasol.dockerdb.image") == null) {
-            System.setProperty("com.exasol.dockerdb.image", "8.26.0");
+            System.setProperty("com.exasol.dockerdb.image", DOCKER_DB_VERSION);
         }
         exasolTestSetup = new ExasolTestSetupFactory(Path.of("no-such-file")).getTestSetup();
         ExasolVersionCheck.assumeExasolVersion8(exasolTestSetup);
