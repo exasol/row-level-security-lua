@@ -16,8 +16,8 @@ build:
   runnerOs: ubuntu-22.04
   freeDiskSpace: true
   exasolDbVersions:
-    - 8.27.0
-    - 7.1.26
+    - 8.32.0
+    - 7.1.30
   workflows:
     - name: ci-build.yml
       stepCustomizations:
