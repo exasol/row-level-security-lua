@@ -57,7 +57,7 @@ class ExtensionIT extends AbstractVirtualSchemaExtensionIT {
     }
 
     @AfterAll
-    static void teardown() throws Exception {
+    static void teardown() {
         if (setup != null) {
             setup.close();
         }
@@ -131,7 +131,7 @@ class ExtensionIT extends AbstractVirtualSchemaExtensionIT {
     }
 
     @Override
-    protected Collection<ParameterValue> createValidParameterValues() {
+    protected Collection<ParameterValue> createValidParameterValues(final String extensionVersion) {
         return List.of(param("SCHEMA_NAME", BASE_SCHEMA_NAME));
     }
 

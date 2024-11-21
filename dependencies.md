@@ -10,7 +10,7 @@
 | [Exasol JDBC Driver][0]                        | [EXAClient License][1]            |
 | [Test containers for Exasol on Docker][2]      | [MIT License][3]                  |
 | [Testcontainers :: JUnit Jupiter Extension][4] | [MIT][5]                          |
-| [Hamcrest][6]                                  | [BSD License 3][7]                |
+| [Hamcrest][6]                                  | [BSD-3-Clause][7]                 |
 | [Matcher for SQL Result Sets][8]               | [MIT License][9]                  |
 | [JUnit Jupiter Engine][10]                     | [Eclipse Public License v2.0][11] |
 | [JUnit Jupiter Params][10]                     | [Eclipse Public License v2.0][11] |
@@ -59,13 +59,13 @@
 | [@exasol/extension-manager-interface][57] | MIT     |
 
 [0]: http://www.exasol.com/
-[1]: https://repo1.maven.org/maven2/com/exasol/exasol-jdbc/24.1.0/exasol-jdbc-24.1.0-license.txt
+[1]: https://repo1.maven.org/maven2/com/exasol/exasol-jdbc/24.2.0/exasol-jdbc-24.2.0-license.txt
 [2]: https://github.com/exasol/exasol-testcontainers/
 [3]: https://github.com/exasol/exasol-testcontainers/blob/main/LICENSE
 [4]: https://java.testcontainers.org
 [5]: http://opensource.org/licenses/MIT
 [6]: http://hamcrest.org/JavaHamcrest/
-[7]: http://opensource.org/licenses/BSD-3-Clause
+[7]: https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE
 [8]: https://github.com/exasol/hamcrest-resultset-matcher/
 [9]: https://github.com/exasol/hamcrest-resultset-matcher/blob/main/LICENSE
 [10]: https://junit.org/junit5/
