@@ -52,8 +52,15 @@ It also includes additional integration tests.
 
 ### Extension
 
+#### Compile Dependency Updates
+
+* Updated `@exasol/extension-manager-interface:0.4.2` to `0.4.3`
+
 #### Development Dependency Updates
 
-* Updated `ts-jest:^29.1.2` to `^29.1.3`
-* Updated `typescript-eslint:^7.8.0` to `^7.10.0`
-* Updated `esbuild:^0.20.2` to `^0.21.3`
+* Updated `eslint:^8.57.0` to `9.14.0`
+* Updated `ts-jest:^29.1.2` to `^29.2.5`
+* Updated `@types/jest:^29.5.12` to `^29.5.14`
+* Updated `typescript-eslint:^7.8.0` to `^8.15.0`
+* Updated `typescript:^5.4.5` to `^5.6.3`
+* Updated `esbuild:^0.20.2` to `^0.24.0`

@@ -151,9 +151,9 @@ table.insert(package.searchers,`)
             expect(actual).toHaveLength(6)
             expect(actual[0]).toStrictEqual({
                 id: "virtualSchemaName",
-                name: "Virtual Schema name",
+                name: "Virtual schema name",
                 placeholder: "MY_VIRTUAL_SCHEMA",
-                regex: "[a-zA-Z_]+", required: true, type: "string",
+                regex: "[a-zA-Z][a-zA-Z0-9_]*", required: true, type: "string",
                 "description": "Name for the new virtual schema",
             })
             expect(actual[1]).toStrictEqual({
