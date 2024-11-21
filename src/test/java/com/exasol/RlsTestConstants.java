@@ -11,8 +11,8 @@ public final class RlsTestConstants {
     public static final String GROUP_COLUMN = "EXA_GROUP";
     public static final String ROLE_MASK_TYPE = "DECIMAL(20,0)";
     public static final String IDENTIFIER_TYPE = "VARCHAR(128)";
-    public static final int PUBLIC_ROLE_BIT_INDEX = 63;
-    public static final String DOCKER_DB = "exasol/docker-db:8.27.0";
+
+    public static final String DEFAULT_DOCKER_IMAGE = "8.32.0";
 
     private RlsTestConstants() {
         // prevent instantiation

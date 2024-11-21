@@ -30,8 +30,9 @@ abstract class AbstractLuaVirtualSchemaIT {
     private static final Path RLS_PACKAGE_PATH = Path.of("target/row-level-security-dist-" + VERSION + ".lua");
     @Container
     protected static final ExasolContainer<? extends ExasolContainer<?>> EXASOL = //
-            new ExasolContainer<>(DOCKER_DB) //
+            new ExasolContainer<>(DEFAULT_DOCKER_IMAGE) //
                     .withReuse(true);
+
     private static final String EXASOL_LUA_MODULE_LOADER_WORKAROUND = "table.insert(" //
             + "package.searchers" //
             + ",\n" //

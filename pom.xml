@@ -7,7 +7,7 @@
     <description>This projects provides a plug-in to the Exasol database that adds per-row access control.</description>
     <url>https://github.com/exasol/row-level-security-lua/</url>
     <properties>
-        <junit.version>5.10.2</junit.version>
+        <junit.version>5.11.3</junit.version>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <lua.src>${basedir}/src/main/lua</lua.src>
         <lua.test>${basedir}/src/test/lua</lua.test>
@@ -19,31 +19,31 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-jdbc</artifactId>
-            <version>24.1.0</version>
+            <version>24.2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>7.1.0</version>
+            <version>7.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.8</version>
+            <version>1.20.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
+            <version>3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.6.5</version>
+            <version>1.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -61,36 +61,36 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.13</version>
+            <version>2.0.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.5.4</version>
+            <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>maven-project-version-getter</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.11</version>
+            <version>0.5.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <!-- Explicityl upgrade transitive dependency of extension-manager-integration-test-java to fix SSH connection to Exasol >= 8.27.0 -->
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>2.1.4</version>
+            <version>2.1.6</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                     <!-- Avoid exception running integration tests caused by wrong XML parser (xerces:xercesImpl) beeing loaded:
+                    <!-- Avoid exception running integration tests caused by wrong XML parser (xerces:xercesImpl) beeing loaded:
                              java.lang.IllegalArgumentException: Property 'http://javax.xml.XMLConstants/property/accessExternalDTD' is not recognized.
                                 at org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.setAttribute(Unknown Source) -->
                     <groupId>xerces</groupId>
@@ -104,7 +104,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.1</version>
+                <version>4.4.0</version>
                 <executions>
                     <execution>
                         <goals>
