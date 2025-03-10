@@ -64,7 +64,7 @@ jobs:
         id: install-luarocks
         uses: leafo/gh-actions-luarocks@v5
         with: {
-          luaRocksVersion: 3.11.1
+          luaRocksVersion: 3.11.0
         }
       - {
         name: Install Lua dependencies,

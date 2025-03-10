@@ -45,7 +45,7 @@ build:
             id: install-luarocks
             uses: leafo/gh-actions-luarocks@v5
             with:
-              luaRocksVersion: "3.11.1"
+              luaRocksVersion: "3.11.0"
         - action: INSERT_AFTER
           job: matrix-build
           stepId: install-luarocks
@@ -107,7 +107,7 @@ build:
             id: install-luarocks
             uses: leafo/gh-actions-luarocks@v5
             with:
-              luaRocksVersion: "3.11.1"
+              luaRocksVersion: "3.11.0"
         - action: INSERT_AFTER
           job: release
           stepId: install-luarocks
