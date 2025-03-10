@@ -13,7 +13,6 @@ sources:
 version:
   fromSource: pom.xml
 build:
-  runnerOs: ubuntu-22.04
   freeDiskSpace: true
   exasolDbVersions:
     - 8.32.0
@@ -22,28 +21,39 @@ build:
     - name: ci-build.yml
       stepCustomizations:
         - action: INSERT_AFTER
+          job: matrix-build
+          stepId: enable-testcontainer-reuse
+          content:
+            name: Fix VM Crash in UDFs
+            id: fix-vm-crash
+            run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+        - action: INSERT_AFTER
+          job: matrix-build
           stepId: setup-java
           content:
             name: Install Lua
             id: install-lua
-            uses: leafo/gh-actions-lua@v10
+            uses: leafo/gh-actions-lua@v11
             with:
               luaVersion: 5.4
         - action: INSERT_AFTER
+          job: matrix-build
           stepId: install-lua
           content:
             name: Install LuaRocks
             id: install-luarocks
-            uses: leafo/gh-actions-luarocks@v4
+            uses: leafo/gh-actions-luarocks@v5
             with:
               luaRocksVersion: "3.11.0"
         - action: INSERT_AFTER
+          job: matrix-build
           stepId: install-luarocks
           content:
             name: Install Lua dependencies
             id: install-lua-dependencies
             run: luarocks --local install *.rockspec --deps-only
         - action: INSERT_AFTER
+          job: matrix-build
           stepId: build-pk-verify
           content:
             name: Archive code coverage results
@@ -54,6 +64,7 @@ build:
               path: target/luacov-reports/luacov.report.out
               if-no-files-found: error
         - action: REPLACE
+          job: matrix-build
           stepId: sonar-analysis
           content:
             name: Skip SonarCloud analysis
@@ -61,31 +72,43 @@ build:
             run: echo "SonarCloud analysis is skipped because the project is written in Lua."
         # Generate dummy error code reports. Error code crawler does not support Lua projects yet.
         - action: INSERT_AFTER
+          job: matrix-build
           stepId: build-pk-verify
           content:
             name: Generate dummy error code report
             id: generate-dummy-error-code-report
             run: echo '{"$schema":"https://schemas.exasol.com/error_code_report-1.0.0.json","errorCodes":[]}' > target/error_code_report.json
 
+        - action: REPLACE
+          job: next-java-compatibility
+          stepId: build-next-java
+          content:
+            name: Skip next java build as project uses Lua
+            id: build-next-java
+            run: echo "Skipped"
+
     - name: release.yml
       stepCustomizations:
         - action: INSERT_AFTER
+          job: release
           stepId: setup-jdks
           content:
             name: Install Lua
             id: install-lua
-            uses: leafo/gh-actions-lua@v10
+            uses: leafo/gh-actions-lua@v11
             with:
               luaVersion: 5.4
         - action: INSERT_AFTER
+          job: release
           stepId: install-lua
           content:
             name: Install LuaRocks
             id: install-luarocks
-            uses: leafo/gh-actions-luarocks@v4
+            uses: leafo/gh-actions-luarocks@v5
             with:
               luaRocksVersion: "3.11.0"
         - action: INSERT_AFTER
+          job: release
           stepId: install-luarocks
           content:
             name: Install Lua dependencies
@@ -93,13 +116,9 @@ build:
             run: luarocks --local install *.rockspec --deps-only
         # Generate dummy error code reports. Error code crawler does not support Lua projects yet.
         - action: INSERT_AFTER
+          job: release
           stepId: build
           content:
             name: Generate dummy error code report
             id: generate-dummy-error-code-report
             run: echo '{"$schema":"https://schemas.exasol.com/error_code_report-1.0.0.json","errorCodes":[]}' > target/error_code_report.json
-
-excludes:
-  # Project is written in Lua, no need to test with Java 17
-  - "E-PK-CORE-17: Missing required file: '.github/workflows/ci-build-next-java.yml'"
-  - "E-PK-CORE-17: Missing required file: 'release_config.yml'"

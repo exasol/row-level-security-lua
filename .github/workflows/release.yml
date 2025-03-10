@@ -73,13 +73,13 @@ jobs:
           cache: maven
       - name: Install Lua
         id: install-lua
-        uses: leafo/gh-actions-lua@v10
+        uses: leafo/gh-actions-lua@v11
         with: {
           luaVersion: 5.4
         }
       - name: Install LuaRocks
         id: install-luarocks
-        uses: leafo/gh-actions-luarocks@v4
+        uses: leafo/gh-actions-luarocks@v5
         with: {
           luaRocksVersion: 3.11.0
         }

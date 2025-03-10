@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.5.6"
+local tag = "1.5.7"
 local project = "row-level-security-lua"
 local src = "src/main/lua"
 
@@ -31,8 +31,8 @@ build_dependencies = {
 
 test_dependencies = {
     "busted >= 2.2.0-1",
-    "luacheck >= 1.1.2-1",
-    "luacov >= 0.15.0-1",
+    "luacheck >= 1.2.0-1",
+    "luacov >= 0.16.0-1",
     "luacov-coveralls >= 0.2.3-1"
 }
 
