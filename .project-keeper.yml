@@ -13,6 +13,7 @@ sources:
 version:
   fromSource: pom.xml
 build:
+  runnerOs: ubuntu-22.04
   freeDiskSpace: true
   exasolDbVersions:
     - 8.32.0
@@ -20,6 +21,13 @@ build:
   workflows:
     - name: ci-build.yml
       stepCustomizations:
+        - action: INSERT_AFTER
+          job: matrix-build
+          stepId: enable-testcontainer-reuse
+          content:
+            name: Fix VM Crash in UDFs
+            id: fix-vm-crash
+            run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
         - action: INSERT_AFTER
           job: matrix-build
           stepId: setup-java
@@ -71,6 +79,14 @@ build:
             name: Generate dummy error code report
             id: generate-dummy-error-code-report
             run: echo '{"$schema":"https://schemas.exasol.com/error_code_report-1.0.0.json","errorCodes":[]}' > target/error_code_report.json
+
+        - action: REPLACE
+          job: next-java-compatibility
+          stepId: build-next-java
+          content:
+            name: Skip next java build as project uses Lua
+            id: build-next-java
+            run: echo "Skipped"
 
     - name: release.yml
       stepCustomizations:

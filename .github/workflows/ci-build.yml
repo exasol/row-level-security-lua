@@ -9,7 +9,7 @@ on:
   pull_request: null
 jobs:
   matrix-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     defaults:
       run: {
         shell: bash
@@ -83,6 +83,11 @@ jobs:
         name: Enable testcontainer reuse,
         id: enable-testcontainer-reuse,
         run: echo 'testcontainers.reuse.enable=true' > "$HOME/.testcontainers.properties"
+      }
+      - {
+        name: Fix VM Crash in UDFs,
+        id: fix-vm-crash,
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       }
       - name: Run tests and build with Maven
         id: build-pk-verify
@@ -172,9 +177,9 @@ jobs:
           cache: maven
         }
       - {
-        name: Run tests and build with Maven 17,
+        name: Skip next java build as project uses Lua,
         id: build-next-java,
-        run: mvn --batch-mode clean package -DtrimStackTrace=false -Djava.version=17
+        run: echo "Skipped"
       }
   build:
     needs: [
