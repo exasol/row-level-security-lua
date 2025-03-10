@@ -13,7 +13,6 @@ sources:
 version:
   fromSource: pom.xml
 build:
-  runnerOs: ubuntu-22.04
   freeDiskSpace: true
   exasolDbVersions:
     - 8.32.0
