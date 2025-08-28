@@ -18,7 +18,7 @@ jobs:
       issues: write
     }
     outputs: {
-      created-issues: '${{ steps.security-issues.outputs.created-issues }}'
+      created-issues: '${{ steps.create-security-issues.outputs.created-issues }}'
     }
     concurrency: {
       group: '${{ github.workflow }}-report_security_issues',
@@ -46,9 +46,9 @@ jobs:
               org.sonatype.ossindex.maven:ossindex-maven-plugin:audit-aggregate \
               -Dossindex.reportFile=$(pwd)/ossindex-report.json \
               -Dossindex.fail=false
-      - name: Report Security Issues
-        id: security-issues
-        uses: exasol/python-toolbox/.github/actions/security-issues@main
+      - name: Create GitHub Issues
+        id: create-security-issues
+        uses: exasol/python-toolbox/.github/actions/security-issues@1.1.0
         with: {
           format: maven,
           command: cat ossindex-report.json,
@@ -60,7 +60,7 @@ jobs:
           echo "$CREATED_ISSUES" > test.jsonl
           cat test.jsonl
         env: {
-          CREATED_ISSUES: '${{ steps.security-issues.outputs.created-issues }}'
+          CREATED_ISSUES: '${{ steps.create-security-issues.outputs.created-issues }}'
         }
   start_dependency_udpate:
     needs: report_security_issues
